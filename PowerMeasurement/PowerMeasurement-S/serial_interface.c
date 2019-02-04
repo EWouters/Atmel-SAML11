@@ -29,6 +29,9 @@ int get_command(char * command)
 	char inbyte = 0;
 	int  command_length = 0;
 	
+	// Clear the previous command
+	command[0] = '\0';
+	
 	scanf("%c", &inbyte);
 	
 	// Make sure the command start sequence is present.
@@ -60,20 +63,39 @@ int get_command(char * command)
 	return rc;
 }
 
-//// debug_print()
-////
-//// Prints debug message to serial port if debugging output is enabled.
-////
-//// Parameters:
-////   msg - The message to print.  A newline will be added automatically.
-////
-//void debug_print(String msg)
-//{
-//if (debug) {
-//printf(LOG_DBG_PREFIX);
-//printf(msg);
-//}
-//}
+// toggleDebug()
+//
+// Enables or disables debugging serial output.
+//
+void toggle_debug(bool * debug)
+{
+    *debug = !*debug;
+    
+    if (*debug) {
+        printf(RESP_DBG_ON);
+    } else {
+        printf(RESP_DBG_OFF);
+    }
+
+    // Terminate our serial response.
+    printf(RESP_OK);
+}
+
+// debug_print()
+//
+// prints debug message to serial port if debugging output is enabled.
+//
+// parameters:
+//   msg - the message to print.  a newline will be added automatically.
+//
+void debug_print(char * info, char * argument, bool * debug)
+{
+	if (*debug) {
+		printf(LOG_DBG_PREFIX);
+		printf(info, argument);
+		printf(RESP_OK);
+	}
+}
 
 // usage()
 //
@@ -97,10 +119,10 @@ void usage()
 	printf("\t");
 	printf("Return some status\n");  // TODO
 	printf("\t");
-	//printf(CMD_DEBUG);
-	//printf("\t");
-	//printf("Toggle debugging output");
-	//printf("\t");
+	printf(CMD_DEBUG);
+	printf("\t");
+	printf("Toggle debugging output\n");
+	printf("\t");
 	printf(CMD_HELP);
 	printf("\t");
 	printf("Show usage information\n");
@@ -109,31 +131,25 @@ void usage()
 	printf(RESP_OK);
 }
 
-char * serial_command()
+void serial_command(char * command)
 {
 	/* Print protocol information */
 	//usage();
 	
-	char command[CMD_MAX_LEN + 1];
-	//bool debug = false;
+	static bool debug = false;
 	
 	/* Attempt to get a command from the serial port */
-	if (get_command(&command) == 0) {
-		//debug_print(String("Received command \"" + String(command) + "\""));
+	if (get_command(command) == 0) {
+		debug_print("Received command \"%s\"\n", command, &debug);
 		if (strcmp(command, CMD_STATUS) == 0) {
 			printf("Hello\n");
 			printf(RESP_OK);
-			} else if (strcmp(command, CMD_HELP) == 0) {
+		} else if (strcmp(command, CMD_HELP) == 0) {
 			usage();
-			//} else if (strcmp(command, CMD_DEBUG) == 0) {
-			//toggle_debug();
-			} else {
+		} else if (strcmp(command, CMD_DEBUG) == 0) {
+			toggle_debug(&debug);
+		} else {
 			printf(ERR_UNKNOWN_CMD);
 		}
-				
-		// Clear the previous command
-		command[0] = '\0';
 	}
-	
-	return command;
 }

@@ -25,24 +25,24 @@
 
 // Serial commands
 #define CMD_STATUS "STA"
-//#define CMD_DEBUG "DBG"
+#define CMD_DEBUG "DBG"
 #define CMD_HELP "?"
 
 // Standard serial responses
 #define RESP_OK "OK\n"
-//#define RESP_DBG_ON "DBG_ON\n"
-//#define RESP_DBG_OFF "DBG_OFF\n"
+#define RESP_DBG_ON "DBG_ON\n"
+#define RESP_DBG_OFF "DBG_OFF\n"
 #define ERR_UNKNOWN_CMD "ERR_UNKNOWN_CMD\n"
 #define ERR_CMDLEN "ERR_CMDLEN\n"
 #define ERR_PROTOCOL2 "ERR_PROTOCOL\n"
 
-int get_command();
-//void toggle_debug();
-//void debug_print(string msg);
+int get_command(char * command);
+void toggle_debug(bool * debug);
+void debug_print(char * info, char * argument, bool * debug);
 void usage();
-char * serial_command();
+void serial_command(char * command);
 
-//// Debug output defines
-//#define LOG_DBG_PREFIX "[DBG] "
+// Debug output defines
+#define LOG_DBG_PREFIX "[DBG] "
 
 #endif /* SERIAL_INTERFACE_H_ */
