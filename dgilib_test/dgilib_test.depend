@@ -1,0 +1,21 @@
+# depslib dependency file v1.0
+1549357178 source:c:\users\erik\desktop\rise\microchip\dgilib_test\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"../DGI/dgilib-5.7.244/dgilib.h"
+
+1549294115 c:\users\erik\desktop\rise\microchip\dgi\dgilib-5.7.244\dgilib.h
+	<stdint.h>
+	<stddef.h>
+
+1549362792 source:c:\users\erik\desktop\github\atmel-saml11\dgilib_test\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"dgilib-5.7.244/dgilib.h"
+
+1549294115 c:\users\erik\desktop\github\atmel-saml11\dgilib_test\dgilib-5.7.244\dgilib.h
+	<stdint.h>
+	<stddef.h>
+
