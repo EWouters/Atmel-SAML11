@@ -396,6 +396,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="aes_interface.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="aes_interface.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="atmel_start.c">
       <SubType>compile</SubType>
     </Compile>
@@ -747,6 +753,477 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="mbedtls\aes.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\aes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\aesni.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\aesni.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\arc4.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\arc4.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\aria.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\aria.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\asn1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\asn1parse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\asn1write.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\asn1write.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\base64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\base64.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\bignum.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\bignum.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\blowfish.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\blowfish.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\bn_mul.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\camellia.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\camellia.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ccm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ccm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\certs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\certs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\chacha20.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\chacha20.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\chachapoly.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\chachapoly.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\check_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cipher.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cipher.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cipher_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cipher_wrap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cmac.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\cmac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\compat-1.3.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ctr_drbg.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ctr_drbg.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\debug.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\debug.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\des.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\des.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\dhm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\dhm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecdh.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecdh.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecdsa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecdsa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecjpake.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecjpake.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecp.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecp.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecp_curves.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ecp_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\entropy.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\entropy.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\entropy_poll.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\entropy_poll.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\error.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\error.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\gcm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\gcm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\havege.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\havege.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\hkdf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\hkdf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\hmac_drbg.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\hmac_drbg.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md4.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md4.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md5.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md5.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\md_wrap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\memory_buffer_alloc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\memory_buffer_alloc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\net.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\net_sockets.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\net_sockets.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\nist_kw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\nist_kw.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\oid.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\oid.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\padlock.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\padlock.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pem.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pem.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pk.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pk.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs11.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs11.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs12.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs12.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs5.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkcs5.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkparse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pkwrite.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pk_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\pk_wrap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\platform.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\platform_time.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\platform_util.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\platform_util.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\poly1305.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\poly1305.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ripemd160.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ripemd160.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\rsa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\rsa.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\rsa_internal.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\rsa_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha256.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha256.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha512.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\sha512.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_cache.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_cache.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_ciphersuites.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_ciphersuites.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_cli.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_cookie.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_cookie.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_srv.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_ticket.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_ticket.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\ssl_tls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\threading.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\threading.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\timing.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\timing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\version.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\version.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\version_features.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509write_crt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509write_csr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_create.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_crl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_crl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_crt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_crt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_csr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\x509_csr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\xtea.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mbedtls\xtea.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="serial_interface.c">
       <SubType>compile</SubType>
     </Compile>
@@ -806,6 +1283,7 @@
     <Folder Include="hpl\port\" />
     <Folder Include="hpl\sercom\" />
     <Folder Include="hri\" />
+    <Folder Include="mbedtls" />
     <Folder Include="stdio_redirect\" />
     <Folder Include="stdio_redirect\gcc\" />
     <Folder Include="toolchain\" />
@@ -820,6 +1298,12 @@
       <SubType>compile</SubType>
     </None>
     <None Include="Device_Startup\saml11_secure.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="mbedtls\CMakeLists.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="mbedtls\Makefile">
       <SubType>compile</SubType>
     </None>
     <None Include="toolchain\iar\linker\saml11_nonsecure.icf">
