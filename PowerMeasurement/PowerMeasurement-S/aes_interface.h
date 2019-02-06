@@ -12,6 +12,8 @@
 
 void generate_aes_key(unsigned char *);
 
+int test_aes(void);
+
 void phex(unsigned char *, unsigned char);
 
 #endif /* AES_INTERFACE_H_ */
