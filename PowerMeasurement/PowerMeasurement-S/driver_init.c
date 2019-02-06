@@ -23,6 +23,19 @@ WEAK int32_t nsc_periph_clock_init(uint32_t gclk_id, uint32_t gclk_src)
 
 struct usart_sync_descriptor TARGET_IO;
 
+/**
+ * \brief NVMCTRL initialization function
+ *
+ * Enables NVMCTRL peripheral, clocks and initializes driver
+ */
+void FLASH_0_clock_init(void)
+{
+#if (defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U))
+	hri_mclk_set_AHBMASK_NVMCTRL_bit(MCLK);
+	hri_mclk_set_APBBMASK_NVMCTRL_bit(MCLK);
+#endif
+}
+
 void TARGET_IO_PORT_init(void)
 {
 
@@ -56,6 +69,9 @@ void system_init(void)
 	/* Only initialize MCU clock when the project is TrustZone secure project  */
 	init_mcu();
 #endif
+
+	FLASH_0_clock_init();
+	FLASH_0_init();
 
 	TARGET_IO_init();
 }

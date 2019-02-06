@@ -403,6 +403,29 @@ drivers:
         - name: CPU
           input: CPU
         configuration: {}
+  FLASH_0:
+    user_label: FLASH_0
+    definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::NVMCTRL::driver_config_definition::Flash::Lite:NVMCTRL:Driver
+    functionality: Flash
+    api: Lite:NVMCTRL:Driver
+    configuration:
+      ctrlb_cachedis: false
+      ctrlb_fwup: false
+      ctrlb_qwen: false
+      ctrlb_readmode: No Miss Penalty
+      ctrlb_sleepprm: Wake On Access
+      ctrlc_manw: true
+      dscc_dsckey: 0
+      evctrl_autowei: false
+      evctrl_autowinv: false
+      secctrl_dscen: false
+      secctrl_silacc: false
+      secctrl_tampeen: false
+      secctrl_terow: 0
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group: null
   OSC32KCTRL:
     user_label: OSC32KCTRL
     definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::OSC32KCTRL::driver_config_definition::OSC32KCTRL::HAL:HPL:OSC32KCTRL
@@ -574,6 +597,9 @@ pads:
     configuration: null
 toolchain_options:
 - definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
+  configuration: {}
+- definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Atmel.Studio:7.0.0
   configuration:
     compiler_config:
@@ -583,7 +609,4 @@ toolchain_options:
         -Wl,--cmse-implib
 - definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
-  configuration: {}
-- definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
   configuration: {}
