@@ -27,6 +27,7 @@
 #define CMD_STATUS "STA"
 #define CMD_DEBUG "DBG"
 #define CMD_TEST_AES "TAE"
+#define CMD_TEST_FLASH "TFL"
 #define CMD_HELP "?"
 
 // Standard serial responses
@@ -38,6 +39,7 @@
 #define ERR_CMDLEN "ERR_CMDLEN\n"
 #define ERR_PROTOCOL2 "ERR_PROTOCOL\n"
 #define ERR_TEST_AES "ERR_TEST_AES\n"
+#define ERR_TEST_FLASH "ERR_TEST_FLASH\n"
 
 int get_command(char * command);
 void toggle_debug(bool * debug);

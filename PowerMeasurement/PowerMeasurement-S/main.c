@@ -7,12 +7,12 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
+	//test_write_flash(500);
+	
 	/* Replace with your application code */
-	
-	
 	char command[CMD_MAX_LEN + 1];
 	while (1) {
-		//delay_ms(1000);
+		//delay_ms(100000);
 		//printf("looping");
 		serial_command(command);
 	}

@@ -15,6 +15,8 @@
 #include "serial_interface.h"
 
 #include "aes_interface.h"
+#include "checkpointing.h"
+#include <stdlib.h>
 //#include "mbedtls/cmac.h"
 
 // get_command()
@@ -130,6 +132,10 @@ void usage()
 	printf("\t");
 	printf("Test AES on a known block of data\n");
 	printf("\t");
+	printf(CMD_TEST_FLASH);
+	printf("\t");
+	printf("Test Flash write and read using n bytes (command has to be followed by the number of bytes to be used in the test)\n");
+	printf("\t");
 	printf(CMD_HELP);
 	printf("\t");
 	printf("Show usage information\n");
@@ -161,6 +167,17 @@ void serial_command(char * command)
 				printf(RESP_OK);
 			} else {
 				printf(ERR_TEST_AES);
+			}
+		} else if (strcmp(command, CMD_TEST_FLASH) == 0) {
+			printf("Please respond with the number of bytes to be used in the test\n");
+			printf(RESP_OK);
+			char number[CMD_MAX_LEN + 1];
+			if (get_command(number) == 0) {
+				if (test_write_flash(atoi(number)) == ERR_NONE) {
+					printf(RESP_OK);
+				} else {
+					printf(ERR_TEST_FLASH);
+				}
 			}
 		} else {
 			printf(ERR_UNKNOWN_CMD);
