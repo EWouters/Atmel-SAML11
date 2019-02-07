@@ -1,8 +1,6 @@
 #include <atmel_start.h>
 
-//#include "serial_interface.h"
-#include "aes_interface.h"
-//#include "mbedtls/cmac.h"
+#include "serial_interface.h"
 
 int main(void)
 {
@@ -10,15 +8,14 @@ int main(void)
 	atmel_start_init();
 	
 	/* Replace with your application code */
-	//mbedtls_cmac_self_test(1); // Note: Cannot compile this due to undefined reference.
-	//test_aes();
 	
-	//char command[CMD_MAX_LEN + 1];
-	//while (1) {
+	
+	char command[CMD_MAX_LEN + 1];
+	while (1) {
 		//delay_ms(1000);
 		//printf("looping");
-		////serial_command(command);
-	//}
+		serial_command(command);
+	}
 }
 
 //int main(void)

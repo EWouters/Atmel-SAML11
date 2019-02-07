@@ -14,6 +14,9 @@
 
 #include "serial_interface.h"
 
+#include "aes_interface.h"
+//#include "mbedtls/cmac.h"
+
 // get_command()
 //
 // Get a command from the serial port, checking for a proper envelope and length.
@@ -123,6 +126,10 @@ void usage()
 	printf("\t");
 	printf("Toggle debugging output\n");
 	printf("\t");
+	printf(CMD_TEST_AES);
+	printf("\t");
+	printf("Test AES on a known block of data\n");
+	printf("\t");
 	printf(CMD_HELP);
 	printf("\t");
 	printf("Show usage information\n");
@@ -144,11 +151,18 @@ void serial_command(char * command)
 		if (strcmp(command, CMD_STATUS) == 0) {
 			printf("Status:\tDebug mode is %s\n", debug ? "ON":"OFF");
 			printf(RESP_OK);
-			} else if (strcmp(command, CMD_HELP) == 0) {
+		} else if (strcmp(command, CMD_HELP) == 0) {
 			usage();
-			} else if (strcmp(command, CMD_DEBUG) == 0) {
+		} else if (strcmp(command, CMD_DEBUG) == 0) {
 			toggle_debug(&debug);
+		} else if (strcmp(command, CMD_TEST_AES) == 0) {
+			//mbedtls_cmac_self_test(1); // Note: Cannot compile this due to undefined reference.
+			if (test_aes() == ERR_NONE) {
+				printf(RESP_OK);
 			} else {
+				printf(ERR_TEST_AES);
+			}
+		} else {
 			printf(ERR_UNKNOWN_CMD);
 		}
 	}
