@@ -2,6 +2,7 @@
 
 //#include "serial_interface.h"
 #include "aes_interface.h"
+//#include "mbedtls/cmac.h"
 
 int main(void)
 {
@@ -9,7 +10,8 @@ int main(void)
 	atmel_start_init();
 	
 	/* Replace with your application code */
-	test_aes();
+	//mbedtls_cmac_self_test(1); // Note: Cannot compile this due to undefined reference.
+	//test_aes();
 	
 	//char command[CMD_MAX_LEN + 1];
 	//while (1) {
