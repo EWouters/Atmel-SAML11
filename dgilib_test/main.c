@@ -7,34 +7,21 @@
 // Wireshark filter:
 // usb.dst == "1.9.0" || usb.src == "1.9.0"
 
-enum
-{
-    O32_LITTLE_ENDIAN = 0x03020100ul,
-    O32_BIG_ENDIAN = 0x00010203ul,
-    O32_PDP_ENDIAN = 0x01000302ul,      /* DEC PDP-11 (aka ENDIAN_LITTLE_WORD) */
-    O32_HONEYWELL_ENDIAN = 0x02030001ul /* Honeywell 316 (aka ENDIAN_BIG_WORD) */
-};
+#define INTERFACE_TIMESTAMP  0x00 // Service interface which appends timestamps to all received events on associated interfaces.
+#define INTERFACE_SPI        0x20 // Communicates directly over SPI in Slave mode.
+#define INTERFACE_USART      0x21 // Communicates directly over USART in Slave mode.
+#define INTERFACE_I2C        0x22 // Communicates directly over I2C in Slave mode.
+#define INTERFACE_GPIO       0x30 // Monitors and controls the state of GPIO pins.
+#define INTERFACE_POWER_DATA 0x40 // Receives data from the attached power measurement co-processors.
+#define INTERFACE_POWER_SYNC 0x41 // Receives sync events from the attached power measurement co-processors.
+#define INTERFACE_RESERVED   0xFF // Special identifier used to indicate no interface.
 
-static const union { unsigned char bytes[4]; uint32_t value; } o32_host_order =
-    { { 0, 1, 2, 3 } };
-
-#define O32_HOST_ORDER (o32_host_order.value)
-
-
-void phex(unsigned char * str, unsigned char len)
-{
-    for (unsigned char i = 0; i < len; ++i)
-        printf("%.2x ", str[i]);
-//    printf("\n");
-}
+#define NUM_INTERFACES 10
+#define NUM_CONFIG_IDS 10
+#define BUFFER_SIZE 10000000
 
 int main()
 {
-    if (O32_HOST_ORDER == O32_LITTLE_ENDIAN) {
-        printf("Is little endian\n");
-    } else if (O32_HOST_ORDER == O32_BIG_ENDIAN) {
-        printf("Is big endian\n");
-    }
     int res = 0;
 
     int major_version = get_major_version();
@@ -58,8 +45,8 @@ int main()
     printf("device_name: %s\n", name);
 
     dgi_handle_t dgi_hndl;
-//    power_handle_t power_h;
-//
+    power_handle_t power_hndl;
+
     Initialize(&dgi_hndl);
 
     //int execute_pam_cmd(dgi_hndl, unsigned char* cmd, unsigned int cmd_len, unsigned char* resp, unsigned int* resp_len);
@@ -99,38 +86,124 @@ int main()
     res = get_fw_version(dgi_hndl, &major, &minor);
     printf("%d fw_version major: %d, minor: %d\n", res, major, minor);
 
-//    unsigned char* interfaces = 0;
-    unsigned char interfaces[10] = {'\0'};
-    unsigned char count;
-    res = interface_list(dgi_hndl, interfaces, &count);
-    //interfaces[254] = '\0';
-    //count[254] = '\0';
-    printf("%d interface_list: ", res);
-    phex(interfaces, 10);
-    printf(", count: %d\n", count);
+    unsigned char interfaces[NUM_INTERFACES] = {'\0'};
+    unsigned char interfaceCount;
+    res = interface_list(dgi_hndl, interfaces, &interfaceCount);
+    printf("%d interface_list:", res);
+    for (unsigned char i = 0; i < NUM_INTERFACES; ++i)
+        printf(" 0x%.2x", interfaces[i]);
+    printf(", interfaceCount: %d\n", interfaceCount);
 
-//    unsigned char cmd[1] = {0x00};
-//    unsigned int cmd_len = 0x0000;
-//    unsigned char resp[255] = {' '};
-//    unsigned int resp_len = 255;
-//    printf("%d ", execute_pam_cmd(dgi_hndl, cmd, cmd_len, resp, &resp_len));
-//    printf("pam_cmd: %s, cmd_len: %d, resp: %s, resp_len: %d\n", cmd, cmd_len, resp, resp_len);
-//
-//    unsigned char cmd1[1] = {0x02};
-//    unsigned int cmd_len1 = 0x0000;
-//    unsigned char resp1[255] = {' '};
-//    unsigned int resp_len1 = 255;
-//    printf("%d ", execute_pam_cmd(dgi_hndl, cmd1, cmd_len1, resp1, &resp_len1));
-//    printf("pam_cmd: %s, cmd_len: %d, resp: %s, resp_len: %d\n", cmd1, cmd_len1, resp1, resp_len1);
+    //int interface_id = INTERFACE_POWER_DATA;
+    int interface_id = INTERFACE_GPIO;
+    bool enableTimestamp = true;
+    res = interface_enable(dgi_hndl, interface_id, enableTimestamp);
+    printf("%d interface_enable: 0x%.2x, enableTimestamp: %d\n", res, interface_id, enableTimestamp);
 
-//    start_polling(dgi_hndl);
-//
-//    stop_polling(dgi_hndl);
+    unsigned int config_id[NUM_CONFIG_IDS];
+    unsigned int config_value[NUM_CONFIG_IDS];
+    unsigned int config_cnt;
+    for (unsigned char i = 0; i < NUM_CONFIG_IDS; ++i) {
+        config_id[i] = 0;
+        config_value[i] = 0;
+    }
+    res = interface_get_configuration(dgi_hndl, interface_id, config_id, config_value, &config_cnt);
+    printf("%d interface_get_configuration: 0x%.2x, config_cnt: %d\n", res, interface_id, config_cnt);
+    for (unsigned char i = 0; i < config_cnt; ++i) {
+        printf("\tconfig_id: %u, value: %u\n", config_id[i], config_value[i]);
+    }
+
+    config_value[0] = 0b0011;
+    config_value[1] = 0b1100;
+    res = interface_set_configuration(dgi_hndl, interface_id, config_id, config_value, config_cnt);
+    printf("%d interface_set_configuration: 0x%.2x, config_cnt: %d\n", res, interface_id, config_cnt);
+    for (unsigned char i = 0; i < config_cnt; ++i) {
+        printf("\tconfig_id: %u, value: %u\n", config_id[i], config_value[i]);
+    }
+
+    res = interface_clear_buffer(dgi_hndl, interface_id);
+    printf("%d interface_clear_buffer: 0x%.2x\n", res, interface_id);
+
+    res = start_polling(dgi_hndl);
+    printf("%d start_polling\n", res);
+
+    unsigned char *readBuffer = malloc(sizeof(unsigned char)*BUFFER_SIZE);
+    unsigned long long* timestamp = malloc(sizeof(unsigned long long)*BUFFER_SIZE);
+    int length = 0;
+    unsigned int ovf_index = 0;
+    unsigned int ovf_length = 0;
+    unsigned int ovf_entry_count = 0;
+    res = interface_read_data(dgi_hndl, interface_id, readBuffer, timestamp, &length, &ovf_index, &ovf_length, &ovf_entry_count);
+    printf("%d interface_read_data: 0x%.2x, length: %d, ovf_index: %u, ovf_length: %u, ovf_entry_count: %u\n", res, interface_id, length, ovf_index, ovf_length, ovf_entry_count);
+    for (unsigned char i = 0; i < length; ++i) {
+        printf("\t%.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
+    }
+
+//    unsigned char* buffer = malloc(sizeof(unsigned char)*255);
+    unsigned char* writeBuffer[2] = {'\0'};
+    int* writeLength = 2;
+    res = interface_write_data(dgi_hndl, interface_id, writeBuffer, &writeLength);
+    printf("%d interface_write_data: 0x%.2x, length: %d\n", res, interface_id, writeLength);
+
+    res = interface_read_data(dgi_hndl, interface_id, readBuffer, timestamp, &length, &ovf_index, &ovf_length, &ovf_entry_count);
+    printf("%d interface_read_data: 0x%.2x, length: %d, ovf_index: %u, ovf_length: %u, ovf_entry_count: %u\n", res, interface_id, length, ovf_index, ovf_length, ovf_entry_count);
+    for (unsigned char i = 0; i < length; ++i) {
+        printf("\t %.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
+    }
+
+    res = auxiliary_power_initialize(&power_hndl, dgi_hndl);
+    printf("%d auxiliary_power_initialize\n", res);
+
+    float* powerBuffer;
+    double* powerTimestamp;
+    size_t powerCount;
+    size_t max_count = 256;
+    int channel = 0;
+    int powerType = 0;
+    res = auxiliary_power_register_buffer_pointers(power_hndl, powerBuffer, powerTimestamp, &powerCount, max_count, channel, powerType);
+    printf("%d auxiliary_power_register_buffer_pointers\n", res);
+
+    res = auxiliary_power_calibration_is_valid(power_hndl);
+    printf("%d auxiliary_power_calibration_is_valid\n", res);
+
+    int calibrationType = 0;
+    res = auxiliary_power_trigger_calibration(power_hndl, calibrationType);
+    printf("%d auxiliary_power_trigger_calibration\n", res);
+
+    uint8_t* calibrationData = malloc(sizeof(uint8_t)*16);;
+    size_t calibrationLength = 16;
+    res = auxiliary_power_get_calibration(power_hndl, calibrationData, calibrationLength);
+    printf("%d auxiliary_power_get_calibration\n", res);
+
+    int circuit;
+    res = auxiliary_power_get_circuit_type(power_hndl, &circuit);
+    printf("%d auxiliary_power_get_circuit_type: 0x%.2x\n", res, circuit);
+
+    int powerStatus = auxiliary_power_get_status(power_hndl);
+    printf("power_status: 0x%.2x\n", powerStatus);
+
+//    int auxiliary_power_start(uint32_t power_hndl, int mode, int parameter)
+//    int auxiliary_power_stop(uint32_t power_hndl)
+//    int auxiliary_power_lock_data_for_reading(uint32_t power_hndl)
+//    int auxiliary_power_copy_data(uint32_t power_hndl, float* buffer, double* timestamp, size_t* count, size_t max_count, int channel, int type)
+//    int auxiliary_power_free_data(uint32_t power_hndl)
+
+    res = auxiliary_power_unregister_buffer_pointers(power_hndl, channel, powerType);
+    printf("%d auxiliary_power_unregister_buffer_pointers\n", res);
+
+    res = auxiliary_power_uninitialize(power_hndl);
+    printf("%d auxiliary_power_uninitialize\n", res);
+
+    res = stop_polling(dgi_hndl);
+    printf("%d stop_polling\n", res);
+
+    res = interface_disable(dgi_hndl, interface_id);
+    printf("%d interface_disable: 0x%.2x\n", res, interface_id);
 
     res = disconnect(dgi_hndl);
     printf("%d disconnect\n", res);
     c_status = connection_status(dgi_hndl);
-    printf("connection_status: %d\n", c_status);
+    printf("connection_status: 0x%.2x\n", c_status);
 
 //    uint8_t gpio_map = 0;
 //    printf("gpio_map of %d is %d\n", gpio_map, get_gpio_map(dgi_hndl, &gpio_map));
