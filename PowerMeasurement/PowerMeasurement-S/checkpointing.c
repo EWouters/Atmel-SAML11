@@ -110,9 +110,7 @@ int test_write_flash(int num_bytes)
 	
 	uint32_t length = num_bytes * sizeof(uint8_t);
 	
-	uint8_t flash_src_data[length];
-	
-	printf("Is %d bytes\n", sizeof(flash_src_data));
+	uint8_t flash_src_data[length] __attribute__ ((aligned(32)));
 	
 	for (i = 0; i < length; i++) {
 		flash_src_data[i] = i;
@@ -163,13 +161,11 @@ int test_aes_write_flash(int num_bytes)
 	
 	uint32_t i;
 	
-	printf("Performing flash read write test with %d bytes\n", num_bytes);
+	printf("Performing aes flash read write test with %d bytes\n", num_bytes);
 	
 	uint32_t length = num_bytes * sizeof(uint8_t);
 	
-	uint8_t flash_src_data[length];
-	
-	printf("Is %d bytes\n", sizeof(flash_src_data));
+	uint8_t flash_src_data[length] __attribute__ ((aligned(32)));
 	
 	for (i = 0; i < length; i++) {
 		flash_src_data[i] = i;

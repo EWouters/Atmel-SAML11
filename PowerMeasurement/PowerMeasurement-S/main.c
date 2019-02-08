@@ -7,6 +7,8 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
+	test_aes_write_flash(64);
+	
 	/* Replace with your application code */
 	char command[CMD_MAX_LEN + 1];
 	while (1) {
