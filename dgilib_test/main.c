@@ -20,6 +20,14 @@ static const union { unsigned char bytes[4]; uint32_t value; } o32_host_order =
 
 #define O32_HOST_ORDER (o32_host_order.value)
 
+
+void phex(unsigned char * str, unsigned char len)
+{
+    for (unsigned char i = 0; i < len; ++i)
+        printf("%.2x ", str[i]);
+//    printf("\n");
+}
+
 int main()
 {
     if (O32_HOST_ORDER == O32_LITTLE_ENDIAN) {
@@ -54,49 +62,52 @@ int main()
 //
     Initialize(&dgi_hndl);
 
-//    printf("Resetting %s ", name);
-//    printf("%d", target_reset(dgi_hndl, false));
-//    for (int i = 0; i < 10; i++) {
-//        printf(".");
-//        for (int j = 0;j < 47483647; j++) {}
-//    }
-//    printf("%d", target_reset(dgi_hndl, false));
-//    printf(" Done\n");
-
-
     //int execute_pam_cmd(dgi_hndl, unsigned char* cmd, unsigned int cmd_len, unsigned char* resp, unsigned int* resp_len);
 
-//    int msd_mode = is_msd_mode(sn);
-//    printf("msd_mode: %d\n", msd_mode);
+    int msd_mode = is_msd_mode(sn);
+    printf("msd_mode: %d\n", msd_mode);
 
-//    int nmbed = 1 | 1 << 2;
+//    int nmbed = 1;
 //    printf("%d set_mode %d\n", set_mode(sn, nmbed), nmbed);
 
 //    msd_mode = is_msd_mode(sn);
 //    printf("msd_mode: %d\n", msd_mode);
 
-//    unsigned char* major = 0;
-//    unsigned char* minor = 0;
-//    unsigned char major = 0;
-//    unsigned char minor = 0;
-//    printf("%d ", get_fw_version(dgi_hndl, &major, &minor));
-//    printf("fw_version major: %u, minor: %u\n", major, minor);
+    int c_status = connection_status(dgi_hndl);
+    printf("connection_status: %d\n", c_status);
 
-//    int c_status = connection_status(dgi_hndl);
-//    printf("connection_status: %d\n", c_status);
-//
 	res = connect(sn, &dgi_hndl);
-//
-//    c_status = connection_status(dgi_hndl);
-//    printf("connection_status: %d\n", c_status);
+    printf("%d connect\n", res);
+
+    c_status = connection_status(dgi_hndl);
+    printf("connection_status: %d\n", c_status);
+
+    printf("Resetting %s ", name);
+    printf("%d", target_reset(dgi_hndl, true));
+    for (int i = 0; i < 10; i++) {
+        printf(".");
+        for (int j = 0;j < 47483647; j++) {}
+    }
+    printf("%d", target_reset(dgi_hndl, false));
+    printf(" Done\n");
+
+    c_status = connection_status(dgi_hndl);
+    printf("connection_status: %d\n", c_status);
+
+    unsigned char major = 0;
+    unsigned char minor = 0;
+    res = get_fw_version(dgi_hndl, &major, &minor);
+    printf("%d fw_version major: %d, minor: %d\n", res, major, minor);
 
 //    unsigned char* interfaces = 0;
-//    unsigned char interfaces[255] = {' '};
-//    unsigned char count[255] = {' '};
-//    interface_list(dgi_hndl, interfaces, count);
-//    interfaces[254] = '\0';
-//    count[254] = '\0';
-//    printf("interface_list: %s, count: %s\n", interfaces, count);
+    unsigned char interfaces[10] = {'\0'};
+    unsigned char count;
+    res = interface_list(dgi_hndl, interfaces, &count);
+    //interfaces[254] = '\0';
+    //count[254] = '\0';
+    printf("%d interface_list: ", res);
+    phex(interfaces, 10);
+    printf(", count: %d\n", count);
 
 //    unsigned char cmd[1] = {0x00};
 //    unsigned int cmd_len = 0x0000;
@@ -116,9 +127,10 @@ int main()
 //
 //    stop_polling(dgi_hndl);
 
-//    disconnect(dgi_hndl);
-//    c_status = connection_status(dgi_hndl);
-//    printf("connection_status: %d\n", c_status);
+    res = disconnect(dgi_hndl);
+    printf("%d disconnect\n", res);
+    c_status = connection_status(dgi_hndl);
+    printf("connection_status: %d\n", c_status);
 
 //    uint8_t gpio_map = 0;
 //    printf("gpio_map of %d is %d\n", gpio_map, get_gpio_map(dgi_hndl, &gpio_map));
