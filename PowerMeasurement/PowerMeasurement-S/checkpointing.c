@@ -145,3 +145,85 @@ int test_write_flash(int num_bytes)
 	
 	return rc;
 }
+
+int test_aes_write_flash(int num_bytes)
+{
+	int32_t rc = ERR_NONE;
+	
+	mbedtls_aes_context aes;
+	
+	unsigned char key[32] = {
+		0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73, 0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81,
+	0x1f, 0x35, 0x2c, 0x07, 0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14, 0xdf, 0xf4 };
+	//unsigned char key[32];
+	//generate_aes_key(key);
+	
+	unsigned char iv[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+	unsigned char iv2[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+	
+	uint32_t i;
+	
+	printf("Performing flash read write test with %d bytes\n", num_bytes);
+	
+	uint32_t length = num_bytes * sizeof(uint8_t);
+	
+	uint8_t flash_src_data[length];
+	
+	printf("Is %d bytes\n", sizeof(flash_src_data));
+	
+	for (i = 0; i < length; i++) {
+		flash_src_data[i] = i;
+	}
+	
+	printf("flash_src_data:\t");
+	phex(flash_src_data, length);
+	
+	rc = mbedtls_aes_setkey_enc( &aes, key, 256 );
+	if (rc != ERR_NONE) {
+		printf("FAILURE! mbedtls_aes_setkey_enc returned %ld\n", rc);
+		return rc;
+	}
+	rc = mbedtls_aes_crypt_cbc( &aes, MBEDTLS_AES_ENCRYPT, length, iv, flash_src_data, flash_src_data);
+	if (rc != ERR_NONE) {
+		printf("FAILURE! mbedtls_aes_crypt_cbc returned %ld\n", rc);
+		return rc;
+	}
+	printf("encrypted in place:\t");
+	phex(flash_src_data, length);
+
+	rc = mem2flash(flash_src_data, length);
+	if (rc != ERR_NONE) {
+		printf("FAILURE! mem2flash returned %ld\n", rc);
+		return rc;
+	}
+	
+	printf("zeroing out flash_src_data in main memory\n");
+	for (i = 0; i < length; i++) {
+		flash_src_data[i] = 0;
+	}
+	printf("flash_src_data:\t");
+	phex(flash_src_data, length);
+
+	rc = flash2mem(flash_src_data, length);
+	if (rc != ERR_NONE) {
+		printf("FAILURE! flash2mem returned %ld\n", rc);
+		return rc;
+	}
+	printf("flash_src_data:\t");
+	phex(flash_src_data, length);
+	
+	rc = mbedtls_aes_setkey_dec( &aes, key, 256 );
+	if (rc != ERR_NONE) {
+		printf("FAILURE! mbedtls_aes_setkey_dec returned %ld\n", rc);
+		return rc;
+	}
+	rc = mbedtls_aes_crypt_cbc( &aes, MBEDTLS_AES_DECRYPT, length, iv2, flash_src_data, flash_src_data);
+	if (rc != ERR_NONE) {
+		printf("FAILURE! mbedtls_aes_crypt_cbc returned %ld\n", rc);
+		return rc;
+	}
+	printf("decrypted in place:\t");
+	phex(flash_src_data, length);
+	
+	return rc;
+}
