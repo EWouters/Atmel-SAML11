@@ -110,8 +110,13 @@ int main()
     printf(", interfaceCount: %d\n", interfaceCount);
 
     //int interface_id = INTERFACE_POWER_DATA;
-    int interface_id = INTERFACE_GPIO;
+    int interface_id = INTERFACE_TIMESTAMP;
     bool enableTimestamp = true;
+    res = interface_enable(dgi_hndl, interface_id, enableTimestamp);
+    printf("%d interface_enable: 0x%.2x, enableTimestamp: %d\n", res, interface_id, enableTimestamp);
+
+    interface_id = INTERFACE_GPIO;
+    enableTimestamp = true;
     res = interface_enable(dgi_hndl, interface_id, enableTimestamp);
     printf("%d interface_enable: 0x%.2x, enableTimestamp: %d\n", res, interface_id, enableTimestamp);
 
@@ -128,8 +133,8 @@ int main()
         printf("\tconfig_id: %u, value: %u\n", config_id[i], config_value[i]);
     }
 
-    config_value[0] = 0b0011;
-    config_value[1] = 0b1100;
+    config_value[0] = 0b1111;
+    config_value[1] = 0b0000;
     res = interface_set_configuration(dgi_hndl, interface_id, config_id, config_value, config_cnt);
     printf("%d interface_set_configuration: 0x%.2x, config_cnt: %d\n", res, interface_id, config_cnt);
     for (unsigned char i = 0; i < config_cnt; ++i) {
@@ -154,17 +159,16 @@ int main()
         printf("\t%.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
     }
 
-//    unsigned char* buffer = malloc(sizeof(unsigned char)*255);
-    unsigned char* writeBuffer[2] = {'\0'};
-    int* writeLength = 2;
-    res = interface_write_data(dgi_hndl, interface_id, writeBuffer, &writeLength);
-    printf("%d interface_write_data: 0x%.2x, length: %d\n", res, interface_id, writeLength);
+//    unsigned char* writeBuffer[2] = {'\0'};
+//    int* writeLength = 2;
+//    res = interface_write_data(dgi_hndl, interface_id, writeBuffer, &writeLength);
+//    printf("%d interface_write_data: 0x%.2x, length: %d\n", res, interface_id, writeLength);
 
-    res = interface_read_data(dgi_hndl, interface_id, readBuffer, timestamp, &length, &ovf_index, &ovf_length, &ovf_entry_count);
-    printf("%d interface_read_data: 0x%.2x, length: %d, ovf_index: %u, ovf_length: %u, ovf_entry_count: %u\n", res, interface_id, length, ovf_index, ovf_length, ovf_entry_count);
-    for (unsigned char i = 0; i < length; ++i) {
-        printf("\t %.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
-    }
+//    res = interface_read_data(dgi_hndl, interface_id, readBuffer, timestamp, &length, &ovf_index, &ovf_length, &ovf_entry_count);
+//    printf("%d interface_read_data: 0x%.2x, length: %d, ovf_index: %u, ovf_length: %u, ovf_entry_count: %u\n", res, interface_id, length, ovf_index, ovf_length, ovf_entry_count);
+//    for (unsigned char i = 0; i < length; ++i) {
+//        printf("\t %.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
+//    }
 
     res = auxiliary_power_initialize(&power_hndl, dgi_hndl);
     printf("%d auxiliary_power_initialize\n", res);
@@ -198,12 +202,11 @@ int main()
     size_t calibrationLength = 255;
     res = auxiliary_power_get_calibration(power_hndl, calibrationData, calibrationLength);
     printf("%d auxiliary_power_get_calibration\n", res);
-//    printf(" %s", calibrationData);
-    for (unsigned char i = 0; i < calibrationLength; ++i) {
-        printf("\t%.3d: 0x%.2x", i, calibrationData[i]);
-        if (i % 4 == 3) {printf("\n");}
-    }
-    printf("\n");
+//    for (unsigned char i = 0; i < calibrationLength; ++i) {
+//        printf("\t%.3d: 0x%.2x", i, calibrationData[i]);
+//        if (i % 4 == 3) {printf("\n");}
+//    }
+//    printf("\n");
 
     float* powerBuffer = malloc(sizeof(float)*BUFFER_SIZE);
     double* powerTimestamp = malloc(sizeof(double)*BUFFER_SIZE);
@@ -227,7 +230,7 @@ int main()
     printf("power_status: 0x%.2x\n", powerStatus);
 
     printf("Waiting to log some data \n");
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 50; i++) {
         printf(".");
         for (int j = 0;j < WAIT_ITERATIONS; j++) {}
     }
@@ -248,10 +251,10 @@ int main()
     res = auxiliary_power_stop(power_hndl);
     printf("%d auxiliary_power_stop\n", res);
 
-    printf("captured power data:\n", res);
-    for (int i = 0; i < powerCount; ++i) {
-        printf("\t%.6d: buffer: %.10f, timestamp: %lf\n", i, powerBuffer[i], powerTimestamp[i]);
-    }
+//    printf("captured power data:\n", res);
+//    for (int i = 0; i < powerCount; ++i) {
+//        printf("\t%.6d: buffer: %.10f, timestamp: %lf\n", i, powerBuffer[i], powerTimestamp[i]);
+//    }
 
     powerStatus = auxiliary_power_get_status(power_hndl);
     printf("power_status: 0x%.2x\n", powerStatus);
@@ -262,11 +265,20 @@ int main()
     res = auxiliary_power_uninitialize(power_hndl);
     printf("%d auxiliary_power_uninitialize\n", res);
 
+    res = interface_read_data(dgi_hndl, interface_id, readBuffer, timestamp, &length, &ovf_index, &ovf_length, &ovf_entry_count);
+    printf("%d interface_read_data: 0x%.2x, length: %d, ovf_index: %u, ovf_length: %u, ovf_entry_count: %u\n", res, interface_id, length, ovf_index, ovf_length, ovf_entry_count);
+    for (unsigned char i = 0; i < length; ++i) {
+        printf("\t%.6d: buffer: %.4u, timestamp: %.4llu\n", i, readBuffer[i], timestamp[i]);
+    }
+
     res = stop_polling(dgi_hndl);
     printf("%d stop_polling\n", res);
 
     res = interface_disable(dgi_hndl, interface_id);
     printf("%d interface_disable: 0x%.2x\n", res, interface_id);
+
+    res = interface_disable(dgi_hndl, INTERFACE_TIMESTAMP);
+    printf("%d interface_disable: 0x%.2x\n", res, INTERFACE_TIMESTAMP);
 
     res = disconnect(dgi_hndl);
     printf("%d disconnect\n", res);
