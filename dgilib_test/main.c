@@ -16,9 +16,18 @@
 #define INTERFACE_POWER_SYNC 0x41 // Receives sync events from the attached power measurement co-processors.
 #define INTERFACE_RESERVED   0xFF // Special identifier used to indicate no interface.
 
+#define GET_STRING_SIZE 100
 #define NUM_INTERFACES 10
 #define NUM_CONFIG_IDS 10
 #define BUFFER_SIZE 10000000
+#define WAIT_ITERATIONS 47483647
+
+//typedef void (*DeviceStatusChangedCallBack)(const char*, const char*, bool);
+
+//void (*DeviceStatusChangedCallBack)(const char* in0, const char* in1, bool in2)
+//{
+//    printf("", in0, in1, in2)
+//}
 
 int main()
 {
@@ -31,16 +40,22 @@ int main()
     int build_number = get_build_number();
     printf("build_number: %d\n", build_number);
 
+//    uint32_t handle;
+//    initialize_status_change_notification(&handle);
+//    printf("initialize_status_change_notification\n");
+//
+//    register_for_device_status_change_notifications(handle, DeviceStatusChangedCallBack deviceStatusChangedCallBack)
+//    unregister_for_device_status_change_notifications(handle, DeviceStatusChangedCallBack deviceStatusChangedCallBack)
 
     discover();
 
     int device_count = get_device_count();
     printf("device_count: %d\n", device_count);
     int index = 0;
-    char sn[255];
+    char sn[GET_STRING_SIZE];
     printf("%d ", get_device_serial(index, sn));
     printf("device_serial: %s\n", sn);
-    char name[255];
+    char name[GET_STRING_SIZE];
     printf("%d ", get_device_name(index, name));
     printf("device_name: %s\n", name);
 
@@ -73,7 +88,7 @@ int main()
     printf("%d", target_reset(dgi_hndl, true));
     for (int i = 0; i < 10; i++) {
         printf(".");
-        for (int j = 0;j < 47483647; j++) {}
+        for (int j = 0;j < WAIT_ITERATIONS; j++) {}
     }
     printf("%d", target_reset(dgi_hndl, false));
     printf(" Done\n");
@@ -154,39 +169,92 @@ int main()
     res = auxiliary_power_initialize(&power_hndl, dgi_hndl);
     printf("%d auxiliary_power_initialize\n", res);
 
-    float* powerBuffer;
-    double* powerTimestamp;
-    size_t powerCount;
-    size_t max_count = 256;
-    int channel = 0;
-    int powerType = 0;
-    res = auxiliary_power_register_buffer_pointers(power_hndl, powerBuffer, powerTimestamp, &powerCount, max_count, channel, powerType);
-    printf("%d auxiliary_power_register_buffer_pointers\n", res);
+    int circuit = 0;
+    res = auxiliary_power_get_circuit_type(power_hndl, &circuit);
+    printf("%d auxiliary_power_get_circuit_type: 0x%.2x\n", res, circuit);
 
     res = auxiliary_power_calibration_is_valid(power_hndl);
-    printf("%d auxiliary_power_calibration_is_valid\n", res);
+    printf("auxiliary_power_calibration_is_valid: %d\n", res);
 
-    int calibrationType = 0;
+    int calibrationType = circuit;
     res = auxiliary_power_trigger_calibration(power_hndl, calibrationType);
     printf("%d auxiliary_power_trigger_calibration\n", res);
 
-    uint8_t* calibrationData = malloc(sizeof(uint8_t)*16);;
-    size_t calibrationLength = 16;
-    res = auxiliary_power_get_calibration(power_hndl, calibrationData, calibrationLength);
-    printf("%d auxiliary_power_get_calibration\n", res);
-
-    int circuit;
-    res = auxiliary_power_get_circuit_type(power_hndl, &circuit);
-    printf("%d auxiliary_power_get_circuit_type: 0x%.2x\n", res, circuit);
+    if (!res) {
+        printf("Calibrating %s ", name);
+        while (auxiliary_power_get_status(power_hndl) == 0x03) {
+            printf(".");
+            for (int j = 0;j < WAIT_ITERATIONS; j+=10) {}
+        }
+        printf(" Done\n");
+    }
 
     int powerStatus = auxiliary_power_get_status(power_hndl);
     printf("power_status: 0x%.2x\n", powerStatus);
 
-//    int auxiliary_power_start(uint32_t power_hndl, int mode, int parameter)
-//    int auxiliary_power_stop(uint32_t power_hndl)
-//    int auxiliary_power_lock_data_for_reading(uint32_t power_hndl)
-//    int auxiliary_power_copy_data(uint32_t power_hndl, float* buffer, double* timestamp, size_t* count, size_t max_count, int channel, int type)
-//    int auxiliary_power_free_data(uint32_t power_hndl)
+//    uint8_t* calibrationData = malloc(sizeof(uint8_t)*1000);
+//    size_t calibrationLength = 1000;
+    uint8_t calibrationData[256] = {'\0'};
+    size_t calibrationLength = 255;
+    res = auxiliary_power_get_calibration(power_hndl, calibrationData, calibrationLength);
+    printf("%d auxiliary_power_get_calibration\n", res);
+//    printf(" %s", calibrationData);
+    for (unsigned char i = 0; i < calibrationLength; ++i) {
+        printf("\t%.3d: 0x%.2x", i, calibrationData[i]);
+        if (i % 4 == 3) {printf("\n");}
+    }
+    printf("\n");
+
+    float* powerBuffer = malloc(sizeof(float)*BUFFER_SIZE);
+    double* powerTimestamp = malloc(sizeof(double)*BUFFER_SIZE);
+    size_t powerCount;
+    size_t max_count = BUFFER_SIZE;
+    int channel = 0;
+    int powerType = 0;
+//    res = auxiliary_power_register_buffer_pointers(power_hndl, powerBuffer, powerTimestamp, &powerCount, max_count, channel, powerType);
+    res = auxiliary_power_register_buffer_pointers(power_hndl, 0, 0, 0, max_count, channel, powerType);
+    printf("%d auxiliary_power_register_buffer_pointers\n", res);
+
+    powerStatus = auxiliary_power_get_status(power_hndl);
+    printf("power_status: 0x%.2x\n", powerStatus);
+
+    int mode = 0;
+    int parameter = 0;
+    res = auxiliary_power_start(power_hndl, mode, parameter);
+    printf("%d auxiliary_power_start\n", res);
+
+    powerStatus = auxiliary_power_get_status(power_hndl);
+    printf("power_status: 0x%.2x\n", powerStatus);
+
+    printf("Waiting to log some data \n");
+    for (int i = 0; i < 5; i++) {
+        printf(".");
+        for (int j = 0;j < WAIT_ITERATIONS; j++) {}
+    }
+    printf(" Done\n");
+
+    powerStatus = auxiliary_power_get_status(power_hndl);
+    printf("power_status: 0x%.2x\n", powerStatus);
+
+    res = auxiliary_power_lock_data_for_reading(power_hndl);
+    printf("%d auxiliary_power_lock_data_for_reading\n", res);
+
+    res = auxiliary_power_copy_data(power_hndl, powerBuffer, powerTimestamp, &powerCount, max_count, channel, powerType);
+    printf("%d auxiliary_power_copy_data: %d samples\n", res, powerCount);
+
+    res = auxiliary_power_free_data(power_hndl);
+    printf("%d auxiliary_power_free_data\n", res);
+
+    res = auxiliary_power_stop(power_hndl);
+    printf("%d auxiliary_power_stop\n", res);
+
+    printf("captured power data:\n", res);
+    for (int i = 0; i < powerCount; ++i) {
+        printf("\t%.6d: buffer: %.10f, timestamp: %lf\n", i, powerBuffer[i], powerTimestamp[i]);
+    }
+
+    powerStatus = auxiliary_power_get_status(power_hndl);
+    printf("power_status: 0x%.2x\n", powerStatus);
 
     res = auxiliary_power_unregister_buffer_pointers(power_hndl, channel, powerType);
     printf("%d auxiliary_power_unregister_buffer_pointers\n", res);
@@ -209,6 +277,9 @@ int main()
 //    printf("gpio_map of %d is %d\n", gpio_map, get_gpio_map(dgi_hndl, &gpio_map));
 
     UnInitialize(dgi_hndl);
+
+//    uninitialize_status_change_notification(handle);
+//    printf("uninitialize_status_change_notification\n");
 
     printf("\n\nHello world!\n");
     return res;
