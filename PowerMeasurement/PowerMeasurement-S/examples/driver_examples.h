@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+void FLASH_0_example(void);
+
 void TARGET_IO_example(void);
 
 #ifdef __cplusplus
