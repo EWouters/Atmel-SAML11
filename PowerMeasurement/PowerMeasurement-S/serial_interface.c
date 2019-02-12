@@ -157,9 +157,9 @@ void serial_command(char * command)
 		if (strcmp(command, CMD_STATUS) == 0) {
 			printf("Status:\tDebug mode is %s\n", debug ? "ON":"OFF");
 			printf(RESP_OK);
-			} else if (strcmp(command, CMD_HELP) == 0) {
+		} else if (strcmp(command, CMD_HELP) == 0) {
 			usage();
-			} else if (strcmp(command, CMD_DEBUG) == 0) {
+		} else if (strcmp(command, CMD_DEBUG) == 0) {
 			toggle_debug(&debug);
 		} else if (strcmp(command, CMD_TEST_AES) == 0) {
 			//mbedtls_cmac_self_test(1); // Note: Cannot compile this due to undefined reference.
