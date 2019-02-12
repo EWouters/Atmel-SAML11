@@ -69,16 +69,16 @@ int get_command(char * command)
 //
 void toggle_debug(bool * debug)
 {
-    *debug = !*debug;
-    
-    if (*debug) {
-        printf(RESP_DBG_ON);
-    } else {
-        printf(RESP_DBG_OFF);
-    }
+	*debug = !*debug;
+	
+	if (*debug) {
+		printf(RESP_DBG_ON);
+		} else {
+		printf(RESP_DBG_OFF);
+	}
 
-    // Terminate our serial response.
-    printf(RESP_OK);
+	// Terminate our serial response.
+	printf(RESP_OK);
 }
 
 // debug_print()
@@ -144,11 +144,11 @@ void serial_command(char * command)
 		if (strcmp(command, CMD_STATUS) == 0) {
 			printf("Status:\tDebug mode is %s\n", debug ? "ON":"OFF");
 			printf(RESP_OK);
-		} else if (strcmp(command, CMD_HELP) == 0) {
+			} else if (strcmp(command, CMD_HELP) == 0) {
 			usage();
-		} else if (strcmp(command, CMD_DEBUG) == 0) {
+			} else if (strcmp(command, CMD_DEBUG) == 0) {
 			toggle_debug(&debug);
-		} else {
+			} else {
 			printf(ERR_UNKNOWN_CMD);
 		}
 	}
