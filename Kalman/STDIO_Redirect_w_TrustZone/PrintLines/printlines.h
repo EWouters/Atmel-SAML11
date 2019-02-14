@@ -16,6 +16,7 @@
 extern int repeated_error;
 extern struct io_descriptor *io;
 
+int readline__(char* line, int length);
 int readline_(char* line, int length);
 void readline(char* line, int length);
 void printline(char *line, int length);

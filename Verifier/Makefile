@@ -13,7 +13,7 @@ run: kalman
 	./kalman
 
 kalman: $(SRC)/main.c $(SRC)/kalman.h
-	g++ -Wall -I. -I$(SRC) -o kalman $(SRC)/main.c -lm
+	g++ -m32 -Wall -I. -I$(SRC) -o kalman $(SRC)/main.c -lm
 
 edit:
 	vim kalman.c

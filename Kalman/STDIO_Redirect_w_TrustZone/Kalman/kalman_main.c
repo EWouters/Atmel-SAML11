@@ -47,7 +47,9 @@ void loop(int idx) {
 	
 	/* Update all the values */
 	readValues(&accX, &accY, &accZ);
+	//printValues(accX, accY, accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
+	//printValues(gyroX, gyroY, gyroZ);
 
 	double dt = 1; // Calculate delta time
 
