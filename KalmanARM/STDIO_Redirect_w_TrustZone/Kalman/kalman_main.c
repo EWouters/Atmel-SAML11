@@ -6,10 +6,7 @@
  */ 
 
 #include <atmel_start.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-
+#include <tgmath.h>
 #include "kalman.h"
 #include "kalman_main.h"
 //#include "kalman_globals.h"
@@ -17,29 +14,13 @@
 //#include "globals.h"
 #include "../PrintLines/printlines.h"
 
-void skipline() {
-	char line[LINE_LENGTH];
-	readline(line, LINE_LENGTH);
-}
-
-void readValues(double *valX, double *valY, double *valZ) {
-	char line[LINE_LENGTH] = { '\0' };
-
-	readline(line, LINE_LENGTH);
-	//printline(line, LINE_LENGTH);
-
-	char * p = strtok(line, ",");
-	
-	p = strtok(NULL, ","); // skip first number
-
-	*valX = atof(p);
-	p = strtok(NULL, ",");
-
-	*valY = atof(p);
-	p = strtok(NULL, ",");
-
-	*valZ = atof(p);
-	p = strtok(NULL, ",");
+double abs2(double val) {
+	if (val < 0) {
+		return -val;
+	}
+	else {
+		return val;
+	}
 }
 
 void loop(int idx) {
@@ -79,7 +60,7 @@ void loop(int idx) {
 	} else
 	kalAngleX = getAngle(&kalmanX, roll, gyroXrate, dt); // Calculate the angle using a Kalman filter
 
-	if (abs(kalAngleX) > 90)
+	if (abs2(kalAngleX) > 90)
 	gyroYrate = -gyroYrate; // Invert rate, so it fits the restriced accelerometer reading
 	kalAngleY = getAngle(&kalmanY, pitch, gyroYrate, dt);
 	#else
@@ -92,7 +73,7 @@ void loop(int idx) {
 	} else
 	kalAngleY = getAngle(&kalmanY, pitch, gyroYrate, dt); // Calculate the angle using a Kalman filter
 
-	if (abs(kalAngleY) > 90)
+	if (abs2(kalAngleY) > 90)
 	gyroXrate = -gyroXrate; // Invert rate, so it fits the restriced accelerometer reading
 	kalAngleX = getAngle&(kalmanX, roll, gyroXrate, dt); // Calculate the angle using a Kalman filter
 	#endif

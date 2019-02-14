@@ -9,14 +9,12 @@
 #ifndef PRINTLINES_H_
 #define PRINTLINES_H_
 
-#define READ 'r'
-#define REREAD 'n'
-#define OK 'y'
-
 extern int repeated_error;
 extern struct io_descriptor *io;
 
-int readline__(char* line, int length);
+void skipline();
+double stof (const char* s);
+void readValues(double *accX, double *accY, double *accZ);
 int readline_(char* line, int length);
 void readline(char* line, int length);
 void printline(char *line, int length);

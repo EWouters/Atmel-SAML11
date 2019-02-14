@@ -9,7 +9,7 @@
 
 #include "globals.h"
 
-#include <math.h>
+#include <tgmath.h>
 
 int main(void)
 {

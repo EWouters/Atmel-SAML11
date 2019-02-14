@@ -12,7 +12,7 @@
 
 #include "Kalman/kalman_struct.h"
 
-#define LINE_LENGTH 1000
+#define LINE_LENGTH 256
 
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;

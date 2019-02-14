@@ -9,11 +9,69 @@
 #include "stdio_start.h"
 #include "printlines.h"
 #include "../globals.h"
-#include <stdint.h>
-#include <tgmath.h>
 
 int repeated_error = 0;
 struct io_descriptor *io = 0;
+
+void skipline() {
+	char line[LINE_LENGTH];
+	readline(line, LINE_LENGTH);
+}
+
+double stof (const char* s) {
+	double rez = 0, fact = 1;
+	if (*s == '-'){
+		s++;
+		fact = -1;
+	};
+	for (int point_seen = 0; *s; s++){
+		if (*s == '.'){
+			point_seen = 1;
+			continue;
+		};
+		int d = *s - '0';
+		if (d >= 0 && d <= 9){
+			if (point_seen) fact /= 10.0f;
+			rez = rez * 10.0f + (double)d;
+		};
+	};
+	return rez * fact;
+};
+
+void readValues(double *valX, double *valY, double *valZ) {
+	char line[LINE_LENGTH] = { '\0' };
+
+	readline(line, LINE_LENGTH);
+	//printline(line, LINE_LENGTH);
+	
+	int i = 0;
+	int commas = 0;
+	int comma_idx = 0;
+	double* vals[3] = {valX, valY, valZ};
+	
+	char dbl[64] = { '\0' };
+
+	while (commas < 4) {
+		if (line[i] == ',' || line[i] == '\r' || line[i] == '\n' || line[i] == '\0') {
+			dbl[i - comma_idx - 1] = '\0';
+			comma_idx = i;
+			
+			if (commas == 0) {
+				; // Do nothing and skip loop
+			}
+			else {
+				*(vals[commas-1]) = stof(dbl);
+			}
+			commas++;
+		}
+		else /* line[i] != ',' */ {
+			if (commas > 0) {
+				dbl[i - comma_idx - 1] = line[i];
+			}
+		}
+		i++;
+	}
+}
 
 int readline_(char* line, int length) {
 	char c = '1';

@@ -12,10 +12,6 @@
 #include "kalman_globals.h"
 #include "globals.h"
 
-void skipline();
-void readValues(double *accX, double *accY, double *accZ);
-//void readGyro(double *gyroX, double *gyroY, double *gyroZ);
-
 void loop(int idx);
 
 #endif /* KALMAN_MAIN_H_ */
