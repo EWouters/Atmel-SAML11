@@ -297,7 +297,7 @@ int main()
     res = auxiliary_power_stop(power_hndl);
     printf("%d auxiliary_power_stop\n", res);
 
-    printf("captured power data:\n", res);
+    printf("captured power data:\n");
     for (int i = 0; i < loggedSamples; ++i) {
         printf("\t%.6d: buffer: %.10f, timestamp: %lf\n", i, powerBuffer[i], powerTimestamp[i]);
     }

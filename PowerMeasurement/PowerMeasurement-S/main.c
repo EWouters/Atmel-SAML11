@@ -11,17 +11,17 @@ int main(void)
 	//test_aes_write_flash(64);
 	
 	/* Replace with your application code */
-	char command[CMD_MAX_LEN + 1];
+	//char command[CMD_MAX_LEN + 1];
 	while (1) {
-		//delay_ms(100);
-		serial_command(command);
-		//gpio_toggle_pin_level(DGI_GPIO0);
-		//delay_ms(10);
-		//gpio_toggle_pin_level(DGI_GPIO1);
-		//delay_ms(10);
-		//gpio_toggle_pin_level(DGI_GPIO2);
-		//delay_ms(10);
-		//gpio_toggle_pin_level(DGI_GPIO3);
+		delay_ms(100);
+		//serial_command(command);
+		gpio_toggle_pin_level(DGI_GPIO0);
+		delay_ms(10);
+		gpio_toggle_pin_level(DGI_GPIO1);
+		delay_ms(10);
+		gpio_toggle_pin_level(DGI_GPIO2);
+		delay_ms(10);
+		gpio_toggle_pin_level(DGI_GPIO3);
 		gpio_toggle_pin_level(LED0);
 	}
 }
