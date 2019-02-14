@@ -45,11 +45,13 @@ void readValues(double *valX, double *valY, double *valZ) {
 void loop(int idx) {
 	//char output[LINE_LENGTH] = { '\n' };
 	
+	double accX_, accY_, accZ_;
+	
 	/* Update all the values */
-	readValues(&accX, &accY, &accZ);
-	//printValues(accX, accY, accZ);
+	readValues(&accX_, &accY_, &accZ_);
 	readValues(&gyroX, &gyroY, &gyroZ);
-	//printValues(gyroX, gyroY, gyroZ);
+
+	accX = accX_; accY = accY_; accZ = accZ_;
 
 	double dt = 1; // Calculate delta time
 
@@ -83,7 +85,7 @@ void loop(int idx) {
 	#else
 	// This fixes the transition problem when the accelerometer angle jumps between -180 and 180 degrees
 	if ((pitch < -90 && kalAngleY > 90) || (pitch > 90 && kalAngleY < -90)) {
-		setAngle(kalmanY, pitch);
+		setAngle(&kalmanY, pitch);
 		compAngleY = pitch;
 		kalAngleY = pitch;
 		gyroYangle = pitch;

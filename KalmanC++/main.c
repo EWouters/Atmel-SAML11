@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Kristian Lauszus, TKJ Electronics. All rights reserved.
+﻿/* Copyright (C) 2012 Kristian Lauszus, TKJ Electronics. All rights reserved.
 
  This software may be distributed and modified under the terms of the GNU
  General Public License version 2 (GPL2) as published by the Free Software
@@ -83,50 +83,8 @@ static void readGyro(FILE * fp) {
     p = strtok(NULL, ",");
 }
 
-void printDouble(double dbl, int accuracy) {
-	int dblSign = (dbl < 0) ? -1 : 1;
-	dbl = (dbl < 0) ? -dbl : dbl;
-	
-	unsigned long int tmpInt = dbl; // Get the integer side
-	
-	if (dblSign < 0) {
-		printf("-%lu.", tmpInt); // Print sign and integer
-	}
-	else {
-		printf("%lu.", tmpInt); // Print sign and integer
-	}
-	
-	int i;
-	for (i=0; i<accuracy; i++) {
-		dbl = dbl - tmpInt; // Get the fraction
-		tmpInt = dbl * 1000000; // Turn fraction to integer
-		dbl  = dbl * 1000000;
-		
-		printf("%06lu", tmpInt); // Print fraction
-	}
-}
 
-void printValuesExtended(int idx, double roll, double pitch, double gyroXangle, double gyroYangle, double compAngleX, double compAngleY, double kalAngleX, double kalAngleY) {
-	printf("%d,", idx);
-	printDouble(roll, 1);
-	printf(",");
-	printDouble(pitch, 1);
-	printf(",");
-	printDouble(gyroXangle, 1);
-	printf(",");
-	printDouble(gyroYangle, 1);
-	printf(",");
-	printDouble(compAngleX, 1);
-	printf(",");
-	printDouble(compAngleY, 1);
-	printf(",");
-	printDouble(kalAngleX, 1);
-	printf(",");
-	printDouble(kalAngleY, 1);
-	printf("\n");
-}
-
-void loop(int idx, FILE *accFile, FILE *gyroFile) {
+void loop(int idx, FILE *accFile, FILE *gyroFile, FILE *output) {
   /* Update all the values */
   readAcc(accFile);
   readGyro(gyroFile);
@@ -190,16 +148,16 @@ void loop(int idx, FILE *accFile, FILE *gyroFile) {
     gyroYangle = kalAngleY;
 
   /* Print Data */
-  //fprintf(output, "%d,%f,%f,%f,%f,%f,%f,%f,%f\r\n", idx+1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
-  printValuesExtended(idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+  fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 }
+
 
 int main() {
 
   // Open input data file
   FILE *accFile = fopen("input_acc.csv", "r");
   FILE *gyroFile = fopen("input_gyro.csv", "r");
-  //FILE *output = fopen("output.csv", "w");
+  FILE *output = fopen("output.csv", "w");
 
   // Skip CSV header
   skipline(accFile);
@@ -228,14 +186,14 @@ int main() {
   compAngleY = pitch;
 
   //fprintf(output, ",Roll,Pitch,GyroX,CompX,KalmanX,GyroY,CompY,KalmanY\r\n");
-  printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+	fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
   int i;
-  for (i = 0; i < 1001; i++) loop(i, accFile, gyroFile);
+  for (i = 0; i < 1001; i++) loop(i, accFile, gyroFile, output);
 
   fclose(accFile);
   fclose(gyroFile);
-  //fclose(output);
+  fclose(output);
 
   return 0;
 }
