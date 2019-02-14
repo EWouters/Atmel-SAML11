@@ -19,11 +19,11 @@
 #include <cstring>
 #include <cstdlib>
 #include <cmath>
-#include "kalman.h" // Source: https://github.com/TKJElectronics/KalmanFilter
+#include "kalman.hpp" // Source: https://github.com/TKJElectronics/KalmanFilter
 
 #define RAD_TO_DEG 57.295779513082321
 
-#define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead 
+#define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead
 		       // please read: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
 
 Kalman kalmanX; // Create the Kalman instances
@@ -51,7 +51,7 @@ static void readAcc(FILE * fp) {
     readline(line, fp);
 
     char * p = strtok(line, ",");
-    
+
     p = strtok(NULL, ","); // skip first number
 
     accX = atof(p);
@@ -70,7 +70,7 @@ static void readGyro(FILE * fp) {
     readline(line, fp);
 
     char * p = strtok(line, ",");
-    
+
     p = strtok(NULL, ","); // skip first number
 
     gyroX = atof(p);
