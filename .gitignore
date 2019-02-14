@@ -460,3 +460,11 @@ dmypy.json
 # generated directories
 bin/
 obj/
+
+# Dragos: Specifically ignore pushing Verifier/kalman executable
+Verifier/kalman
+Accelerometer+gyroscope transfer/output.csv
+Accelerometer+gyroscope transfer/output_old.csv
+Verifier/output.csv
+Verifier/output_32.csv
+Verifier/output_64.csv
