@@ -58,12 +58,9 @@ int main(void)
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
 	int i;
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 1000; i++) {
 		loop(i);
 	}
-	
-	//char buffer[LINE_LENGTH] = { '\0' };
-	//char line[LINE_LENGTH] = { '\0' };	
 	
 	/* Replace with your application code */	
 	while (1) {

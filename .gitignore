@@ -470,3 +470,10 @@ Verifier/output_32.csv
 Verifier/output_64.csv
 KalmanC++/output.csv
 PythonCSV/output.csv
+KalmanC++/output_pc.csv
+PythonCSV/output_arm.csv
+KalmanC++/output_32.csv
+KalmanC++/output_64.csv
+PythonCSV/output_old.csv
+PythonEnergy/dgi_interface.py
+KalmanC++/kalman

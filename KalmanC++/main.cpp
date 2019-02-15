@@ -157,7 +157,7 @@ int main() {
   // Open input data file
   FILE *accFile = fopen("input_acc.csv", "r");
   FILE *gyroFile = fopen("input_gyro.csv", "r");
-  FILE *output = fopen("output.csv", "w");
+  FILE *output = fopen("output_pc.csv", "w");
 
   // Skip CSV header
   skipline(accFile);
