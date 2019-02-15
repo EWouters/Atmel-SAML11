@@ -73,6 +73,7 @@ USB_DISCONNECTED   = 0x12 #  18
 CALIBRATION_FAILED = 0x20 #  32</p>
 <p>from ctypes import *
 from time import sleep</p>
+<p>from pydgilib.dgilib_exceptions import *</p>
 <dl class="docutils">
 <dt>class DGILibInterfaceCommunication(object):</dt>
 <dd><p class="first">“”“Python bindings for DGILib Interface Communication.</p>
@@ -370,7 +371,7 @@ timestamp, int* length, unsigned int* ovf_index, unsigned int* ovf_length, unsig
 <tr class="field-even field"><th class="field-name" colspan="2">type interface_id:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">int</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Tuple of a list of received values and a list of timestamps</td>
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Tuple of a list of received values and a list of ticks</td>
 </tr>
 <tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">tuple(list(int), list(int))</td>
 </tr>
@@ -380,7 +381,7 @@ timestamp, int* length, unsigned int* ovf_index, unsigned int* ovf_length, unsig
 </table>
 <p>“”“</p>
 <p>buffer = (c_ubyte * BUFFER_SIZE)()
-timestamp = (c_ulonglong * BUFFER_SIZE)()
+ticks = (c_ulonglong * BUFFER_SIZE)()
 length = c_uint(0)
 ovf_index = c_uint(0)
 ovf_length = c_uint(0)
@@ -390,7 +391,7 @@ res = self.dgilib.interface_read_data(</p>
 <div>self.dgi_hndl,
 interface_id,
 buffer,
-timestamp,
+ticks,
 byref(length),
 byref(ovf_index),
 byref(ovf_length),
@@ -408,7 +409,7 @@ if self.verbose:</p>
 <dt>if self.verbose &gt;= 2:</dt>
 <dd><dl class="first last docutils">
 <dt>for i in range(length.value):</dt>
-<dd>print(f”t{i}:tbuffer: {buffer[i]},ttimestamp: {timestamp[i]}”)</dd>
+<dd>print(f”t{i}:tbuffer: {buffer[i]},ttick: {ticks[i]}”)</dd>
 </dl>
 </dd>
 <dt>if res:</dt>
@@ -419,7 +420,7 @@ if self.verbose:</p>
 <p class="last">)</p>
 </dd>
 </dl>
-<p class="last">return buffer[: length.value], timestamp[: length.value]</p>
+<p class="last">return buffer[: length.value], ticks[: length.value]</p>
 </dd>
 <dt>def interface_write_data(self, interface_id, buffer):</dt>
 <dd><p class="first">“”“<cite>interface_write_data</cite>

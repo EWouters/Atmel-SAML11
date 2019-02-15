@@ -78,6 +78,8 @@
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
 
+<span class="kn">from</span> <span class="nn">pydgilib.dgilib_exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
 <div class="viewcode-block" id="DGILibHousekeeping"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping">[docs]</a><span class="k">class</span> <span class="nc">DGILibHousekeeping</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Housekeeping.</span>
 <span class="sd">    </span>
@@ -272,7 +274,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;major_fw: </span><span class="si">{major_fw.value}</span><span class="se">\n</span><span class="s2">minor_fw: </span><span class="si">{minor_fw.value}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">major_fw</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">minor_fw</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">major_fw</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">minor_fw</span><span class="o">.</span><span class="n">value</span></div>
 
 <div class="viewcode-block" id="DGILibHousekeeping.start_polling"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.start_polling">[docs]</a>    <span class="k">def</span> <span class="nf">start_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`start_polling`</span>

@@ -78,6 +78,8 @@
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
 
+<span class="kn">from</span> <span class="nn">pydgilib.dgilib_exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
 <span class="kn">from</span> <span class="nn">pydgilib.dgilib_discovery</span> <span class="k">import</span> <span class="n">DGILibDiscovery</span>
 <span class="kn">from</span> <span class="nn">pydgilib.dgilib_housekeeping</span> <span class="k">import</span> <span class="n">DGILibHousekeeping</span>
 <span class="kn">from</span> <span class="nn">pydgilib.dgilib_interface_communication</span> <span class="k">import</span> <span class="n">DGILibInterfaceCommunication</span>
@@ -99,8 +101,8 @@
 <span class="sd">    :Example:</span>
 
 <span class="sd">    &gt;&gt;&gt; with DGILib() as dgilib:</span>
-<span class="sd">    ...     dgilib.info(True)</span>
-<span class="sd">    major_version: 5, minor_version: 7, build_number: 244</span>
+<span class="sd">    ...     dgilib.get_major_version()</span>
+<span class="sd">    5</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>

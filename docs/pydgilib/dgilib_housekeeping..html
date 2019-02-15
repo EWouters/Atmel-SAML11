@@ -70,6 +70,7 @@ USB_DISCONNECTED   = 0x12 #  18
 CALIBRATION_FAILED = 0x20 #  32</p>
 <p>from ctypes import *
 from time import sleep</p>
+<p>from pydgilib.dgilib_exceptions import *</p>
 <dl class="docutils">
 <dt>class DGILibHousekeeping(object):</dt>
 <dd><p class="first">“”“Python bindings for DGILib Housekeeping.</p>
@@ -282,7 +283,7 @@ if self.verbose:</p>
 <dt>if self.verbose:</dt>
 <dd>print(f”major_fw: {major_fw.value}nminor_fw: {minor_fw.value}”)</dd>
 </dl>
-<p class="last">return (major_fw.value, minor_fw.value)</p>
+<p class="last">return major_fw.value, minor_fw.value</p>
 </dd>
 <dt>def start_polling(self):</dt>
 <dd><p class="first">“”“<cite>start_polling</cite>

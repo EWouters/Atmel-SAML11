@@ -80,6 +80,8 @@
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
 
+<span class="kn">from</span> <span class="nn">pydgilib.dgilib_exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
 <div class="viewcode-block" id="DGILibInterfaceCommunication"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication">[docs]</a><span class="k">class</span> <span class="nc">DGILibInterfaceCommunication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Interface Communication.</span>
 <span class="sd">    </span>
@@ -328,13 +330,13 @@
 <span class="sd">        </span>
 <span class="sd">        :param interface_id: The ID of the interface</span>
 <span class="sd">        :type interface_id: int</span>
-<span class="sd">        :return: Tuple of a list of received values and a list of timestamps</span>
+<span class="sd">        :return: Tuple of a list of received values and a list of ticks</span>
 <span class="sd">        :rtype: tuple(list(int), list(int))</span>
 <span class="sd">        :raises: :exc:`DeviceReturnError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">buffer</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_ubyte</span> <span class="o">*</span> <span class="n">BUFFER_SIZE</span><span class="p">)()</span>
-        <span class="n">timestamp</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_ulonglong</span> <span class="o">*</span> <span class="n">BUFFER_SIZE</span><span class="p">)()</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_ulonglong</span> <span class="o">*</span> <span class="n">BUFFER_SIZE</span><span class="p">)()</span>
         <span class="n">length</span> <span class="o">=</span> <span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ovf_index</span> <span class="o">=</span> <span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ovf_length</span> <span class="o">=</span> <span class="n">c_uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -343,7 +345,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">,</span>
             <span class="n">interface_id</span><span class="p">,</span>
             <span class="n">buffer</span><span class="p">,</span>
-            <span class="n">timestamp</span><span class="p">,</span>
+            <span class="n">ticks</span><span class="p">,</span>
             <span class="n">byref</span><span class="p">(</span><span class="n">length</span><span class="p">),</span>
             <span class="n">byref</span><span class="p">(</span><span class="n">ovf_index</span><span class="p">),</span>
             <span class="n">byref</span><span class="p">(</span><span class="n">ovf_length</span><span class="p">),</span>
@@ -355,13 +357,13 @@
             <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{i}</span><span class="s2">:</span><span class="se">\t</span><span class="s2">buffer: </span><span class="si">{buffer[i]}</span><span class="s2">,</span><span class="se">\t</span><span class="s2">timestamp: </span><span class="si">{timestamp[i]}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{i}</span><span class="s2">:</span><span class="se">\t</span><span class="s2">buffer: </span><span class="si">{buffer[i]}</span><span class="s2">,</span><span class="se">\t</span><span class="s2">tick: </span><span class="si">{ticks[i]}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span>
                 <span class="n">f</span><span class="s2">&quot;interface_read_data: </span><span class="si">{interface_id}</span><span class="s2"> returned: </span><span class="si">{res}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span> <span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="n">timestamp</span><span class="p">[:</span> <span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span> <span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="n">ticks</span><span class="p">[:</span> <span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_write_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_write_data">[docs]</a>    <span class="k">def</span> <span class="nf">interface_write_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">,</span> <span class="n">buffer</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_write_data`</span>
