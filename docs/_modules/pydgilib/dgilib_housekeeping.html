@@ -1,0 +1,413 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pydgilib.dgilib_housekeeping &#8212; pydgilib 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pydgilib.dgilib_housekeeping</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides Python bindings for the Housekeeping API of DGILib.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Erik Wouters &lt;ehwo(at)kth.se&gt;&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="s2">&quot;Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s2">&quot; $Id: dgilib_housekeeping.py 1586 2019-02-13 15:56:25Z EWouters $ &quot;</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;reStructuredText&quot;</span>
+
+<span class="n">GET_STRING_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">NUM_INTERFACES</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">NUM_CONFIG_IDS</span> <span class="o">=</span> <span class="mi">255</span>
+<span class="n">NUM_CALIBRATION</span> <span class="o">=</span> <span class="mi">255</span>
+<span class="n">BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">10000000</span>
+<span class="n">MAX_PRINT</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Interface types</span>
+<span class="n">INTERFACE_TIMESTAMP</span>  <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0 Service interface which appends timestamps to all received events on associated interfaces.</span>
+<span class="n">INTERFACE_SPI</span>        <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32 Communicates directly over SPI in Slave mode.</span>
+<span class="n">INTERFACE_USART</span>      <span class="o">=</span> <span class="mh">0x21</span> <span class="c1">#  33 Communicates directly over USART in Slave mode.</span>
+<span class="n">INTERFACE_I2C</span>        <span class="o">=</span> <span class="mh">0x22</span> <span class="c1">#  34 Communicates directly over I2C in Slave mode.</span>
+<span class="n">INTERFACE_GPIO</span>       <span class="o">=</span> <span class="mh">0x30</span> <span class="c1">#  48 Monitors and controls the state of GPIO pins.</span>
+<span class="n">INTERFACE_POWER_DATA</span> <span class="o">=</span> <span class="mh">0x40</span> <span class="c1">#  64 Receives data from the attached power measurement co-processors.</span>
+<span class="n">INTERFACE_POWER_SYNC</span> <span class="o">=</span> <span class="mh">0x41</span> <span class="c1">#  65 Receives sync events from the attached power measurement co-processors.</span>
+<span class="n">INTERFACE_RESERVED</span>   <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255 Special identifier used to indicate no interface.</span>
+
+<span class="c1"># Circuit types</span>
+<span class="n">OLD_XAM</span> <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
+<span class="n">XAM</span>     <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
+<span class="n">PAM</span>     <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
+<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255</span>
+
+<span class="c1"># Return codes</span>
+<span class="n">IDLE</span>               <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
+<span class="n">RUNNING</span>            <span class="o">=</span> <span class="mh">0x01</span> <span class="c1">#   1</span>
+<span class="n">DONE</span>               <span class="o">=</span> <span class="mh">0x02</span> <span class="c1">#   2</span>
+<span class="n">CALIBRATING</span>        <span class="o">=</span> <span class="mh">0x03</span> <span class="c1">#   3</span>
+<span class="n">INIT_FAILED</span>        <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
+<span class="n">OVERFLOWED</span>         <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
+<span class="n">USB_DISCONNECTED</span>   <span class="o">=</span> <span class="mh">0x12</span> <span class="c1">#  18</span>
+<span class="n">CALIBRATION_FAILED</span> <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32</span>
+
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+
+<div class="viewcode-block" id="DGILibHousekeeping"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping">[docs]</a><span class="k">class</span> <span class="nc">DGILibHousekeeping</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Housekeeping.</span>
+<span class="sd">    </span>
+<span class="sd">    DGILib is a Dynamic-Link Library (DLL) to help software applications communicate with Data Gateway</span>
+<span class="sd">    Interface (DGI) devices. See the Data Gateway Interface user guide for further details. DGILib handles</span>
+<span class="sd">    the low-level USB communication and adds a level of buffering for minimizing the chance of overflows.</span>
+<span class="sd">    The library helps parse data streams of high complexity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :raises: :exc:`DeviceConnectionError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_sn</span><span class="p">)</span>
+        <span class="n">c_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_status</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">c_status</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceConnectionError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Could not connect to device. Connection status: </span><span class="si">{c_status}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye from Housekeeping&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DGILibHousekeeping.connect"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_sn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`connect`</span>
+<span class="sd">        Opens a connection to the specified device. This function must be called prior to any function requiring</span>
+<span class="sd">        the connection handle.</span>
+
+<span class="sd">        `int connect(char* sn, uint32_t* dgi_hndl_p)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *sn* | Buffer holding the serial number of the device to open a connection to |</span>
+<span class="sd">        | *dgi_hndl_p* | Pointer to a variable that will hold the handle of the connection |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :param device_sn: Serial number of the device</span>
+<span class="sd">        :type device_sn: str</span>
+<span class="sd">        :return: Variable that holds the handle of the connection</span>
+<span class="sd">        :rtype: c_uint()</span>
+<span class="sd">        :raises: :exc:`DeviceReturnError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dgi_hndl</span> <span class="o">=</span> <span class="n">c_uint</span><span class="p">()</span>  <span class="c1"># Create the dgi_hndl</span>
+
+        <span class="c1"># Initialize (not in manual, exists in dgilib.h)</span>
+        <span class="c1"># self.dgilib.Initialize(byref(dgi_hndl))</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">device_sn</span><span class="p">,</span> <span class="n">byref</span><span class="p">(</span><span class="n">dgi_hndl</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> connect&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;connect returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dgi_hndl</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.disconnect"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`disconnect`</span>
+<span class="sd">        Closes the specified connection.</span>
+
+<span class="sd">        `int disconnect(uint32_t dgi_hndl)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :raises: :exc:`DeviceReturnError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> disconnect&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;disconnect returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+        <span class="c1"># UnInitialize (not in manual, exists in dgilib.h)</span>
+        <span class="c1"># self.dgilib.UnInitialize(dgi_hndl)</span>
+
+<div class="viewcode-block" id="DGILibHousekeeping.connection_status"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.connection_status">[docs]</a>    <span class="k">def</span> <span class="nf">connection_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`connection_status`</span>
+<span class="sd">        Verifies that the specified connection is still open.</span>
+
+<span class="sd">        `int connection_status(uint32_t* dgi_hndl)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :return: A non-zero return value indicates a connection error.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">connection_status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;connection_status: </span><span class="si">{c_status}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">c_status</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.get_major_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_major_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_major_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`get_major_version`</span>
+<span class="sd">        Get the major version of the DGI library.</span>
+
+<span class="sd">        `int get_major_version(void)`</span>
+<span class="sd">        </span>
+<span class="sd">        :return: The major version of the DGI library</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">major_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">get_major_version</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;major_version: </span><span class="si">{major_version}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">major_version</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.get_minor_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_minor_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_minor_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`get_minor_version`</span>
+<span class="sd">        Get the minor version of the DGI library.</span>
+
+<span class="sd">        `int get_minor_version(void)`</span>
+<span class="sd">        </span>
+<span class="sd">        :return: The minor version of the DGI library</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">minor_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">get_minor_version</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;minor_version: </span><span class="si">{minor_version}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">minor_version</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.get_build_number"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_build_number">[docs]</a>    <span class="k">def</span> <span class="nf">get_build_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`get_build_number`</span>
+<span class="sd">        Get the major version of the DGI library.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns the build number of DGILib. If not supported, returns 0.</span>
+
+<span class="sd">        `int get_build_number(void)`</span>
+<span class="sd">        </span>
+<span class="sd">        :return: The build number of DGILib. If not supported, returns 0.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">build_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">get_build_number</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;build_number: </span><span class="si">{build_number}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">build_number</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.get_fw_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_fw_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_fw_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`get_fw_version`</span>
+<span class="sd">        Gets the firmware version of the DGI device connected. Note that this is the version of the DGI device,</span>
+<span class="sd">        and not the tool.</span>
+<span class="sd">        </span>
+<span class="sd">        `int get_fw_version(uint32_t dgi_hndl, unsigned char* major, unsigned char* minor)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        | *major* | Pointer to a variable where the major version will be stored |</span>
+<span class="sd">        | *minor* | Pointer to a variable where the minor version will be stored |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :return: Version information of the DGI device:</span>
+<span class="sd">            - major_fw: the major firmware version of the DGI device connected</span>
+<span class="sd">            - minor_fw: the minor firmware version of the DGI device connected</span>
+<span class="sd">        :rtype: tuple(int, int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">major_fw</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">()</span>
+        <span class="n">minor_fw</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">get_fw_version</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">,</span> <span class="n">byref</span><span class="p">(</span><span class="n">major_fw</span><span class="p">),</span> <span class="n">byref</span><span class="p">(</span><span class="n">minor_fw</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> get_fw_version&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;get_fw_version returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;major_fw: </span><span class="si">{major_fw.value}</span><span class="se">\n</span><span class="s2">minor_fw: </span><span class="si">{minor_fw.value}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">major_fw</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">minor_fw</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.start_polling"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.start_polling">[docs]</a>    <span class="k">def</span> <span class="nf">start_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`start_polling`</span>
+<span class="sd">        This function will start the polling system and start acquisition on enabled interfaces. It is possible to</span>
+<span class="sd">        enable/disable interfaces both before and after the polling has been started. However, no data will be</span>
+<span class="sd">        transferred until the polling is started.</span>
+<span class="sd">        </span>
+<span class="sd">        `int start_polling(uint32_t dgi_hndl)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :param dgi_hndl: Handle of the connection</span>
+<span class="sd">        :type dgi_hndl: c_uint()</span>
+<span class="sd">        :raises: :exc:`DeviceReturnError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">start_polling</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> start_polling&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;start_polling returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.stop_polling"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.stop_polling">[docs]</a>    <span class="k">def</span> <span class="nf">stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`stop_polling`</span>
+<span class="sd">        This function will stop the polling system and stop acquisition on all interfaces.</span>
+<span class="sd">        </span>
+<span class="sd">        `int stop_polling(uint32_t dgi_hndl)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :param dgi_hndl: Handle of the connection</span>
+<span class="sd">        :type dgi_hndl: c_uint()</span>
+<span class="sd">        :raises: :exc:`DeviceReturnError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> stop_polling&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;stop_polling returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DGILibHousekeeping.target_reset"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.target_reset">[docs]</a>    <span class="k">def</span> <span class="nf">target_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hold_reset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`target_reset`</span>
+<span class="sd">        This function is used to control the state of the reset line connected to the target, if available.</span>
+<span class="sd">        </span>
+<span class="sd">        `int target_reset(uint32_t dgi_hndl, bool hold_reset)`</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        | Parameter  | Description |</span>
+<span class="sd">        +============+============+</span>
+<span class="sd">        | *dgi_hndl* | Handle of the connection |</span>
+<span class="sd">        | *hold_reset* | True will assert reset, false will release it |</span>
+<span class="sd">        +------------+------------+</span>
+<span class="sd">        </span>
+<span class="sd">        :param hold_reset: True will assert reset, False will release it</span>
+<span class="sd">        :type hold_reset: bool</span>
+<span class="sd">        :raises: :exc:`DeviceReturnError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgilib</span><span class="o">.</span><span class="n">target_reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dgi_hndl</span><span class="p">,</span> <span class="n">hold_reset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> target_reset&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;target_reset returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pydgilib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Erik Wouters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,438 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; pydgilib 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p>“”“This module provides Python bindings for the Housekeeping API of DGILib.”“”</p>
+<p>__author__ = “Erik Wouters &lt;ehwo(at)kth.se&gt;”
+__credits__ = “Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/2016”
+__license__ = “MIT”
+__version__ = “0.1”
+__revision__ = ” $Id: dgilib_housekeeping.py 1586 2019-02-13 15:56:25Z EWouters $ ”
+__docformat__ = “reStructuredText”</p>
+<p>GET_STRING_SIZE = 100
+NUM_INTERFACES = 10
+NUM_CONFIG_IDS = 255
+NUM_CALIBRATION = 255
+BUFFER_SIZE = 10000000
+MAX_PRINT = 100</p>
+<p># Interface types
+INTERFACE_TIMESTAMP  = 0x00 #   0 Service interface which appends timestamps to all received events on associated interfaces.
+INTERFACE_SPI        = 0x20 #  32 Communicates directly over SPI in Slave mode.
+INTERFACE_USART      = 0x21 #  33 Communicates directly over USART in Slave mode.
+INTERFACE_I2C        = 0x22 #  34 Communicates directly over I2C in Slave mode.
+INTERFACE_GPIO       = 0x30 #  48 Monitors and controls the state of GPIO pins.
+INTERFACE_POWER_DATA = 0x40 #  64 Receives data from the attached power measurement co-processors.
+INTERFACE_POWER_SYNC = 0x41 #  65 Receives sync events from the attached power measurement co-processors.
+INTERFACE_RESERVED   = 0xFF # 255 Special identifier used to indicate no interface.</p>
+<p># Circuit types
+OLD_XAM = 0x00 #   0
+XAM     = 0x10 #  16
+PAM     = 0x11 #  17
+UNKNOWN = 0xFF # 255</p>
+<p># Return codes
+IDLE               = 0x00 #   0
+RUNNING            = 0x01 #   1
+DONE               = 0x02 #   2
+CALIBRATING        = 0x03 #   3
+INIT_FAILED        = 0x10 #  16
+OVERFLOWED         = 0x11 #  17
+USB_DISCONNECTED   = 0x12 #  18
+CALIBRATION_FAILED = 0x20 #  32</p>
+<p>from ctypes import *
+from time import sleep</p>
+<dl class="docutils">
+<dt>class DGILibHousekeeping(object):</dt>
+<dd><p class="first">“”“Python bindings for DGILib Housekeeping.</p>
+<p>DGILib is a Dynamic-Link Library (DLL) to help software applications communicate with Data Gateway
+Interface (DGI) devices. See the Data Gateway Interface user guide for further details. DGILib handles
+the low-level USB communication and adds a level of buffering for minimizing the chance of overflows.
+The library helps parse data streams of high complexity.
+“”“</p>
+<dl class="last docutils">
+<dt>def __enter__(self):</dt>
+<dd><p class="first">“””
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceConnectionError</span></code>
+“”“</p>
+<p>self.dgi_hndl = self.connect(self.device_sn)
+c_status = self.connection_status()
+if c_status:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>raise DeviceConnectionError(</dt>
+<dd>f”Could not connect to device. Connection status: {c_status}.”</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+<p class="last">return self</p>
+</dd>
+<dt>def __exit__(self, exc_type, exc_value, traceback):</dt>
+<dd><p class="first">self.disconnect()
+if self.verbose:</p>
+<blockquote class="last">
+<div>print(“bye from Housekeeping”)</div></blockquote>
+</dd>
+<dt>def connect(self, device_sn):</dt>
+<dd><p class="first">“”“<cite>connect</cite>
+Opens a connection to the specified device. This function must be called prior to any function requiring
+the connection handle.</p>
+<p><cite>int connect(char* sn, uint32_t* dgi_hndl_p)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param device_sn:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Serial number of the device</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type device_sn:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Variable that holds the handle of the connection</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">c_uint()</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>dgi_hndl = c_uint()  # Create the dgi_hndl</p>
+<p># Initialize (not in manual, exists in dgilib.h)
+# self.dgilib.Initialize(byref(dgi_hndl))</p>
+<p>res = self.dgilib.connect(device_sn, byref(dgi_hndl))
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} connect”)</div></blockquote>
+<dl class="docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”connect returned: {res}”)</dd>
+</dl>
+<p class="last">return dgi_hndl</p>
+</dd>
+<dt>def disconnect(self):</dt>
+<dd><p class="first">“”“<cite>disconnect</cite>
+Closes the specified connection.</p>
+<p><cite>int disconnect(uint32_t dgi_hndl)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>res = self.dgilib.disconnect(self.dgi_hndl)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} disconnect”)</div></blockquote>
+<dl class="docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”disconnect returned: {res}”)</dd>
+</dl>
+<p class="last"># UnInitialize (not in manual, exists in dgilib.h)
+# self.dgilib.UnInitialize(dgi_hndl)</p>
+</dd>
+<dt>def connection_status(self):</dt>
+<dd><p class="first">“”“<cite>connection_status</cite>
+Verifies that the specified connection is still open.</p>
+<p><cite>int connection_status(uint32_t* dgi_hndl)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">A non-zero return value indicates a connection error.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>c_status = self.dgilib.connection_status(self.dgi_hndl)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”connection_status: {c_status}”)</div></blockquote>
+<p class="last">return c_status</p>
+</dd>
+<dt>def get_major_version(self):</dt>
+<dd><p class="first">“”“<cite>get_major_version</cite>
+Get the major version of the DGI library.</p>
+<p><cite>int get_major_version(void)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">The major version of the DGI library</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>major_version = self.dgilib.get_major_version()</p>
+<dl class="docutils">
+<dt>if self.verbose:</dt>
+<dd>print(f”major_version: {major_version}”)</dd>
+</dl>
+<p class="last">return major_version</p>
+</dd>
+<dt>def get_minor_version(self):</dt>
+<dd><p class="first">“”“<cite>get_minor_version</cite>
+Get the minor version of the DGI library.</p>
+<p><cite>int get_minor_version(void)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">The minor version of the DGI library</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>minor_version = self.dgilib.get_minor_version()</p>
+<dl class="docutils">
+<dt>if self.verbose:</dt>
+<dd>print(f”minor_version: {minor_version}”)</dd>
+</dl>
+<p class="last">return minor_version</p>
+</dd>
+<dt>def get_build_number(self):</dt>
+<dd><p class="first">“”“<cite>get_build_number</cite>
+Get the major version of the DGI library.</p>
+<p>Returns the build number of DGILib. If not supported, returns 0.</p>
+<p><cite>int get_build_number(void)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">The build number of DGILib. If not supported, returns 0.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>build_number = self.dgilib.get_build_number()</p>
+<dl class="docutils">
+<dt>if self.verbose:</dt>
+<dd>print(f”build_number: {build_number}”)</dd>
+</dl>
+<p class="last">return build_number</p>
+</dd>
+<dt>def get_fw_version(self):</dt>
+<dd><p class="first">“”“<cite>get_fw_version</cite>
+Gets the firmware version of the DGI device connected. Note that this is the version of the DGI device,
+and not the tool.</p>
+<p><cite>int get_fw_version(uint32_t dgi_hndl, unsigned char* major, unsigned char* minor)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Version information of the DGI device:
+- major_fw: the major firmware version of the DGI device connected
+- minor_fw: the minor firmware version of the DGI device connected</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">tuple(int, int)</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>major_fw = c_ubyte()
+minor_fw = c_ubyte()
+res = self.dgilib.get_fw_version(</p>
+<blockquote>
+<div>self.dgi_hndl, byref(major_fw), byref(minor_fw)</div></blockquote>
+<p>)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} get_fw_version”)</div></blockquote>
+<dl class="docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”get_fw_version returned: {res}”)</dd>
+<dt>if self.verbose:</dt>
+<dd>print(f”major_fw: {major_fw.value}nminor_fw: {minor_fw.value}”)</dd>
+</dl>
+<p class="last">return (major_fw.value, minor_fw.value)</p>
+</dd>
+<dt>def start_polling(self):</dt>
+<dd><p class="first">“”“<cite>start_polling</cite>
+This function will start the polling system and start acquisition on enabled interfaces. It is possible to
+enable/disable interfaces both before and after the polling has been started. However, no data will be
+transferred until the polling is started.</p>
+<p><cite>int start_polling(uint32_t dgi_hndl)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param dgi_hndl:</th><td class="field-body">Handle of the connection</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type dgi_hndl:</th><td class="field-body">c_uint()</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>res = self.dgilib.start_polling(self.dgi_hndl)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} start_polling”)</div></blockquote>
+<dl class="last docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”start_polling returned: {res}”)</dd>
+</dl>
+</dd>
+<dt>def stop_polling(self):</dt>
+<dd><p class="first">“”“<cite>stop_polling</cite>
+This function will stop the polling system and stop acquisition on all interfaces.</p>
+<p><cite>int stop_polling(uint32_t dgi_hndl)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param dgi_hndl:</th><td class="field-body">Handle of the connection</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type dgi_hndl:</th><td class="field-body">c_uint()</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>res = self.dgilib.stop_polling(self.dgi_hndl)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} stop_polling”)</div></blockquote>
+<dl class="last docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”stop_polling returned: {res}”)</dd>
+</dl>
+</dd>
+<dt>def target_reset(self, hold_reset):</dt>
+<dd><p class="first">“”“<cite>target_reset</cite>
+This function is used to control the state of the reset line connected to the target, if available.</p>
+<p><cite>int target_reset(uint32_t dgi_hndl, bool hold_reset)</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param hold_reset:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">True will assert reset, False will release it</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type hold_reset:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">bool</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>res = self.dgilib.target_reset(self.dgi_hndl, hold_reset)
+if self.verbose:</p>
+<blockquote>
+<div>print(f”t{res} target_reset”)</div></blockquote>
+<dl class="last docutils">
+<dt>if res:</dt>
+<dd>raise DeviceReturnError(f”target_reset returned: {res}”)</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">pydgilib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Erik Wouters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/pydgilib/dgilib_housekeeping..py.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
