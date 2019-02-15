@@ -1,3 +1,6 @@
+The dgilib library has been obtained from https://www.microchip.com/mplab/avr-support/data-visualizer and remains under it's respective licence.
+Parts of the documentation have been copied from the Data Gateway Interface User's Guide (available at https://www.microchip.com/mplab/avr-support/data-visualizer) to clarify what these functions do. All other parts are released under the licence below.
+
 MIT License
 
 Copyright (c) 2019 EWouters
