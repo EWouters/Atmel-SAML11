@@ -1,4 +1,5 @@
 #include <atmel_start.h>
+	
 
 #include "stdio_start.h"
 #include "PrintLines/printlines.h"
@@ -8,6 +9,7 @@
 #include "Kalman/kalman_globals.h"
 
 #include "globals.h"
+#include <hal_gpio.h>
 
 #include <tgmath.h>
 
@@ -21,18 +23,14 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
+	gpio_set_pin_level(DGI_GPIO0, false);
+	
 	printf("RDY\r\n");
 	
-	double accX_, accY_, accZ_;
-
+	readValues(&accX, &accY, &accZ);
+	readValues(&gyroX, &gyroY, &gyroZ);
 	
-	readValues(&accX_, &accY_, &accZ_);
-	//readValues(&accX, &accY, &accZ);        //    <-+
-	readValues(&gyroX, &gyroY, &gyroZ);       //      |
-											  //      |
-	accX = accX_; accY = accY_; accZ = accZ_; // For some weird reason, accX and accY are losing their original 
-											  // values if given to readValues() directly (as shown by arrow),
-											  // after gyro values are read, so this line here is needed
+	gpio_set_pin_level(DGI_GPIO0, true);
 
 	// Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
 	// atan2 outputs the value of -? to ? (radians) - see http://en.wikipedia.org/wiki/Atan2
@@ -54,6 +52,8 @@ int main(void)
 	gyroYangle = pitch;
 	compAngleX = roll;
 	compAngleY = pitch;
+	
+	gpio_set_pin_level(DGI_GPIO0, false);
 
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 

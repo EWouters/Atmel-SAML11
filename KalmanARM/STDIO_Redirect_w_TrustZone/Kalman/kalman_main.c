@@ -26,13 +26,11 @@ double abs2(double val) {
 void loop(int idx) {
 	//char output[LINE_LENGTH] = { '\n' };
 	
-	double accX_, accY_, accZ_;
-	
 	/* Update all the values */
-	readValues(&accX_, &accY_, &accZ_);
+	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
-
-	accX = accX_; accY = accY_; accZ = accZ_;
+	
+	gpio_set_pin_level(DGI_GPIO0, true);
 
 	double dt = 1; // Calculate delta time
 
@@ -91,6 +89,8 @@ void loop(int idx) {
 	gyroXangle = kalAngleX;
 	if (gyroYangle < -180 || gyroYangle > 180)
 	gyroYangle = kalAngleY;
+	
+	gpio_set_pin_level(DGI_GPIO0, false);
 
 	/* Print Data */
 	printValuesExtended(idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
