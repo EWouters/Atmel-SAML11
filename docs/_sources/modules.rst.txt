@@ -1,0 +1,9 @@
+pydgilib
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   conf
+   pydgilib
+   setup

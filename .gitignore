@@ -461,6 +461,9 @@ dmypy.json
 bin/
 obj/
 
+# sphinx build folder
+_build
+
 # Dragos: Specifically ignore pushing Verifier/kalman executable
 Verifier/kalman
 Accelerometer+gyroscope transfer/output.csv
