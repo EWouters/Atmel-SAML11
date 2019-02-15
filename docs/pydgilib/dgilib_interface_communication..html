@@ -85,8 +85,8 @@ separate buffers for each data source.
 “”“</p>
 <dl class="last docutils">
 <dt>def interface_list(self):</dt>
-<dd><p class="first">“”“<cite>interface_list</cite>
-Queries the connected DGI device for available interfaces. Refer to the DGI documentation to resolve the
+<dd><p class="first">“”“<cite>interface_list</cite></p>
+<p>Queries the connected DGI device for available interfaces. Refer to the DGI documentation to resolve the
 ID.</p>
 <p><cite>int interface_list(uint32_t dgi_hndl, unsigned char* interfaces, unsigned char* count)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -123,8 +123,8 @@ if self.verbose:</p>
 <p class="last">return interfaces[: interfaceCount.value]</p>
 </dd>
 <dt>def interface_enable(self, interface_id, timestamp=True):</dt>
-<dd><p class="first">“”“<cite>interface_enable</cite>
-Enables the specified interface. Note that no data acquisition will begin until a session has been started.</p>
+<dd><p class="first">“”“<cite>interface_enable</cite></p>
+<p>Enables the specified interface. Note that no data acquisition will begin until a session has been started.</p>
 <p><cite>int interface_enable(uint32_t dgi_hndl, int interface_id, bool timestamp)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -161,8 +161,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def interface_disable(self, interface_id):</dt>
-<dd><p class="first">“”“<cite>interface_disable</cite>
-Disables the specified interface.</p>
+<dd><p class="first">“”“<cite>interface_disable</cite></p>
+<p>Disables the specified interface.</p>
 <p><cite>int interface_disable(uint32_t dgi_hndl, int interface_id)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -189,8 +189,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def interface_get_configuration(self, interface_id):</dt>
-<dd><p class="first">“”“<cite>interface_get_configuration</cite>
-Gets the configuration associated with the specified interface. Consult the DGI documentation for details.</p>
+<dd><p class="first">“”“<cite>interface_get_configuration</cite></p>
+<p>Gets the configuration associated with the specified interface. Consult the DGI documentation for details.</p>
 <p><cite>int interface_get_configuration(uint32_t dgi_hndl, int interface_id, unsigned int* config_id, unsigned int*
 config_value, unsigned int* config_cnt)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -249,8 +249,8 @@ if self.verbose:</p>
 <p class="last">return config_id[: config_cnt.value], config_value[: config_cnt.value]</p>
 </dd>
 <dt>def interface_set_configuration(self, interface_id, config_id, config_value):</dt>
-<dd><p class="first">“”“<cite>interface_set_configuration</cite>
-Sets the given configuration fields for the specified interface. Consult the DGI documentation for details.</p>
+<dd><p class="first">“”“<cite>interface_set_configuration</cite></p>
+<p>Sets the given configuration fields for the specified interface. Consult the DGI documentation for details.</p>
 <p><cite>int interface_set_configuration(uint32_t dgi_hndl, int interface_id, unsigned int* config_id, unsigned int*
 config_value, unsigned int config_cnt)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -328,8 +328,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def interface_clear_buffer(self, interface_id):</dt>
-<dd><p class="first">“”“<cite>interface_clear_buffer</cite>
-Clears the data in the buffers for the specified interface.</p>
+<dd><p class="first">“”“<cite>interface_clear_buffer</cite></p>
+<p>Clears the data in the buffers for the specified interface.</p>
 <p><cite>int interface_clear_buffer(uint32_t dgi_hndl, int interface_id)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -356,8 +356,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def interface_read_data(self, interface_id):</dt>
-<dd><p class="first">“”“<cite>interface_read_data</cite>
-Reads the data received on the specified interface. This should be called regularly to avoid overflows in
+<dd><p class="first">“”“<cite>interface_read_data</cite></p>
+<p>Reads the data received on the specified interface. This should be called regularly to avoid overflows in
 the system. DGILib can buffer 10M samples.</p>
 <p><cite>int interface_read_data(uint32_t dgi_hndl, int interface_id, unsigned char* buffer, unsigned long long*
 timestamp, int* length, unsigned int* ovf_index, unsigned int* ovf_length, unsigned int* ovf_entry_count)</cite></p>
@@ -423,8 +423,8 @@ if self.verbose:</p>
 <p class="last">return buffer[: length.value], ticks[: length.value]</p>
 </dd>
 <dt>def interface_write_data(self, interface_id, buffer):</dt>
-<dd><p class="first">“”“<cite>interface_write_data</cite>
-Writes data to the specified interface. A maximum of 255 elements can be written each time. An error
+<dd><p class="first">“”“<cite>interface_write_data</cite></p>
+<p>Writes data to the specified interface. A maximum of 255 elements can be written each time. An error
 return code will be given if data hasn’t been written yet.</p>
 <p>TODO: A non-zero return value indicates an error. An error will be returned if the interface is still in the process of
 writing data. Wait a while and try again. The function get_connection_status can be used to verify if there

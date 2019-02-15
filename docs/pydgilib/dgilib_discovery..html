@@ -251,8 +251,8 @@ if self.verbose:</p>
 <p class="last">return device_sn.value</p>
 </dd>
 <dt>def is_msd_mode(self, device_sn):</dt>
-<dd><p class="first">“”“<cite>is_msd_mode</cite>
-EDBG devices can be set to a mass storage mode where the DGI is unavailable. In such cases the
+<dd><p class="first">“”“<cite>is_msd_mode</cite></p>
+<p>EDBG devices can be set to a mass storage mode where the DGI is unavailable. In such cases the
 device is still detected by DGILib, but it won’t be possible to directly connect to it. This command is used
 to check if the device is in such a mode.</p>
 <p>A non-zero return value indicates that the mode must be changed by <cite>set_mode</cite> before proceeding.</p>
@@ -280,8 +280,8 @@ if self.verbose:</p>
 <p class="last">return msd_mode</p>
 </dd>
 <dt>def set_mode(self, device_sn, nmbed=1):</dt>
-<dd><p class="first">“”“<cite>set_mode</cite>
-This function is used to temporarily set the EDBG to a specified mode.</p>
+<dd><p class="first">“”“<cite>set_mode</cite></p>
+<p>This function is used to temporarily set the EDBG to a specified mode.</p>
 <p><cite>int set_mode(char* sn, int nmbed)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

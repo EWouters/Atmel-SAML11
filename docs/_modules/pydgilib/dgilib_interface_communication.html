@@ -94,6 +94,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_list"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_list">[docs]</a>    <span class="k">def</span> <span class="nf">interface_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_list`</span>
+<span class="sd">        </span>
 <span class="sd">        Queries the connected DGI device for available interfaces. Refer to the DGI documentation to resolve the</span>
 <span class="sd">        ID.</span>
 <span class="sd">        </span>
@@ -128,6 +129,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_enable"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_enable">[docs]</a>    <span class="k">def</span> <span class="nf">interface_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_enable`</span>
+<span class="sd">        </span>
 <span class="sd">        Enables the specified interface. Note that no data acquisition will begin until a session has been started.</span>
 
 <span class="sd">        `int interface_enable(uint32_t dgi_hndl, int interface_id, bool timestamp)`</span>
@@ -157,6 +159,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_disable"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_disable">[docs]</a>    <span class="k">def</span> <span class="nf">interface_disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_disable`</span>
+<span class="sd">        </span>
 <span class="sd">        Disables the specified interface.</span>
 
 <span class="sd">        `int interface_disable(uint32_t dgi_hndl, int interface_id)`</span>
@@ -181,6 +184,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_get_configuration"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_get_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">interface_get_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_get_configuration`</span>
+<span class="sd">        </span>
 <span class="sd">        Gets the configuration associated with the specified interface. Consult the DGI documentation for details.</span>
 
 <span class="sd">        `int interface_get_configuration(uint32_t dgi_hndl, int interface_id, unsigned int* config_id, unsigned int*</span>
@@ -229,6 +233,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_set_configuration"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_set_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">interface_set_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">,</span> <span class="n">config_id</span><span class="p">,</span> <span class="n">config_value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_set_configuration`</span>
+<span class="sd">        </span>
 <span class="sd">        Sets the given configuration fields for the specified interface. Consult the DGI documentation for details.</span>
 
 <span class="sd">        `int interface_set_configuration(uint32_t dgi_hndl, int interface_id, unsigned int* config_id, unsigned int*</span>
@@ -285,6 +290,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_clear_buffer"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_clear_buffer">[docs]</a>    <span class="k">def</span> <span class="nf">interface_clear_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_clear_buffer`</span>
+<span class="sd">        </span>
 <span class="sd">        Clears the data in the buffers for the specified interface.</span>
 
 <span class="sd">        `int interface_clear_buffer(uint32_t dgi_hndl, int interface_id)`</span>
@@ -309,6 +315,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_read_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_read_data">[docs]</a>    <span class="k">def</span> <span class="nf">interface_read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_read_data`</span>
+<span class="sd">        </span>
 <span class="sd">        Reads the data received on the specified interface. This should be called regularly to avoid overflows in</span>
 <span class="sd">        the system. DGILib can buffer 10M samples.</span>
 
@@ -367,6 +374,7 @@
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication.interface_write_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication.interface_write_data">[docs]</a>    <span class="k">def</span> <span class="nf">interface_write_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_id</span><span class="p">,</span> <span class="n">buffer</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`interface_write_data`</span>
+<span class="sd">        </span>
 <span class="sd">        Writes data to the specified interface. A maximum of 255 elements can be written each time. An error</span>
 <span class="sd">        return code will be given if data hasn&#39;t been written yet.</span>
 

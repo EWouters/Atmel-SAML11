@@ -242,6 +242,7 @@
 
 <div class="viewcode-block" id="DGILibDiscovery.is_msd_mode"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_discovery.DGILibDiscovery.is_msd_mode">[docs]</a>    <span class="k">def</span> <span class="nf">is_msd_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_sn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`is_msd_mode`</span>
+<span class="sd">        </span>
 <span class="sd">        EDBG devices can be set to a mass storage mode where the DGI is unavailable. In such cases the </span>
 <span class="sd">        device is still detected by DGILib, but it won&#39;t be possible to directly connect to it. This command is used </span>
 <span class="sd">        to check if the device is in such a mode.</span>
@@ -269,6 +270,7 @@
 
 <div class="viewcode-block" id="DGILibDiscovery.set_mode"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_discovery.DGILibDiscovery.set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_sn</span><span class="p">,</span> <span class="n">nmbed</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`set_mode`</span>
+<span class="sd">        </span>
 <span class="sd">        This function is used to temporarily set the EDBG to a specified mode.</span>
 
 <span class="sd">        `int set_mode(char* sn, int nmbed)`</span>

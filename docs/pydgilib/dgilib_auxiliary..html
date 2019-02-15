@@ -111,8 +111,8 @@ help with this have been made to perform parsing and calibration.
 </div></blockquote>
 <dl class="last docutils">
 <dt>def auxiliary_power_initialize(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_initialize</cite>
-Initializes the power parser.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_initialize</cite></p>
+<p>Initializes the power parser.</p>
 <p><cite>int auxiliary_power_initialize(uint32_t* power_hndl_p, uint32_t dgi_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -139,8 +139,8 @@ if self.verbose:</p>
 <p class="last">return power_hndl</p>
 </dd>
 <dt>def auxiliary_power_uninitialize(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_uninitialize</cite>
-Uninitializes the power parser.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_uninitialize</cite></p>
+<p>Uninitializes the power parser.</p>
 <p><cite>int auxiliary_power_uninitialize(uint32_t power_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -163,8 +163,8 @@ if self.verbose:</p>
 <dt>def auxiliary_power_register_buffer_pointers(</dt>
 <dd>self, channel=0, power_type=0, max_count=BUFFER_SIZE</dd>
 <dt>):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_register_buffer_pointers</cite>
-Registers a set of pointers to be used for storing the calibrated power data. The buffers can then be
+<dd><p class="first">“”“<cite>auxiliary_power_register_buffer_pointers</cite></p>
+<p>Registers a set of pointers to be used for storing the calibrated power data. The buffers can then be
 locked by auxiliary_power_lock_data_for_reading, and the data directly read from the specified buffers.
 Zero-pointers can be specified to get the buffers allocated within DGILib. This requires the data to be
 fetched using auxiliary_power_copy_data.</p>
@@ -225,8 +225,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_unregister_buffer_pointers(self, channel=0, power_type=0):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_unregister_buffer_pointers</cite>
-Unregisters the pointers for the specified power channel.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_unregister_buffer_pointers</cite></p>
+<p>Unregisters the pointers for the specified power channel.</p>
 <p><cite>int auxiliary_power_unregister_buffer_pointers(uint32_t power_hndl, int channel, int type)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -273,8 +273,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_calibration_is_valid(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_calibration_is_valid</cite>
-Checks the status of the stored calibration.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_calibration_is_valid</cite></p>
+<p>Checks the status of the stored calibration.</p>
 <p>Returns true if the calibration is valid, false otherwise. Unity gain and offset will be used.</p>
 <p><cite>bool auxiliary_power_calibration_is_valid(uint32_t power_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -299,8 +299,8 @@ if self.verbose:</p>
 <p class="last">return bool(calibration_is_valid)</p>
 </dd>
 <dt>def auxiliary_power_trigger_calibration(self, circuit_type=XAM):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_trigger_calibration</cite>
-Triggers a calibration of the specified type. This can take some time, so use <cite>auxiliary_power_get_status</cite>
+<dd><p class="first">“”“<cite>auxiliary_power_trigger_calibration</cite></p>
+<p>Triggers a calibration of the specified type. This can take some time, so use <cite>auxiliary_power_get_status</cite>
 to check for completion.</p>
 <p><cite>int auxiliary_power_trigger_calibration(uint32_t power_hndl, int type)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -337,8 +337,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_get_calibration(self, length=NUM_CALIBRATION):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_get_calibration</cite>
-Gets the raw calibration read from the tool.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_get_calibration</cite></p>
+<p>Gets the raw calibration read from the tool.</p>
 <p><cite>int auxiliary_power_get_calibration(uint32_t power_hndl, uint8_t* data, size_t length)</cite></p>
 <p>Note: actually returns the number of calibration samples, not an error if non-zero. The length argument is not used.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -351,7 +351,7 @@ Gets the raw calibration read from the tool.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">List of the read raw calibration data</td>
 </tr>
-<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">List(int)</td>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">list(int)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeviceReturnError</span></code></td>
 </tr>
@@ -377,8 +377,8 @@ if self.verbose:</p>
 <p class="last">return data[:length]</p>
 </dd>
 <dt>def auxiliary_power_get_circuit_type(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_get_circuit_type</cite>
-Gets the type of power circuit.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_get_circuit_type</cite></p>
+<p>Gets the type of power circuit.</p>
 <p><cite>int auxiliary_power_get_circuit_type(uint32_t power_hndl, int* circuit)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -413,9 +413,9 @@ if self.verbose:</p>
 <p class="last">return circuit.value</p>
 </dd>
 <dt>def auxiliary_power_get_status(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_get_status</cite>
-Gets the status of the power parser.</p>
-<p>Return codes
+<dd><p class="first">“”“<cite>auxiliary_power_get_status</cite></p>
+<p>Gets the status of the power parser.</p>
+<p>Return codes:
 - <cite>IDLE</cite> = 0x00
 - <cite>RUNNING</cite> = 0x01
 - <cite>DONE</cite> = 0x02
@@ -451,8 +451,8 @@ if self.verbose:</p>
 <p class="last">return status</p>
 </dd>
 <dt>def auxiliary_power_start(self, mode=0, parameter=0):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_start</cite>
-Starts parsing of power data. The power and power sync interfaces are enabled automatically, but note
+<dd><p class="first">“”“<cite>auxiliary_power_start</cite></p>
+<p>Starts parsing of power data. The power and power sync interfaces are enabled automatically, but note
 that it is necessary to start the polling separately. This only starts the parser that consumes data from the
 DGILib buffer.</p>
 <p><cite>int auxiliary_power_start(uint32_t power_hndl, int mode, int parameter)</cite></p>
@@ -499,8 +499,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_stop(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_stop</cite>
-Stops parsing of power data.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_stop</cite></p>
+<p>Stops parsing of power data.</p>
 <p><cite>int auxiliary_power_stop(uint32_t power_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -521,8 +521,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_lock_data_for_reading(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_lock_data_for_reading</cite>
-Blocks the parsing thread from accessing all the buffers. This must be called before the user application
+<dd><p class="first">“”“<cite>auxiliary_power_lock_data_for_reading</cite></p>
+<p>Blocks the parsing thread from accessing all the buffers. This must be called before the user application
 code accesses the buffers, or a call to <cite>auxiliary_power_copy_data</cite> is made. Afterwards
 <cite>auxiliary_power_free_data</cite> must be called. Minimize the amount of time between locking and freeing to
 avoid buffer overflows.</p>
@@ -551,8 +551,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def auxiliary_power_copy_data(self, channel=0, power_type=0, max_count=BUFFER_SIZE):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_copy_data</cite>
-Copies parsed power data into the specified buffer. Remember to lock the buffers first. If the count
+<dd><p class="first">“”“<cite>auxiliary_power_copy_data</cite></p>
+<p>Copies parsed power data into the specified buffer. Remember to lock the buffers first. If the count
 parameter is the same as max_count there is probably more data to be read. Do another read to get the
 remaining data.</p>
 <p><cite>int auxiliary_power_copy_data(uint32_t power_hndl, float* buffer, double* timestamp, size_t* count, size_t
@@ -652,8 +652,8 @@ if self.verbose:</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>def auxiliary_power_free_data(self):</dt>
-<dd><p class="first">“”“<cite>auxiliary_power_free_data</cite>
-Clears the power data buffers and allows the power parser to continue.</p>
+<dd><p class="first">“”“<cite>auxiliary_power_free_data</cite></p>
+<p>Clears the power data buffers and allows the power parser to continue.</p>
 <p><cite>int auxiliary_power_free_data(uint32_t power_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

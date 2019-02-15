@@ -151,10 +151,6 @@ try:</p>
 <p class="last">)</p>
 </dd>
 </dl>
-<p># DGILibDiscovery.__init__(self, <a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs)
-# DGILibHousekeeping.__init__(self, <a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs)
-# DGILibInterfaceCommunication.__init__(self, <a href="#id13"><span class="problematic" id="id14">*</span></a>args, <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs)
-# DGILibAuxiliary.__init__(self, <a href="#id17"><span class="problematic" id="id18">*</span></a>args, <a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs)</p>
 <p class="last">self.device_index = device_index
 self.device_sn = device_sn
 self.verbose = verbose</p>
@@ -166,7 +162,6 @@ self.verbose = verbose</p>
 “”“</p>
 <p>DGILibDiscovery.__enter__(self)
 DGILibHousekeeping.__enter__(self)
-# DGILibInterfaceCommunication.__enter__(self)
 DGILibAuxiliary.__enter__(self)</p>
 <p class="last">return self</p>
 </dd>
@@ -174,7 +169,6 @@ DGILibAuxiliary.__enter__(self)</p>
 <p>def __exit__(self, exc_type, exc_value, traceback):</p>
 <blockquote class="last">
 <div><p>DGILibAuxiliary.__exit__(self, exc_type, exc_value, traceback)
-# DGILibInterfaceCommunication.__exit__(self, exc_type, exc_value, traceback)
 DGILibHousekeeping.__exit__(self, exc_type, exc_value, traceback)
 DGILibDiscovery.__exit__(self, exc_type, exc_value, traceback)</p>
 <dl class="docutils">
@@ -184,10 +178,6 @@ DGILibDiscovery.__exit__(self, exc_type, exc_value, traceback)</p>
 </div></blockquote>
 </dd>
 </dl>
-<p>#     def __contains__(self, attribute_name):
-#         “”“Used to provide <cite>attribute_name in object</cite> syntax
-#         “””
-#         return hasattr(self, attribute_name)</p>
 
 
           </div>

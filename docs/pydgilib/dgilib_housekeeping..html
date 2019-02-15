@@ -103,8 +103,8 @@ if self.verbose:</p>
 <div>print(“bye from Housekeeping”)</div></blockquote>
 </dd>
 <dt>def connect(self, device_sn):</dt>
-<dd><p class="first">“”“<cite>connect</cite>
-Opens a connection to the specified device. This function must be called prior to any function requiring
+<dd><p class="first">“”“<cite>connect</cite></p>
+<p>Opens a connection to the specified device. This function must be called prior to any function requiring
 the connection handle.</p>
 <p><cite>int connect(char* sn, uint32_t* dgi_hndl_p)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -139,8 +139,8 @@ if self.verbose:</p>
 <p class="last">return dgi_hndl</p>
 </dd>
 <dt>def disconnect(self):</dt>
-<dd><p class="first">“”“<cite>disconnect</cite>
-Closes the specified connection.</p>
+<dd><p class="first">“”“<cite>disconnect</cite></p>
+<p>Closes the specified connection.</p>
 <p><cite>int disconnect(uint32_t dgi_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -163,8 +163,8 @@ if self.verbose:</p>
 # self.dgilib.UnInitialize(dgi_hndl)</p>
 </dd>
 <dt>def connection_status(self):</dt>
-<dd><p class="first">“”“<cite>connection_status</cite>
-Verifies that the specified connection is still open.</p>
+<dd><p class="first">“”“<cite>connection_status</cite></p>
+<p>Verifies that the specified connection is still open.</p>
 <p><cite>int connection_status(uint32_t* dgi_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -184,8 +184,8 @@ if self.verbose:</p>
 <p class="last">return c_status</p>
 </dd>
 <dt>def get_major_version(self):</dt>
-<dd><p class="first">“”“<cite>get_major_version</cite>
-Get the major version of the DGI library.</p>
+<dd><p class="first">“”“<cite>get_major_version</cite></p>
+<p>Get the major version of the DGI library.</p>
 <p><cite>int get_major_version(void)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -206,8 +206,8 @@ Get the major version of the DGI library.</p>
 <p class="last">return major_version</p>
 </dd>
 <dt>def get_minor_version(self):</dt>
-<dd><p class="first">“”“<cite>get_minor_version</cite>
-Get the minor version of the DGI library.</p>
+<dd><p class="first">“”“<cite>get_minor_version</cite></p>
+<p>Get the minor version of the DGI library.</p>
 <p><cite>int get_minor_version(void)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -228,8 +228,8 @@ Get the minor version of the DGI library.</p>
 <p class="last">return minor_version</p>
 </dd>
 <dt>def get_build_number(self):</dt>
-<dd><p class="first">“”“<cite>get_build_number</cite>
-Get the major version of the DGI library.</p>
+<dd><p class="first">“”“<cite>get_build_number</cite></p>
+<p>Get the major version of the DGI library.</p>
 <p>Returns the build number of DGILib. If not supported, returns 0.</p>
 <p><cite>int get_build_number(void)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -251,8 +251,8 @@ Get the major version of the DGI library.</p>
 <p class="last">return build_number</p>
 </dd>
 <dt>def get_fw_version(self):</dt>
-<dd><p class="first">“”“<cite>get_fw_version</cite>
-Gets the firmware version of the DGI device connected. Note that this is the version of the DGI device,
+<dd><p class="first">“”“<cite>get_fw_version</cite></p>
+<p>Gets the firmware version of the DGI device connected. Note that this is the version of the DGI device,
 and not the tool.</p>
 <p><cite>int get_fw_version(uint32_t dgi_hndl, unsigned char* major, unsigned char* minor)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -286,8 +286,8 @@ if self.verbose:</p>
 <p class="last">return major_fw.value, minor_fw.value</p>
 </dd>
 <dt>def start_polling(self):</dt>
-<dd><p class="first">“”“<cite>start_polling</cite>
-This function will start the polling system and start acquisition on enabled interfaces. It is possible to
+<dd><p class="first">“”“<cite>start_polling</cite></p>
+<p>This function will start the polling system and start acquisition on enabled interfaces. It is possible to
 enable/disable interfaces both before and after the polling has been started. However, no data will be
 transferred until the polling is started.</p>
 <p><cite>int start_polling(uint32_t dgi_hndl)</cite></p>
@@ -314,8 +314,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def stop_polling(self):</dt>
-<dd><p class="first">“”“<cite>stop_polling</cite>
-This function will stop the polling system and stop acquisition on all interfaces.</p>
+<dd><p class="first">“”“<cite>stop_polling</cite></p>
+<p>This function will stop the polling system and stop acquisition on all interfaces.</p>
 <p><cite>int stop_polling(uint32_t dgi_hndl)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -340,8 +340,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 <dt>def target_reset(self, hold_reset):</dt>
-<dd><p class="first">“”“<cite>target_reset</cite>
-This function is used to control the state of the reset line connected to the target, if available.</p>
+<dd><p class="first">“”“<cite>target_reset</cite></p>
+<p>This function is used to control the state of the reset line connected to the target, if available.</p>
 <p><cite>int target_reset(uint32_t dgi_hndl, bool hold_reset)</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

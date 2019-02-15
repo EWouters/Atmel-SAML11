@@ -136,11 +136,6 @@
                 <span class="n">f</span><span class="s2">&quot;dgilib.dll could not be found in the specicied path: </span><span class="si">{dgilib_path}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># DGILibDiscovery.__init__(self, *args, **kwargs)</span>
-        <span class="c1"># DGILibHousekeeping.__init__(self, *args, **kwargs)</span>
-        <span class="c1"># DGILibInterfaceCommunication.__init__(self, *args, **kwargs)</span>
-        <span class="c1"># DGILibAuxiliary.__init__(self, *args, **kwargs)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">device_index</span> <span class="o">=</span> <span class="n">device_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device_sn</span> <span class="o">=</span> <span class="n">device_sn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
@@ -153,7 +148,6 @@
 
         <span class="n">DGILibDiscovery</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">DGILibHousekeeping</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="c1"># DGILibInterfaceCommunication.__enter__(self)</span>
         <span class="n">DGILibAuxiliary</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>
@@ -161,18 +155,12 @@
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 
         <span class="n">DGILibAuxiliary</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
-        <span class="c1"># DGILibInterfaceCommunication.__exit__(self, exc_type, exc_value, traceback)</span>
         <span class="n">DGILibHousekeeping</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
         <span class="n">DGILibDiscovery</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye from DGILib&quot;</span><span class="p">)</span></div>
-
-
-<span class="c1">#     def __contains__(self, attribute_name):</span>
-<span class="c1">#         &quot;&quot;&quot;Used to provide `attribute_name in object` syntax</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         return hasattr(self, attribute_name)</span>
+            
 </pre></div>
 
           </div>

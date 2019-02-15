@@ -114,6 +114,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_initialize"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_initialize">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_initialize`</span>
+<span class="sd">        </span>
 <span class="sd">        Initializes the power parser.</span>
 
 <span class="sd">        `int auxiliary_power_initialize(uint32_t* power_hndl_p, uint32_t dgi_hndl)`</span>
@@ -142,6 +143,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_uninitialize"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_uninitialize">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_uninitialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_uninitialize`</span>
+<span class="sd">        </span>
 <span class="sd">        Uninitializes the power parser.</span>
 
 <span class="sd">        `int auxiliary_power_uninitialize(uint32_t power_hndl)`</span>
@@ -165,6 +167,7 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">power_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="n">BUFFER_SIZE</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_register_buffer_pointers`</span>
+<span class="sd">        </span>
 <span class="sd">        Registers a set of pointers to be used for storing the calibrated power data. The buffers can then be</span>
 <span class="sd">        locked by auxiliary_power_lock_data_for_reading, and the data directly read from the specified buffers.</span>
 <span class="sd">        Zero-pointers can be specified to get the buffers allocated within DGILib. This requires the data to be</span>
@@ -220,6 +223,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_unregister_buffer_pointers"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_unregister_buffer_pointers">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_unregister_buffer_pointers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">power_type</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_unregister_buffer_pointers`</span>
+<span class="sd">        </span>
 <span class="sd">        Unregisters the pointers for the specified power channel.</span>
 
 <span class="sd">        `int auxiliary_power_unregister_buffer_pointers(uint32_t power_hndl, int channel, int type)`</span>
@@ -256,6 +260,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_calibration_is_valid"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_calibration_is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_calibration_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_calibration_is_valid`</span>
+<span class="sd">        </span>
 <span class="sd">        Checks the status of the stored calibration.</span>
 
 <span class="sd">        Returns true if the calibration is valid, false otherwise. Unity gain and offset will be used.</span>
@@ -282,6 +287,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_trigger_calibration"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_trigger_calibration">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_trigger_calibration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit_type</span><span class="o">=</span><span class="n">XAM</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_trigger_calibration`</span>
+<span class="sd">        </span>
 <span class="sd">        Triggers a calibration of the specified type. This can take some time, so use `auxiliary_power_get_status`</span>
 <span class="sd">        to check for completion.</span>
 
@@ -312,6 +318,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_get_calibration"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_get_calibration">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_get_calibration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">NUM_CALIBRATION</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_get_calibration`</span>
+<span class="sd">        </span>
 <span class="sd">        Gets the raw calibration read from the tool.</span>
 
 <span class="sd">        `int auxiliary_power_get_calibration(uint32_t power_hndl, uint8_t* data, size_t length)`</span>
@@ -329,7 +336,7 @@
 <span class="sd">        :param length: Number of raw calibration bytes to fetch. See the DGI documentation for number of bytes. (defaults to NUM_CALIBRATION)</span>
 <span class="sd">        :type length: int</span>
 <span class="sd">        :return: List of the read raw calibration data</span>
-<span class="sd">        :rtype: List(int)</span>
+<span class="sd">        :rtype: list(int)</span>
 <span class="sd">        :raises: :exc:`DeviceReturnError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -347,6 +354,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_get_circuit_type"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_get_circuit_type">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_get_circuit_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_get_circuit_type`</span>
+<span class="sd">        </span>
 <span class="sd">        Gets the type of power circuit.</span>
 
 <span class="sd">        `int auxiliary_power_get_circuit_type(uint32_t power_hndl, int* circuit)`</span>
@@ -378,9 +386,10 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_get_status"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_get_status">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_get_status`</span>
+<span class="sd">        </span>
 <span class="sd">        Gets the status of the power parser.</span>
 
-<span class="sd">        Return codes</span>
+<span class="sd">        Return codes:</span>
 <span class="sd">        - `IDLE` = 0x00</span>
 <span class="sd">        - `RUNNING` = 0x01</span>
 <span class="sd">        - `DONE` = 0x02</span>
@@ -418,6 +427,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_start"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_start">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_start`</span>
+<span class="sd">        </span>
 <span class="sd">        Starts parsing of power data. The power and power sync interfaces are enabled automatically, but note</span>
 <span class="sd">        that it is necessary to start the polling separately. This only starts the parser that consumes data from the</span>
 <span class="sd">        DGILib buffer.</span>
@@ -458,6 +468,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_stop"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_stop">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_stop`</span>
+<span class="sd">        </span>
 <span class="sd">        Stops parsing of power data.</span>
 
 <span class="sd">        `int auxiliary_power_stop(uint32_t power_hndl)`</span>
@@ -479,6 +490,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_lock_data_for_reading"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_lock_data_for_reading">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_lock_data_for_reading</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_lock_data_for_reading`</span>
+<span class="sd">        </span>
 <span class="sd">        Blocks the parsing thread from accessing all the buffers. This must be called before the user application</span>
 <span class="sd">        code accesses the buffers, or a call to `auxiliary_power_copy_data` is made. Afterwards</span>
 <span class="sd">        `auxiliary_power_free_data` must be called. Minimize the amount of time between locking and freeing to</span>
@@ -505,6 +517,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_copy_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_copy_data">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_copy_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">power_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="n">BUFFER_SIZE</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_copy_data`</span>
+<span class="sd">        </span>
 <span class="sd">        Copies parsed power data into the specified buffer. Remember to lock the buffers first. If the count</span>
 <span class="sd">        parameter is the same as max_count there is probably more data to be read. Do another read to get the</span>
 <span class="sd">        remaining data.</span>
@@ -575,6 +588,7 @@
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_free_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_free_data">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_free_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_free_data`</span>
+<span class="sd">        </span>
 <span class="sd">        Clears the power data buffers and allows the power parser to continue.</span>
 
 <span class="sd">        `int auxiliary_power_free_data(uint32_t power_hndl)`</span>

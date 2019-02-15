@@ -110,6 +110,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.connect"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_sn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`connect`</span>
+<span class="sd">        </span>
 <span class="sd">        Opens a connection to the specified device. This function must be called prior to any function requiring</span>
 <span class="sd">        the connection handle.</span>
 
@@ -144,6 +145,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.disconnect"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`disconnect`</span>
+<span class="sd">        </span>
 <span class="sd">        Closes the specified connection.</span>
 
 <span class="sd">        `int disconnect(uint32_t dgi_hndl)`</span>
@@ -168,6 +170,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.connection_status"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.connection_status">[docs]</a>    <span class="k">def</span> <span class="nf">connection_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`connection_status`</span>
+<span class="sd">        </span>
 <span class="sd">        Verifies that the specified connection is still open.</span>
 
 <span class="sd">        `int connection_status(uint32_t* dgi_hndl)`</span>
@@ -190,6 +193,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.get_major_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_major_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_major_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`get_major_version`</span>
+<span class="sd">        </span>
 <span class="sd">        Get the major version of the DGI library.</span>
 
 <span class="sd">        `int get_major_version(void)`</span>
@@ -207,6 +211,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.get_minor_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_minor_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_minor_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`get_minor_version`</span>
+<span class="sd">        </span>
 <span class="sd">        Get the minor version of the DGI library.</span>
 
 <span class="sd">        `int get_minor_version(void)`</span>
@@ -224,6 +229,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.get_build_number"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_build_number">[docs]</a>    <span class="k">def</span> <span class="nf">get_build_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`get_build_number`</span>
+<span class="sd">        </span>
 <span class="sd">        Get the major version of the DGI library.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns the build number of DGILib. If not supported, returns 0.</span>
@@ -243,6 +249,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.get_fw_version"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.get_fw_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_fw_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`get_fw_version`</span>
+<span class="sd">        </span>
 <span class="sd">        Gets the firmware version of the DGI device connected. Note that this is the version of the DGI device,</span>
 <span class="sd">        and not the tool.</span>
 <span class="sd">        </span>
@@ -278,6 +285,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.start_polling"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.start_polling">[docs]</a>    <span class="k">def</span> <span class="nf">start_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`start_polling`</span>
+<span class="sd">        </span>
 <span class="sd">        This function will start the polling system and start acquisition on enabled interfaces. It is possible to</span>
 <span class="sd">        enable/disable interfaces both before and after the polling has been started. However, no data will be</span>
 <span class="sd">        transferred until the polling is started.</span>
@@ -303,6 +311,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.stop_polling"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.stop_polling">[docs]</a>    <span class="k">def</span> <span class="nf">stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`stop_polling`</span>
+<span class="sd">        </span>
 <span class="sd">        This function will stop the polling system and stop acquisition on all interfaces.</span>
 <span class="sd">        </span>
 <span class="sd">        `int stop_polling(uint32_t dgi_hndl)`</span>
@@ -326,6 +335,7 @@
 
 <div class="viewcode-block" id="DGILibHousekeeping.target_reset"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_housekeeping.DGILibHousekeeping.target_reset">[docs]</a>    <span class="k">def</span> <span class="nf">target_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hold_reset</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`target_reset`</span>
+<span class="sd">        </span>
 <span class="sd">        This function is used to control the state of the reset line connected to the target, if available.</span>
 <span class="sd">        </span>
 <span class="sd">        `int target_reset(uint32_t dgi_hndl, bool hold_reset)`</span>
