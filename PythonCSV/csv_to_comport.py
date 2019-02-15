@@ -70,7 +70,7 @@ with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='
    x = []
    y = []
 
-   for i in range (3):
+   for i in range(1000):
         line = ser.readline()
         line = str("".join(map(chr, line))).strip()
         print("[RECV] " + line)
@@ -78,7 +78,7 @@ with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='
         if stage == 0:
             stage = 1
             if plotting_or_outputting_csv == "output_csv":
-                output_file = open("output.csv", "w")
+                output_file = open("output_arm.csv", "w")
                 #print("Outputting: " + line)
                 #output_file.write(line + "\r\n")
         elif stage == 1 and plotting_or_outputting_csv == "plot":
