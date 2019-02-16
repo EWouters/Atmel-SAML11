@@ -32,19 +32,34 @@
 
           <div class="body" role="main">
             
-  <p>from setuptools import setup</p>
+  <p>import sys</p>
+<p>from setuptools import setup</p>
+<p>needs_pytest = {“pytest”, “test”, “ptr”}.intersection(sys.argv)
+pytest_runner = [“pytest-runner”] if needs_pytest else []</p>
 <dl class="docutils">
-<dt>setup(name=’pydgilib’,</dt>
-<dd>version=‘0.1’,
-description=’This module provides Python bindings for DGILib’,
-url=’<a class="reference external" href="https://github.com/EWouters/Atmel-SAML11/tree/master/Python/pydgilib">https://github.com/EWouters/Atmel-SAML11/tree/master/Python/pydgilib</a>’,
-author=’Erik Wouters’,
-author_email=’ehwo(at)kth.se’,
-license=’MIT’,
-packages=[‘pydgilib’],
-dependency_links=[‘<a class="reference external" href="https://www.microchip.com/developmenttools/ProductDetails/ATPOWERDEBUGGER">https://www.microchip.com/developmenttools/ProductDetails/ATPOWERDEBUGGER</a>’],
-zip_safe=False)</dd>
+<dt>setup(</dt>
+<dd><p class="first">name=”pydgilib”,
+version=”0.1”,
+description=”This module provides Python bindings for DGILib”,
+url=”<a class="reference external" href="https://github.com/EWouters/Atmel-SAML11/tree/master/Python/pydgilib">https://github.com/EWouters/Atmel-SAML11/tree/master/Python/pydgilib</a>”,
+author=”Erik Wouters”,
+author_email=”ehwo(at)kth.se”,
+license=”MIT”,
+packages=[“pydgilib”, “pydgilib_extra”],
+dependency_links=[</p>
+<blockquote>
+<div>“<a class="reference external" href="https://www.microchip.com/developmenttools/ProductDetails/ATPOWERDEBUGGER">https://www.microchip.com/developmenttools/ProductDetails/ATPOWERDEBUGGER</a>”</div></blockquote>
+<p>],
+zip_safe=False,
+setup_requires=[</p>
+<blockquote>
+<div># … (other setup requirements)</div></blockquote>
+<p class="last">]
++ pytest_runner,
+tests_require=[“pytest”],</p>
+</dd>
 </dl>
+<p>)</p>
 
 
           </div>

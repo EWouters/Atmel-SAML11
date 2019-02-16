@@ -44,43 +44,11 @@
 <span class="p">)</span>
 <span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;reStructuredText&quot;</span>
 
-<span class="n">GET_STRING_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">NUM_INTERFACES</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">NUM_CONFIG_IDS</span> <span class="o">=</span> <span class="mi">255</span>
-<span class="n">NUM_CALIBRATION</span> <span class="o">=</span> <span class="mi">255</span>
-<span class="n">BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">10000000</span>
-<span class="n">MAX_PRINT</span> <span class="o">=</span> <span class="mi">100</span>
-
-<span class="c1"># Interface types</span>
-<span class="n">INTERFACE_TIMESTAMP</span>  <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0 Service interface which appends timestamps to all received events on associated interfaces.</span>
-<span class="n">INTERFACE_SPI</span>        <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32 Communicates directly over SPI in Slave mode.</span>
-<span class="n">INTERFACE_USART</span>      <span class="o">=</span> <span class="mh">0x21</span> <span class="c1">#  33 Communicates directly over USART in Slave mode.</span>
-<span class="n">INTERFACE_I2C</span>        <span class="o">=</span> <span class="mh">0x22</span> <span class="c1">#  34 Communicates directly over I2C in Slave mode.</span>
-<span class="n">INTERFACE_GPIO</span>       <span class="o">=</span> <span class="mh">0x30</span> <span class="c1">#  48 Monitors and controls the state of GPIO pins.</span>
-<span class="n">INTERFACE_POWER_DATA</span> <span class="o">=</span> <span class="mh">0x40</span> <span class="c1">#  64 Receives data from the attached power measurement co-processors.</span>
-<span class="n">INTERFACE_POWER_SYNC</span> <span class="o">=</span> <span class="mh">0x41</span> <span class="c1">#  65 Receives sync events from the attached power measurement co-processors.</span>
-<span class="n">INTERFACE_RESERVED</span>   <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255 Special identifier used to indicate no interface.</span>
-
-<span class="c1"># Circuit types</span>
-<span class="n">OLD_XAM</span> <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
-<span class="n">XAM</span>     <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
-<span class="n">PAM</span>     <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
-<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255</span>
-
-<span class="c1"># Return codes</span>
-<span class="n">IDLE</span>               <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
-<span class="n">RUNNING</span>            <span class="o">=</span> <span class="mh">0x01</span> <span class="c1">#   1</span>
-<span class="n">DONE</span>               <span class="o">=</span> <span class="mh">0x02</span> <span class="c1">#   2</span>
-<span class="n">CALIBRATING</span>        <span class="o">=</span> <span class="mh">0x03</span> <span class="c1">#   3</span>
-<span class="n">INIT_FAILED</span>        <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
-<span class="n">OVERFLOWED</span>         <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
-<span class="n">USB_DISCONNECTED</span>   <span class="o">=</span> <span class="mh">0x12</span> <span class="c1">#  18</span>
-<span class="n">CALIBRATION_FAILED</span> <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32</span>
-
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
 
+<span class="kn">from</span> <span class="nn">pydgilib.dgilib_config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pydgilib.dgilib_exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
 
 <div class="viewcode-block" id="DGILibInterfaceCommunication"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_interface_communication.DGILibInterfaceCommunication">[docs]</a><span class="k">class</span> <span class="nc">DGILibInterfaceCommunication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Interface Communication.</span>

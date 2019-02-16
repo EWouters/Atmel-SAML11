@@ -39,38 +39,11 @@ __license__ = “MIT”
 __version__ = “0.1”
 __revision__ = ” $Id: dgilib_auxiliary.py 1586 2019-02-13 15:56:25Z EWouters $ ”
 __docformat__ = “reStructuredText”</p>
-<p>GET_STRING_SIZE = 100
-NUM_INTERFACES = 10
-NUM_CONFIG_IDS = 255
-NUM_CALIBRATION = 255
-BUFFER_SIZE = 10000000
-MAX_PRINT = 100</p>
-<p># Interface types
-INTERFACE_TIMESTAMP  = 0x00 #   0 Service interface which appends timestamps to all received events on associated interfaces.
-INTERFACE_SPI        = 0x20 #  32 Communicates directly over SPI in Slave mode.
-INTERFACE_USART      = 0x21 #  33 Communicates directly over USART in Slave mode.
-INTERFACE_I2C        = 0x22 #  34 Communicates directly over I2C in Slave mode.
-INTERFACE_GPIO       = 0x30 #  48 Monitors and controls the state of GPIO pins.
-INTERFACE_POWER_DATA = 0x40 #  64 Receives data from the attached power measurement co-processors.
-INTERFACE_POWER_SYNC = 0x41 #  65 Receives sync events from the attached power measurement co-processors.
-INTERFACE_RESERVED   = 0xFF # 255 Special identifier used to indicate no interface.</p>
-<p># Circuit types
-OLD_XAM = 0x00 #   0
-XAM     = 0x10 #  16
-PAM     = 0x11 #  17
-UNKNOWN = 0xFF # 255</p>
-<p># Return codes
-IDLE               = 0x00 #   0
-RUNNING            = 0x01 #   1
-DONE               = 0x02 #   2
-CALIBRATING        = 0x03 #   3
-INIT_FAILED        = 0x10 #  16
-OVERFLOWED         = 0x11 #  17
-USB_DISCONNECTED   = 0x12 #  18
-CALIBRATION_FAILED = 0x20 #  32</p>
 <p>from ctypes import *
-from time import sleep</p>
-<p>from pydgilib.dgilib_exceptions import *</p>
+# from ctypes import byref, c_uint, c_int, c_float, c_double, c_size_t, c_ubyte</p>
+<p>from pydgilib.dgilib_config import *
+from pydgilib.dgilib_exceptions import *
+# from pydgilib.dgilib_exceptions import DeviceReturnError</p>
 <dl class="docutils">
 <dt>class DGILibAuxiliary(object):</dt>
 <dd><p class="first">“”“Python bindings for DGILib Auxiliary.</p>
@@ -88,28 +61,15 @@ help with this have been made to perform parsing and calibration.
 “”“</p>
 <dl class="last docutils">
 <dt>def __enter__(self):</dt>
-<dd>self.power_hndl = self.auxiliary_power_initialize()</dd>
-</dl>
+<dd><p class="first">self.power_hndl = self.auxiliary_power_initialize()</p>
+<p class="last">return self</p>
 </dd>
-</dl>
-<p>#         self.auxiliary_power_register_buffer_pointers()</p>
-<blockquote>
-<div><blockquote>
-<div>return self</div></blockquote>
-<dl class="docutils">
 <dt>def __exit__(self, exc_type, exc_value, traceback):</dt>
-<dd>self.auxiliary_power_uninitialize()</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>#         self.auxiliary_power_unregister_buffer_pointers()</dt>
-<dd><blockquote class="first">
-<div><dl class="docutils">
-<dt>if self.verbose:</dt>
-<dd>print(“bye from Auxiliary”)</dd>
-</dl>
-</div></blockquote>
-<dl class="last docutils">
+<dd><p class="first">self.auxiliary_power_uninitialize()
+if self.verbose:</p>
+<blockquote class="last">
+<div>print(“bye from Auxiliary”)</div></blockquote>
+</dd>
 <dt>def auxiliary_power_initialize(self):</dt>
 <dd><p class="first">“”“<cite>auxiliary_power_initialize</cite></p>
 <p>Initializes the power parser.</p>
@@ -584,15 +544,10 @@ max_count, int channel, int type)</cite></p>
 </tr>
 </tbody>
 </table>
-<p class="last">“”“</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>#         buffer = (c_float * max_count)()
-#         timestamp = (c_double * max_count)()</p>
-<blockquote>
-<div><p>count = c_size_t()
+<p>“”“</p>
+<p># buffer = (c_float * max_count)()
+# timestamp = (c_double * max_count)()
+count = c_size_t()
 max_count = c_size_t(max_count)
 channel = c_int(channel)
 power_type = c_int(power_type)</p>
@@ -600,57 +555,45 @@ power_type = c_int(power_type)</p>
 <dt>res = self.dgilib.auxiliary_power_copy_data(</dt>
 <dd>self.power_hndl,
 self.powerBuffer,
-self.powerTimestamp,</dd>
-</dl>
-</div></blockquote>
-<p>#             byref(self.powerCount),
-#             buffer,
-#             timestamp,</p>
-<blockquote>
-<div><blockquote>
-<div>byref(count),
+self.powerTimestamp,
+# byref(self.powerCount),
+# buffer,
+# timestamp,
+byref(count),
 max_count,
 channel,
-power_type,</div></blockquote>
+power_type,</dd>
+</dl>
 <p>)
 if self.verbose:</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>print(</dt>
-<dd>f”t{res} auxiliary_power_copy_data: {count.value} samples, power_type: {power_type.value}”</dd>
-</dl>
-</div></blockquote>
-</div></blockquote>
-<dl class="docutils">
-<dt>#                 f”t{res} auxiliary_power_copy_data: {self.powerCount.value} samples, power_type: {power_type.value}”</dt>
-<dd><blockquote class="first">
-<div>)</div></blockquote>
-<dl class="last docutils">
-<dt>if self.verbose &gt;= 3:</dt>
-<dd>for i in range(min(count.value, MAX_PRINT)):</dd>
-</dl>
-</dd>
-</dl>
-<p>#             for i in range(min(self.powerCount.value, MAX_PRINT)):
-#                 print(f”t{i}: buffer: {buffer[i]}, timestamp: {timestamp[i]}”)</p>
-<blockquote>
-<div><blockquote>
-<div><dl class="docutils">
-<dt>print(</dt>
-<dd>f”t{i}: buffer: {self.powerBuffer[i]}, timestamp: {self.powerTimestamp[i]}”</dd>
+<dd>f”t{res} auxiliary_power_copy_data: {count.value} samples, power_type: {power_type.value}”
+# f”t{res} auxiliary_power_copy_data: {self.powerCount.value} samples, power_type: {power_type.value}”</dd>
 </dl>
 <p>)</p>
 </div></blockquote>
 <dl class="docutils">
+<dt>if self.verbose &gt;= 3:</dt>
+<dd><dl class="first last docutils">
+<dt>for i in range(min(count.value, MAX_PRINT)):</dt>
+<dd><p class="first"># for i in range(min(self.powerCount.value, MAX_PRINT)):
+#     print(f”t{i}: buffer: {buffer[i]}, timestamp: {timestamp[i]}”)
+print(</p>
+<blockquote>
+<div>f”t{i}: buffer: {self.powerBuffer[i]}, timestamp: {self.powerTimestamp[i]}”</div></blockquote>
+<p class="last">)</p>
+</dd>
+</dl>
+</dd>
 <dt>if res:</dt>
 <dd>raise DeviceReturnError(f”auxiliary_power_copy_data returned: {res}”)</dd>
 </dl>
-<p>return self.powerBuffer[: count.value], self.powerTimestamp[: count.value]</p>
-</div></blockquote>
-<p>#         return self.powerBuffer[:self.powerCount.value], self.powerTimestamp[:self.powerCount.value]
-#         return buffer[:], timestamp[:]</p>
-<blockquote>
-<div><dl class="docutils">
+<p class="last">return self.powerBuffer[: count.value], self.powerTimestamp[: count.value]
+# return self.powerBuffer[:self.powerCount.value], self.powerTimestamp[:self.powerCount.value]
+# return buffer[:], timestamp[:]</p>
+</dd>
 <dt>def auxiliary_power_free_data(self):</dt>
 <dd><p class="first">“”“<cite>auxiliary_power_free_data</cite></p>
 <p>Clears the power data buffers and allows the power parser to continue.</p>
@@ -674,7 +617,8 @@ if self.verbose:</p>
 </dl>
 </dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 
 
           </div>

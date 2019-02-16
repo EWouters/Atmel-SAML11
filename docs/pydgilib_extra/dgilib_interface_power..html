@@ -1,0 +1,388 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; pydgilib 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p>“”“This module provides Python bindings for DGILibExtra Power interface.”“”</p>
+<p>__author__ = “Erik Wouters &lt;ehwo(at)kth.se&gt;”
+__credits__ = “Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/2016”
+__license__ = “MIT”
+__version__ = “0.1”
+__revision__ = ” $Id: dgilib_interface_power.py 1586 2019-02-13 15:56:25Z EWouters $ ”
+__docformat__ = “reStructuredText”</p>
+<p>from time import sleep</p>
+<p>from pydgilib.dgilib_config import *
+from pydgilib_extra.dgilib_extra_exceptions import *</p>
+<dl class="docutils">
+<dt>class DGILibInterfacePower(object):</dt>
+<dd><p class="first">“”“Python bindings for DGILib Power interface.</p>
+<p>“”“</p>
+<dl class="last docutils">
+<dt>def __init__(self, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt>
+<dd><p class="first">“””
+:Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pb</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;power_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">DGILibExtra</span><span class="p">(</span><span class="n">power_buffers</span><span class="o">=</span><span class="n">pb</span><span class="p">)</span> <span class="k">as</span> <span class="n">dgilib</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">dgilib</span><span class="o">.</span><span class="n">get_major_version</span><span class="p">()</span>
+<span class="go">5</span>
+<span class="go">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p># Argument parsing
+self.power_buffers = kwargs.get(“power_buffers”, [])
+if self.verbose:</p>
+<blockquote class="last">
+<div>print(“power_buffers: “, self.power_buffers)</div></blockquote>
+</dd>
+<dt>def __enter__(self):</dt>
+<dd><p class="first"># Check if calibration is valid and trigger calibration if it is not
+self.circuit_type = self.auxiliary_power_get_circuit_type()
+if not self.auxiliary_power_calibration_is_valid():</p>
+<blockquote>
+<div>self.auxiliary_power_trigger_calibration(self.circuit_type)</div></blockquote>
+<p># Register buffers inside the library for the buffers specified in self.power_buffers
+for power_buffer in self.power_buffers:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>self.auxiliary_power_register_buffer_pointers(</dt>
+<dd>channel=power_buffer[“channel”], power_type=power_buffer[“power_type”]</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+<p class="last">return self</p>
+</dd>
+<dt>def __exit__(self, exc_type, exc_value, traceback):</dt>
+<dd>self.power_set_config([])</dd>
+<dt>def auxiliary_power_calibration(self, circuit_type=XAM):</dt>
+<dd><p class="first">“”“Calibrate the Auxilary Power interface of the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param circuit_type:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Type of calibration to trigger (defaults to XAM)</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type circuit_type:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p>self.auxiliary_power_trigger_calibration(circuit_type)
+while self.auxiliary_power_get_status() == CALIBRATING:</p>
+<blockquote class="last">
+<div>sleep(0.1)</div></blockquote>
+</dd>
+<dt>def power_get_config(self):</dt>
+<dd><p class="first">“”“Get the power config options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Power buffers configuration list of dictionaries like [{“channel”: CHANNEL_A, “power_type”: POWER_CURRENT}]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">list(dict())</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p class="last"># Return the configuration
+return self.power_buffers</p>
+</dd>
+<dt>def power_set_config(self, power_buffers):</dt>
+<dd><p class="first">“”“Set the power config options.</p>
+<p>Register buffers inside the library for the buffers specified in power_buffers and removes ones that are not present.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param power_buffers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Power buffers configuration list of dictionaries like [{“channel”: CHANNEL_A, “power_type”: POWER_CURRENT}]</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type power_buffers:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list(dict())</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Disable the configurations that are not in the new config and remove them from self.power_buffers
+for power_buffer in self.power_buffers:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>if power_buffer not in power_buffers:</dt>
+<dd><dl class="first docutils">
+<dt>self.auxiliary_power_unregister_buffer_pointers(</dt>
+<dd>channel=power_buffer[“channel”],
+power_type=power_buffer[“power_type”],</dd>
+</dl>
+<p class="last">)
+self.power_buffers.remove(power_buffer)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p># Enable the configurations that are in the new config and not in self.power_buffers
+for power_buffer in power_buffers:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>if power_buffer not in self.power_buffers:</dt>
+<dd><dl class="first docutils">
+<dt>self.auxiliary_power_register_buffer_pointers(</dt>
+<dd>channel=power_buffer[“channel”],
+power_type=power_buffer[“power_type”],</dd>
+</dl>
+<p class="last">)
+self.power_buffers.append(power_buffer)</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>def power_read_buffer(self, power_buffer, <a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs):</dt>
+<dd><p class="first">“”“Read power data of the specified buffer.</p>
+<p>TODO: Copies parsed power data into the specified buffer. Remember to lock the buffers first. If the count parameter is the same as max_count there is probably more data to be read. Do another read to get the remaining data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Tuple of list of power samples in Ampere and list of timestamps in seconds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">(list(float), list(float))</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Check if power_buffer is in self.power_buffers
+if power_buffer not in self.power_buffers:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>raise PowerReadError(</dt>
+<dd>f”Power Buffer {power_buffer} does not exist in self.power_buffers: {self.power_buffers}.”</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+<p># Check if auxiliary_power_get_status() is in IDLE = 0x00, RUNNING = 0x01, DONE = 0x02 or OVERFLOWED = 0x11
+# and raise DevicePowerStatusError if it is.
+power_status = self.auxiliary_power_get_status()
+if self.verbose:</p>
+<blockquote>
+<div>print(f”power_status: {power_status}”)</div></blockquote>
+<p># if power_status &lt;= DONE or power_status == OVERFLOWED:
+if power_status not in (IDLE, RUNNING, DONE, OVERFLOWED):</p>
+<blockquote>
+<div>raise DevicePowerStatusError(f”Power Status {power_status}.”)</div></blockquote>
+<dl class="docutils">
+<dt>if power_status == OVERFLOWED:</dt>
+<dd><dl class="first docutils">
+<dt>print(</dt>
+<dd>f”BUFFER OVERFLOW, call this function more frequently or increase the buffer size.”</dd>
+</dl>
+<p class="last">)</p>
+</dd>
+</dl>
+<p># Create variable to the store data in
+power_samples = []
+timestamps = []</p>
+<p># TODO: Check implementation in case of buffer overflow.
+#  Should auxiliary_power_lock_data_for_reading() be inside the loop or before?</p>
+<p># Get the data from the buffer in the library
+while True:</p>
+<blockquote>
+<div><p>self.auxiliary_power_lock_data_for_reading()
+data = self.auxiliary_power_copy_data(</p>
+<blockquote>
+<div>power_buffer[“channel”], power_buffer[“power_type”], <a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs</div></blockquote>
+<p>)
+power_samples.append(data[0])
+timestamps.append(data[1])
+self.auxiliary_power_free_data()  # BUG: This probably clears all channels!
+# Repeat the loop untill there is no buffer overflow (which should always be avoided.)
+if self.auxiliary_power_get_status() != OVERFLOWED:</p>
+<blockquote>
+<div>break</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>if self.verbose &gt;= 4:</dt>
+<dd>print(power_samples, timestamps)</dd>
+</dl>
+<p class="last">return power_samples, timestamps</p>
+</dd>
+<dt>def power_read(self, <a href="#id13"><span class="problematic" id="id14">*</span></a>args, <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs):</dt>
+<dd><p class="first">“”“Read power data from all enabled buffers.</p>
+<p>The returned list has the same indexes as the list obtained from <cite>power_get_config()</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">List of tuples of list of power samples in Ampere and list of timestamps in seconds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">list[(list(float), list(float)), …]</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Check if auxiliary_power_get_status() is in IDLE = 0x00, RUNNING = 0x01, DONE = 0x02 or OVERFLOWED = 0x11
+# and raise DevicePowerStatusError if it is.
+power_status = self.auxiliary_power_get_status()
+if self.verbose:</p>
+<blockquote>
+<div>print(f”power_status: {power_status}”)</div></blockquote>
+<p># if power_status &lt;= DONE or power_status == OVERFLOWED:
+if power_status not in (IDLE, RUNNING, DONE, OVERFLOWED):</p>
+<blockquote>
+<div>raise DevicePowerStatusError(f”Power Status {power_status}.”)</div></blockquote>
+<dl class="docutils">
+<dt>if power_status == OVERFLOWED:</dt>
+<dd><dl class="first docutils">
+<dt>raise DevicePowerStatusError(</dt>
+<dd>f”BUFFER OVERFLOW, call <cite>power_read()</cite> more frequently or increase the buffer size.”</dd>
+</dl>
+<p class="last">)</p>
+</dd>
+</dl>
+<p># Create variable to the store data in
+data = []</p>
+<p># Get the data from the buffer in the library
+self.auxiliary_power_lock_data_for_reading()
+for power_buffer in self.power_buffers:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>data.append(</dt>
+<dd><dl class="first docutils">
+<dt>self.auxiliary_power_copy_data(</dt>
+<dd>power_buffer[“channel”], power_buffer[“power_type”], <a href="#id17"><span class="problematic" id="id18">*</span></a>args, <a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs</dd>
+</dl>
+<p class="last">)</p>
+</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+<p>self.auxiliary_power_free_data()</p>
+<p>#         # TODO: Check implementation in case of buffer overflow.
+#         #  Should auxiliary_power_lock_data_for_reading() be inside the loop or before?</p>
+<p>#         # Get the data from the buffer in the library
+#         while True:
+#             self.auxiliary_power_lock_data_for_reading()
+#             for power_buffer in self.power_buffers:
+#                 data = self.auxiliary_power_copy_data(power_buffer[“channel”], power_buffer[“power_type”], <a href="#id21"><span class="problematic" id="id22">*</span></a>args, <a href="#id23"><span class="problematic" id="id24">**</span></a>kwargs)
+#                 power_samples.append(data[0])
+#                 timestamps.append(data[1])
+#             self.auxiliary_power_free_data()
+#             # Repeat the loop untill there is no buffer overflow (which should always be avoided.)
+#             if self.auxiliary_power_get_status() != OVERFLOWED:
+#                 break</p>
+<dl class="docutils">
+<dt>if self.verbose &gt;= 4:</dt>
+<dd>print(data)</dd>
+<dt>if self.verbose &gt;= 2:</dt>
+<dd>print(f”Collected {len(data[0])} power samples”)</dd>
+</dl>
+<p class="last">return data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>#     dgilib.auxiliary_power_register_buffer_pointers()
+#     dgilib.start_polling()
+#     dgilib.auxiliary_power_start()
+#     dgilib.auxiliary_power_get_status()
+#     sleep(1)
+#     dgilib.auxiliary_power_lock_data_for_reading()
+#     dat = dgilib.auxiliary_power_copy_data()
+#     dgilib.auxiliary_power_free_data()
+#     dgilib.auxiliary_power_stop()
+#     dgilib.auxiliary_power_get_status()</p>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">pydgilib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Erik Wouters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/pydgilib_extra/dgilib_interface_power..py.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

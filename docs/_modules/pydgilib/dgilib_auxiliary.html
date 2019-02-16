@@ -42,43 +42,13 @@
 <span class="n">__revision__</span> <span class="o">=</span> <span class="s2">&quot; $Id: dgilib_auxiliary.py 1586 2019-02-13 15:56:25Z EWouters $ &quot;</span>
 <span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;reStructuredText&quot;</span>
 
-<span class="n">GET_STRING_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">NUM_INTERFACES</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">NUM_CONFIG_IDS</span> <span class="o">=</span> <span class="mi">255</span>
-<span class="n">NUM_CALIBRATION</span> <span class="o">=</span> <span class="mi">255</span>
-<span class="n">BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">10000000</span>
-<span class="n">MAX_PRINT</span> <span class="o">=</span> <span class="mi">100</span>
-
-<span class="c1"># Interface types</span>
-<span class="n">INTERFACE_TIMESTAMP</span>  <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0 Service interface which appends timestamps to all received events on associated interfaces.</span>
-<span class="n">INTERFACE_SPI</span>        <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32 Communicates directly over SPI in Slave mode.</span>
-<span class="n">INTERFACE_USART</span>      <span class="o">=</span> <span class="mh">0x21</span> <span class="c1">#  33 Communicates directly over USART in Slave mode.</span>
-<span class="n">INTERFACE_I2C</span>        <span class="o">=</span> <span class="mh">0x22</span> <span class="c1">#  34 Communicates directly over I2C in Slave mode.</span>
-<span class="n">INTERFACE_GPIO</span>       <span class="o">=</span> <span class="mh">0x30</span> <span class="c1">#  48 Monitors and controls the state of GPIO pins.</span>
-<span class="n">INTERFACE_POWER_DATA</span> <span class="o">=</span> <span class="mh">0x40</span> <span class="c1">#  64 Receives data from the attached power measurement co-processors.</span>
-<span class="n">INTERFACE_POWER_SYNC</span> <span class="o">=</span> <span class="mh">0x41</span> <span class="c1">#  65 Receives sync events from the attached power measurement co-processors.</span>
-<span class="n">INTERFACE_RESERVED</span>   <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255 Special identifier used to indicate no interface.</span>
-
-<span class="c1"># Circuit types</span>
-<span class="n">OLD_XAM</span> <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
-<span class="n">XAM</span>     <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
-<span class="n">PAM</span>     <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
-<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="mh">0xFF</span> <span class="c1"># 255</span>
-
-<span class="c1"># Return codes</span>
-<span class="n">IDLE</span>               <span class="o">=</span> <span class="mh">0x00</span> <span class="c1">#   0</span>
-<span class="n">RUNNING</span>            <span class="o">=</span> <span class="mh">0x01</span> <span class="c1">#   1</span>
-<span class="n">DONE</span>               <span class="o">=</span> <span class="mh">0x02</span> <span class="c1">#   2</span>
-<span class="n">CALIBRATING</span>        <span class="o">=</span> <span class="mh">0x03</span> <span class="c1">#   3</span>
-<span class="n">INIT_FAILED</span>        <span class="o">=</span> <span class="mh">0x10</span> <span class="c1">#  16</span>
-<span class="n">OVERFLOWED</span>         <span class="o">=</span> <span class="mh">0x11</span> <span class="c1">#  17</span>
-<span class="n">USB_DISCONNECTED</span>   <span class="o">=</span> <span class="mh">0x12</span> <span class="c1">#  18</span>
-<span class="n">CALIBRATION_FAILED</span> <span class="o">=</span> <span class="mh">0x20</span> <span class="c1">#  32</span>
-
 <span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+<span class="c1"># from ctypes import byref, c_uint, c_int, c_float, c_double, c_size_t, c_ubyte</span>
 
+<span class="kn">from</span> <span class="nn">pydgilib.dgilib_config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pydgilib.dgilib_exceptions</span> <span class="k">import</span> <span class="o">*</span>
+<span class="c1"># from pydgilib.dgilib_exceptions import DeviceReturnError</span>
+
 
 <div class="viewcode-block" id="DGILibAuxiliary"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary">[docs]</a><span class="k">class</span> <span class="nc">DGILibAuxiliary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Auxiliary.</span>
@@ -102,13 +72,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">power_hndl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_power_initialize</span><span class="p">()</span>
-<span class="c1">#         self.auxiliary_power_register_buffer_pointers()</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_power_uninitialize</span><span class="p">()</span>
-<span class="c1">#         self.auxiliary_power_unregister_buffer_pointers()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye from Auxiliary&quot;</span><span class="p">)</span>
 
@@ -548,8 +516,8 @@
 <span class="sd">        :raises: :exc:`DeviceReturnError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="c1">#         buffer = (c_float * max_count)()</span>
-<span class="c1">#         timestamp = (c_double * max_count)()</span>
+        <span class="c1"># buffer = (c_float * max_count)()</span>
+        <span class="c1"># timestamp = (c_double * max_count)()</span>
         <span class="n">count</span> <span class="o">=</span> <span class="n">c_size_t</span><span class="p">()</span>
         <span class="n">max_count</span> <span class="o">=</span> <span class="n">c_size_t</span><span class="p">(</span><span class="n">max_count</span><span class="p">)</span>
         <span class="n">channel</span> <span class="o">=</span> <span class="n">c_int</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
@@ -559,9 +527,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">power_hndl</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">powerBuffer</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">powerTimestamp</span><span class="p">,</span>
-<span class="c1">#             byref(self.powerCount),</span>
-<span class="c1">#             buffer,</span>
-<span class="c1">#             timestamp,</span>
+            <span class="c1"># byref(self.powerCount),</span>
+            <span class="c1"># buffer,</span>
+            <span class="c1"># timestamp,</span>
             <span class="n">byref</span><span class="p">(</span><span class="n">count</span><span class="p">),</span>
             <span class="n">max_count</span><span class="p">,</span>
             <span class="n">channel</span><span class="p">,</span>
@@ -570,12 +538,12 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{res}</span><span class="s2"> auxiliary_power_copy_data: </span><span class="si">{count.value}</span><span class="s2"> samples, power_type: </span><span class="si">{power_type.value}</span><span class="s2">&quot;</span>
-<span class="c1">#                 f&quot;\t{res} auxiliary_power_copy_data: {self.powerCount.value} samples, power_type: {power_type.value}&quot;</span>
+                <span class="c1"># f&quot;\t{res} auxiliary_power_copy_data: {self.powerCount.value} samples, power_type: {power_type.value}&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">count</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">MAX_PRINT</span><span class="p">)):</span>
-<span class="c1">#             for i in range(min(self.powerCount.value, MAX_PRINT)):</span>
-<span class="c1">#                 print(f&quot;\t{i}: buffer: {buffer[i]}, timestamp: {timestamp[i]}&quot;)</span>
+                <span class="c1"># for i in range(min(self.powerCount.value, MAX_PRINT)):</span>
+                <span class="c1">#     print(f&quot;\t{i}: buffer: {buffer[i]}, timestamp: {timestamp[i]}&quot;)</span>
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{i}</span><span class="s2">: buffer: </span><span class="si">{self.powerBuffer[i]}</span><span class="s2">, timestamp: </span><span class="si">{self.powerTimestamp[i]}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
@@ -583,8 +551,8 @@
             <span class="k">raise</span> <span class="n">DeviceReturnError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;auxiliary_power_copy_data returned: </span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">powerBuffer</span><span class="p">[:</span> <span class="n">count</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">powerTimestamp</span><span class="p">[:</span> <span class="n">count</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
-<span class="c1">#         return self.powerBuffer[:self.powerCount.value], self.powerTimestamp[:self.powerCount.value]</span>
-<span class="c1">#         return buffer[:], timestamp[:]</span>
+        <span class="c1"># return self.powerBuffer[:self.powerCount.value], self.powerTimestamp[:self.powerCount.value]</span>
+        <span class="c1"># return buffer[:], timestamp[:]</span>
 
 <div class="viewcode-block" id="DGILibAuxiliary.auxiliary_power_free_data"><a class="viewcode-back" href="../../pydgilib.html#pydgilib.dgilib_auxiliary.DGILibAuxiliary.auxiliary_power_free_data">[docs]</a>    <span class="k">def</span> <span class="nf">auxiliary_power_free_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;`auxiliary_power_free_data`</span>

@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pydgilib_extra.dgilib_logger &#8212; pydgilib 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pydgilib_extra.dgilib_logger</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides Python bindings for DGILibExtra Logger.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Erik Wouters &lt;ehwo(at)kth.se&gt;&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="s2">&quot;Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1&quot;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s2">&quot; $Id: dgilib_logger.py 1586 2019-02-13 15:56:25Z EWouters $ &quot;</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s2">&quot;reStructuredText&quot;</span>
+
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+
+<div class="viewcode-block" id="DGILibLogger"><a class="viewcode-back" href="../../pydgilib_extra.html#pydgilib_extra.dgilib_logger.DGILibLogger">[docs]</a><span class="k">class</span> <span class="nc">DGILibLogger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Python bindings for DGILib Logger.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Argument parsing</span>
+<span class="c1">#         interfaces</span>
+<span class="c1">#             - GPIO mode</span>
+<span class="c1">#             - Power mode</span>
+        
+<span class="c1">#         file_name</span>
+<span class="c1">#         plot</span>
+        
+<span class="c1">#         update_callback</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">interfaces</span>   <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interfaces&quot;</span><span class="p">,[])</span>  <span class="c1"># List of interfaces (ints)</span>
+<span class="c1">#         self.interface_configs = {}</span>
+<span class="c1">#         if INTERFACE_GPIO in self.interfaces:</span>
+<span class="c1">#             self.interface_configs[INTERFACE_GPIO]   = kwargs.get(&quot;interface_configs&quot;,[])  # List of interfaces (ints)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span>    <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_name&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># File name (passed to open), if empty no logging will be done.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_in_obj</span>  <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_in_obj&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># if this is true the data will be available through self.timestamp[INTERFACE] and self.data[INTERFACE]</span>
+        
+
+<span class="c1">#         output = csv.writer(open(&#39;export_log.csv&#39;, &#39;w&#39;))</span>
+
+<span class="c1">#         for foo in bar:</span>
+<span class="c1">#            # do work</span>
+<span class="c1">#            output.writerow([status, view, filename, out, err, current_time])</span>
+        
+        
+<span class="c1">#         self.options = {</span>
+<span class="c1">#             &#39;option1&#39; : &#39;default_value1&#39;,</span>
+<span class="c1">#             &#39;option2&#39; : &#39;default_value2&#39;,</span>
+<span class="c1">#             &#39;option3&#39; : &#39;default_value3&#39;, }</span>
+
+<span class="c1">#         self.options.update(kwargs)</span>
+<span class="c1">#         print self.options</span>
+        
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO per interface</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="s2">&quot;csv.writer&quot;</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+            
+
+<div class="viewcode-block" id="DGILibLogger.logger_start"><a class="viewcode-back" href="../../pydgilib_extra.html#pydgilib_extra.dgilib_logger.DGILibLogger.logger_start">[docs]</a>    <span class="k">def</span> <span class="nf">logger_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_polling</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_power_start</span><span class="p">()</span></div>
+        
+<div class="viewcode-block" id="DGILibLogger.logger_stop"><a class="viewcode-back" href="../../pydgilib_extra.html#pydgilib_extra.dgilib_logger.DGILibLogger.logger_stop">[docs]</a>    <span class="k">def</span> <span class="nf">logger_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_polling</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_power_stop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DGILibLogger.logger"><a class="viewcode-back" href="../../pydgilib_extra.html#pydgilib_extra.dgilib_logger.DGILibLogger.logger">[docs]</a>    <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;logger</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        
+<span class="c1">#         self.writer[INTERFACE_GPIO].writerow([&#39;status&#39;, &#39;view&#39;, &#39;filename&#39;, &#39;stdout&#39;, &#39;stderr&#39;, &#39;time&#39;])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger_start</span><span class="p">()</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">power_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_read</span><span class="p">()</span>
+        <span class="n">gpio_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpio_read</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger_stop</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">power_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gpio_data</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pydgilib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Erik Wouters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

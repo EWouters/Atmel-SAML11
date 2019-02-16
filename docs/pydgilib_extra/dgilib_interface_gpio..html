@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>&lt;no title&gt; &#8212; pydgilib 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p>“”“This module provides Python bindings for DGILibExtra GPIO interface.”“”</p>
+<p>__author__ = “Erik Wouters &lt;ehwo(at)kth.se&gt;”
+__credits__ = “Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/2016”
+__license__ = “MIT”
+__version__ = “0.1”
+__revision__ = ” $Id: dgilib_interface_gpio.py 1586 2019-02-13 15:56:25Z EWouters $ ”
+__docformat__ = “reStructuredText”</p>
+<p>from pydgilib.dgilib_config import *</p>
+<p># TODO: make these functions faster
+def int2bool(i):</p>
+<blockquote>
+<div>“”“Convert int to list of bool
+“””
+return [bit is “1” for bit in f”{i:04b}”]</div></blockquote>
+<dl class="docutils">
+<dt>def bool2int(b):</dt>
+<dd>“”“Convert list of bool to int
+“””
+return int(“”.join(“1” if d else “0” for d in b), 2)</dd>
+<dt>class DGILibInterfaceGPIO(object):</dt>
+<dd><p class="first">“”“Python bindings for DGILib GPIO interface.</p>
+<p>The GPIO interface consists of four lines available, which can be individually set to input or output
+through the configuration interface. This interface can only be used in Timestamp mode. Input lines are
+monitored and will trigger an entry to be added to the timestamp buffer on each change. Output lines can
+be controlled through the send data command.</p>
+<p>## Parsing
+Each received data byte corresponds to an input pattern on the GPIO pins. If a bit is 1 it means that the
+corresponding GPIO pin is high, a 0 means a low level.</p>
+<p>## Configuration
+The GPIO configuration controls the direction of the pins.
+Field ID Description
+Input pins 0 Setting a bit to 1 means the pin is monitored.
+Output pins 1 Setting a bit to 1 means the pin is set to output and can be controlled by the send
+command.
+“”“</p>
+<dl class="last docutils">
+<dt>def __init__(self, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt>
+<dd><p class="first">“””
+:Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">DGILibExtra</span><span class="p">(</span><span class="n">read_mode</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">dgilib</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">dgilib</span><span class="o">.</span><span class="n">get_major_version</span><span class="p">()</span>
+<span class="go">5</span>
+<span class="go">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p># Argument parsing
+self.read_mode = kwargs.get(“read_mode”, [False] * 4)
+self.write_mode = kwargs.get(“write_mode”, [False] * 4)
+if self.verbose:</p>
+<blockquote class="last">
+<div>print(“read_mode: “, self.read_mode)
+print(“write_mode: “, self.write_mode)</div></blockquote>
+</dd>
+<dt>def __enter__(self):</dt>
+<dd><p class="first">self.gpio_set_config(read_mode=self.read_mode, write_mode=self.write_mode)</p>
+<p class="last">return self</p>
+</dd>
+<dt>def __exit__(self, exc_type, exc_value, traceback):</dt>
+<dd>self.gpio_set_config()  # Disables interface.</dd>
+<dt>def gpio_get_config(self):</dt>
+<dd><p class="first">“”“Get the pin-mode for the GPIO pins</p>
+<p>The GPIO configuration controls the direction of the pins.</p>
+<p>Input pins:  Setting a bit to 1 means the pin is monitored.
+Output pins: Setting a bit to 1 means the pin is set to output and can be controlled by the send
+command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Tuple of:
+- List of read modes, Setting a pin to True means the pin is monitored.
+- List of write modes, Setting a pin to True means the pin is set to output and can be controlled by the send command.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">(list(bool), list(bool))</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Get the configuration
+config_id, config_value = self.interface_get_configuration(INTERFACE_GPIO)</p>
+<p># Convert int to lists of bool
+read_mode = int2bool(config_value[0])
+write_mode = int2bool(config_value[1])</p>
+<p class="last">return read_mode, write_mode</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>#     def gpio_set_config(self, read_mode=[False] * 4, write_mode=[False] * 4):</p>
+<p>#         # Update internal values
+#         self.read_mode = read_mode
+#         self.write_mode = write_mode</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>def gpio_set_config(self, <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs):</dt>
+<dd><p class="first">“”“Set the pin-mode for the GPIO pins</p>
+<p>The GPIO configuration controls the direction of the pins, and enables the interface if needed.</p>
+<p>Input pins:  Setting a bit to 1 means the pin is monitored.
+Output pins: Setting a bit to 1 means the pin is set to output and can be controlled by the send
+command.</p>
+<p>If any of the pins are set to read mode or write mode the GPIO interface will be enabled. If none of the pins are set to read mode
+or write mode the GPIO interface will be disabled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param read_mode:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">List of modes, Setting a pin to True means the pin is monitored.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type read_mode:</th><td class="field-body">list(bool)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param write_mode:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">List of modes, Setting a pin to True means the pin is set to output and can be controlled by the send command.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type write_mode:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list(bool)</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Argument parsing
+self.read_mode = kwargs.get(“read_mode”, self.read_mode)
+self.write_mode = kwargs.get(“write_mode”, self.write_mode)</p>
+<p># Convert lists of bool to int
+read_mode = bool2int(self.read_mode)
+write_mode = bool2int(self.write_mode)</p>
+<p># Set the configuration
+if “read_mode” in kwargs:</p>
+<blockquote>
+<div>self.interface_set_configuration(INTERFACE_GPIO, [0], [read_mode])</div></blockquote>
+<dl class="docutils">
+<dt>if “write_mode” in kwargs:</dt>
+<dd>self.interface_set_configuration(INTERFACE_GPIO, [1], [write_mode])</dd>
+</dl>
+<p># Enable the interface if any of the pins are set to read mode or write mode
+if read_mode + write_mode:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>if not INTERFACE_GPIO in self.enabled_interfaces:</dt>
+<dd>self.interface_enable(INTERFACE_GPIO)
+self.enabled_interfaces.append(INTERFACE_GPIO)</dd>
+<dt>if self.timer_factor is None:</dt>
+<dd>self.timer_factor = self.get_time_factor()</dd>
+</dl>
+</div></blockquote>
+<dl class="last docutils">
+<dt>elif INTERFACE_GPIO in self.enabled_interfaces:  # Disable the interface if none of the pins are set to read mode or write mode</dt>
+<dd>self.interface_disable(INTERFACE_GPIO)
+self.enabled_interfaces.remove(INTERFACE_GPIO)</dd>
+</dl>
+</dd>
+<dt>def gpio_read(self):</dt>
+<dd><p class="first">“”“Get the state of the GPIO pins.</p>
+<p>Clears the buffer and returns the values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Tuple of list of list of pin states (bool) and list of timestamps in seconds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">(list(list(bool)), list(float)</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Read the data from the buffer
+pin_values, ticks = self.interface_read_data(INTERFACE_GPIO)</p>
+<p>pin_values = [int2bool(pin_value) for pin_value in pin_values]
+timestamps = [tick * self.timer_factor for tick in ticks]</p>
+<dl class="docutils">
+<dt>if self.verbose &gt;= 2:</dt>
+<dd>print(f”Collected {len(pin_values)} gpio samples (4 pins per sample)”)</dd>
+</dl>
+<p class="last">return pin_values, timestamps</p>
+</dd>
+<dt>def gpio_write(self, pin_values):</dt>
+<dd><p class="first">“”“Set the state of the GPIO pins</p>
+<p>Make sure to set the pin to write mode first. Possibly also needs to be configured properly on the board</p>
+<p>A maximum of 255 elements can be written each time. An error return code will be given if data hasn’t been written yet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param pin_values:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">List of pin values. Has to include all four pins ? TODO: TEST</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type pin_values:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list(bool)</td>
+</tr>
+</tbody>
+</table>
+<p>“”“</p>
+<p># Convert list of bool to int
+pin_values = bool2int(pin_values)</p>
+<p>self.interface_write_data(INTERFACE_GPIO, [pin_values])</p>
+<dl class="last docutils">
+<dt>if self.verbose &gt;= 2:</dt>
+<dd>print(f”Sent gpio packet”)</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">pydgilib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Erik Wouters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/pydgilib_extra/dgilib_interface_gpio..py.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
