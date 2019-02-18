@@ -464,6 +464,9 @@ obj/
 # sphinx build folder
 _build
 
+# Atmel Start
+.atmel-start-backup
+
 # Dragos: Specifically ignore pushing Verifier/kalman executable
 Verifier/kalman
 Accelerometer+gyroscope transfer/output.csv
