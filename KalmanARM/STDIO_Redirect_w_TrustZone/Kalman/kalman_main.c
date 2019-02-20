@@ -30,7 +30,7 @@ void loop(int idx) {
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
 	
-	gpio_set_pin_level(DGI_GPIO0, true);
+	gpio_set_pin_level(DGI_GPIO3, true);
 
 	double dt = 1; // Calculate delta time
 
@@ -90,7 +90,7 @@ void loop(int idx) {
 	if (gyroYangle < -180 || gyroYangle > 180)
 	gyroYangle = kalAngleY;
 	
-	gpio_set_pin_level(DGI_GPIO0, false);
+	gpio_set_pin_level(DGI_GPIO3, false);
 
 	/* Print Data */
 	printValuesExtended(idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
