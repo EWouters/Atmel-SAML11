@@ -21,7 +21,7 @@ int main(void)
 		//delay_ms(10);
 		//gpio_toggle_pin_level(DGI_GPIO2);
 		//delay_ms(10);
-		//gpio_toggle_pin_level(DGI_GPIO3);
+		gpio_toggle_pin_level(DGI_GPIO3);
 		//gpio_toggle_pin_level(LED0);
 	}
 }
