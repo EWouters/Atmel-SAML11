@@ -20,8 +20,8 @@ def energy_measurements_worker(queue, division = 5, max_seconds = 50, pin_filter
             data = dgilib.logger(division)
             queue.put(data)
 
-            with open("wtf.txt", "w") as f:
-                 f.write(str(data[INTERFACE_GPIO]))
+            # with open("wtf.txt", "w") as f:
+            #      f.write(str(data[INTERFACE_GPIO]))
 
 def identify_hold_times(whole_data, true_false, pin, correction_forward = 0.00, shrink = 0.00):
     data = whole_data[INTERFACE_GPIO]
@@ -79,37 +79,42 @@ def identify_hold_times(whole_data, true_false, pin, correction_forward = 0.00, 
 
     return hold_times
 
-def calculate_average2(power_data, good_intervals, start_time = None, end_time = None):
+def calculate_average_midpoint_single_interval(power_data, start_time = None, end_time = None):
     # Calculate average value using midpoint Riemann sum
     sum = 0
-
-    will_divide_with = 1
-
+ 
+    actual_start_time = -1
+    actual_end_time = -1
+ 
     for i in range(len(power_data[0]) - 1)[1:]:
         first_current_value = power_data[1][i]
         second_current_value = power_data[1][i+1]
-        timestamp2 = power_data[0][i+1]
-        timestamp1 = power_data[0][i]
-
-        do_calculations = True
-
-        if not ((timestamp1 >= start_time) and (timestamp1 < end_time)):
-            do_calculations = False
-        if not do_calculations: continue
-
-        for gi in good_intervals:
-            if not (timestamp2 >= gi[0] and timestamp2 <= gi[1] and timestamp1 >= gi[0] and timestamp1 <= gi[1]):
-                do_calculations = False
-        if not do_calculations: continue
-
-        sum += ((first_current_value + second_current_value)/2) * (timestamp2 - timestamp1)
-        will_divide_with += (timestamp2 - timestamp1)
-        print("Added")
-
-        if (timestamp2 >= end_time):
+        timestamp = power_data[0][i+1]
+        last_time = power_data[0][i]
+ 
+        if ((last_time >= start_time) and (last_time < end_time)):
+            sum += ((first_current_value + second_current_value)/2) * (timestamp - last_time)
+ 
+            # We have to select the actual start time and the actual 
+            if (actual_start_time == -1): actual_start_time = power_data[0][i]
+ 
+        if (timestamp >= end_time):
+            actual_end_time = power_data[0][i-1]
             break
+ 
+    return sum / (actual_end_time - actual_start_time)   
 
-    return sum / will_divide_with
+def calculate_average_midpoint_multiple_intervals(power_data, intervals, start_time = None, end_time = None):
+    # Calculate average value using midpoint Riemann sum
+    sum = 0
+    to_divide = 0
+
+    for intv in intervals:
+        if ((intv[0] >= start_time) and (intv[0] <= end_time) and (intv[1] >= start_time) and (intv[1] <= end_time)):
+            sum += calculate_average_midpoint_single_interval(power_data, intv[0], intv[1])
+            to_divide += 1
+
+    return sum / to_divide
 
 def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plot_max = 0.005, plot_min = 0):
     xdata = []
@@ -152,7 +157,10 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
 
         axes.axis([pos,pos+width,plot_min,plot_max])
 
-        axes.set_title(f"Visible average: {visible_average} mA; Total average: {all_average} mA.")
+        visible_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, i, i+width) * 1000
+        all_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
+
+        axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
 
         fig.canvas.draw_idle()
 
@@ -197,11 +205,10 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
             axes.axis([i,i+width,plot_min,plot_max])
             spos.set_val(i)
 
-        print(str(all_hold_times))
-        visible_average = calculate_average2([xdata,ydata], all_hold_times, i, i+width) * 1000
-        all_average = calculate_average2([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
+        visible_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, i, i+width) * 1000
+        all_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
 
-        axes.set_title(f"Visible average: {visible_average} mA; Total average: {all_average} mA.")
+        axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
 
         plt.draw()
         plt.pause(0.1)
