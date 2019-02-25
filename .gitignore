@@ -835,3 +835,8 @@ healthchecksdb
 MigrationBackup/
 Python/log48.csv
 Python/log256.csv
+PythonCSV/wtf.txt
+PythonCSV/log256.csv
+PythonCSV/dgilib.dll
+PythonCSV/.directory
+PythonCSV/log48.csv
