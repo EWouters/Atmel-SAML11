@@ -25,10 +25,18 @@ int main(void)
 
 	gpio_set_pin_level(DGI_GPIO3, false);
 	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
+	
 	printf("RDY\r\n");
 	
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 	
 	gpio_set_pin_level(DGI_GPIO3, true);
 
@@ -54,6 +62,10 @@ int main(void)
 	compAngleY = pitch;
 	
 	gpio_set_pin_level(DGI_GPIO3, false);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 

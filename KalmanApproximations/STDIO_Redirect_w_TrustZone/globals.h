@@ -14,6 +14,9 @@
 
 #define LINE_LENGTH 256
 
+#define DO_DELAY
+#define DELAY_DURATION 1000
+
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;
 
@@ -23,5 +26,7 @@ double compAngleX;
 double compAngleY; // Calculated angle using a complementary filter
 double kalAngleX;
 double kalAngleY; // Calculated angle using a Kalman filter
+
+
 
 #endif /* MAIN_H_ */

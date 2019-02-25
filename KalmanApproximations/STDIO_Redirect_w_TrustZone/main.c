@@ -1,5 +1,5 @@
 #include <atmel_start.h>
-	
+
 
 #include "stdio_start.h"
 #include "PrintLines/printlines.h"
@@ -17,7 +17,7 @@ int main(void)
 {
 	//char line[LINE_LENGTH] = {'\0'};
 	//char buffer[LINE_LENGTH] = {'\0'};
-		
+	
 	usart_sync_get_io_descriptor(&TARGET_IO, &io);
 
 	/* Initializes MCU, drivers and middleware */
@@ -25,10 +25,18 @@ int main(void)
 
 	gpio_set_pin_level(DGI_GPIO3, false);
 	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
+	
 	printf("RDY\r\n");
 	
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 	
 	gpio_set_pin_level(DGI_GPIO3, true);
 
@@ -54,6 +62,10 @@ int main(void)
 	compAngleY = pitch;
 	
 	gpio_set_pin_level(DGI_GPIO3, false);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
@@ -62,7 +74,7 @@ int main(void)
 		loop(i);
 	}
 	
-	/* Replace with your application code */	
+	/* Replace with your application code */
 	while (1) {
 		1+1;
 	}

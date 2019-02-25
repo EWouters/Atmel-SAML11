@@ -13,6 +13,8 @@ config_dict = {
     "verbose": 0,
 }
 
+PAUSE_DURATION = 0.5
+
 def energy_measurements_worker(queue, division = 5, max_seconds = 50, pin_filter = 3):
     with DGILibExtra(**config_dict) as dgilib:
         for i in np.arange(0.0, max_seconds, division):
@@ -173,7 +175,10 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
         spos.on_changed(update)
         spos.reset()
 
-        axes.set_title(f"Visible average: {visible_average} mA; Total average: {all_average} mA.")
+        visible_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, i, i+width) * 1000
+        all_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
+
+        axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
         
     button.on_clicked(reset)
 
@@ -185,7 +190,7 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
         if not plt.fignum_exists(fig.number): break
 
         if queue.empty(): 
-            plt.pause(0.1)
+            plt.pause(PAUSE_DURATION)
             continue
 
         data = queue.get()
@@ -194,7 +199,7 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
             xdata.append(i + data[INTERFACE_POWER][0][j])
             ydata.append(data[INTERFACE_POWER][1][j])
 
-        for hold_times in identify_hold_times(data, True, 2, correction_forward=0.0005, shrink=0.0010):
+        for hold_times in identify_hold_times(data, True, 2, correction_forward=0.00075, shrink=0.0010):
             axes.axvspan(i+hold_times[0], i+hold_times[1], color='green', alpha=0.5)
             all_hold_times.append((i+hold_times[0], i+hold_times[1]))
 
@@ -211,8 +216,8 @@ def power_plot_worker(queue, division = 5, max_seconds = 50, plot_width = 5, plo
         axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
 
         plt.draw()
-        plt.pause(0.1)
+        plt.pause(PAUSE_DURATION)
         i = i + division
 
     while plt.fignum_exists(fig.number):
-        plt.pause(0.1)
+        plt.pause(PAUSE_DURATION)

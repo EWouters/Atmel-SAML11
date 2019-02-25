@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>STDIO_Redirect_w_TrustZone</AssemblyName>
-    <Name>STDIO_Redirect_w_TrustZone</Name>
+    <Name>KalmanBaseline</Name>
     <RootNamespace>STDIO_Redirect_w_TrustZone</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>

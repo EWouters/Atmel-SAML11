@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>STDIO_Redirect_w_TrustZone</AssemblyName>
-    <Name>STDIO_Redirect_w_TrustZone</Name>
+    <Name>KalmanHash</Name>
     <RootNamespace>STDIO_Redirect_w_TrustZone</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -628,6 +628,12 @@
     <Compile Include="hal\utils\src\utils_syscalls.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="HashTable\hashtable.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="HashTable\hashtable.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hpl\core\hpl_core_m23_base.c">
       <SubType>compile</SubType>
     </Compile>
@@ -844,6 +850,7 @@
     <Folder Include="hpl\sercom\" />
     <Folder Include="hri\" />
     <Folder Include="Kalman" />
+    <Folder Include="HashTable" />
     <Folder Include="PrintLines" />
     <Folder Include="stdio_redirect\" />
     <Folder Include="stdio_redirect\gcc\" />
