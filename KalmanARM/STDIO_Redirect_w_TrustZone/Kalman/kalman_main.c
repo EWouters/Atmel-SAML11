@@ -9,6 +9,7 @@
 #include <tgmath.h>
 #include "kalman.h"
 #include "kalman_main.h"
+#include "../globals.h"
 //#include "kalman_globals.h"
 #include "stdio_start.h"
 //#include "globals.h"
@@ -29,6 +30,10 @@ void loop(int idx) {
 	/* Update all the values */
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 	
 	gpio_set_pin_level(DGI_GPIO3, true);
 
@@ -91,6 +96,10 @@ void loop(int idx) {
 	gyroYangle = kalAngleY;
 	
 	gpio_set_pin_level(DGI_GPIO3, false);
+	
+	#ifdef DO_DELAY
+	delay_ms(DELAY_DURATION);
+	#endif
 
 	/* Print Data */
 	printValuesExtended(idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);

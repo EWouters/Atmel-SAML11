@@ -4,9 +4,8 @@ import sys
 import numpy
 import queue
 import matplotlib.pyplot as plt; plt.ion()
-import matplotlib.animation as animation
 
-plotting_or_outputting_csv = "output_csv" # options are: "output_csv" or "plot"
+#plotting_or_outputting_csv = "output_csv" # options are: "output_csv" or "plot"
 
 def sendline(ser, line, verbose = 1):
     prevline = ""

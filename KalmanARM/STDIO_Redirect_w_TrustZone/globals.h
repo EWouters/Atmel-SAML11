@@ -13,6 +13,8 @@
 #include "Kalman/kalman_struct.h"
 
 #define LINE_LENGTH 256
+#define DO_DELAY
+#define DELAY_DURATION 1000
 
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;
