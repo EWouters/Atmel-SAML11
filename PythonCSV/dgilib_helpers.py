@@ -1,9 +1,7 @@
 from pydgilib_extra import *
-from time import sleep
-import numpy as np
+from dgilib_globals import *
+
 import queue
-import matplotlib.pyplot as plt; plt.ion()
-from matplotlib.widgets import Slider, Button
 
 config_dict = {
     "power_buffers": [{"channel": CHANNEL_A, "power_type": POWER_CURRENT}],
@@ -12,8 +10,6 @@ config_dict = {
     "loggers": [LOGGER_OBJECT],
     "verbose": 0,
 }
-
-PAUSE_DURATION = 0.5
 
 def identify_hold_times(whole_data, true_false, pin, correction_forward = 0.00, shrink = 0.00):
     data = whole_data[INTERFACE_GPIO]

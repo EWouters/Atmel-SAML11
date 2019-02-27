@@ -13,7 +13,7 @@ run: kalman
 	./kalman
 
 kalman: $(SRC)/main.cpp $(SRC)/kalman.hpp
-	g++ -m32 -Wall -I. -I$(SRC) -o kalman $(SRC)/main.cpp -lm
+	g++ -m32 -Wall -I. -I$(SRC) -I$(SRC)/HashTable/ -o kalman $(SRC)/main.cpp $(SRC)/HashTable/hashtable.c -lm
 
 edit:
 	vim kalman.cpp

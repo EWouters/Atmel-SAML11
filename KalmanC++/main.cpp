@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cmath>
 #include "kalman.hpp" // Source: https://github.com/TKJElectronics/KalmanFilter
+#include "HashTable/hashtable.h"
 
 #define RAD_TO_DEG 57.295779513082321
 
@@ -185,11 +186,55 @@ int main() {
   compAngleX = roll;
   compAngleY = pitch;
 
+  struct hentry* he = (struct hentry*) NULL; 
+  he = (struct hentry*) hash(accX, accY, gyroX, gyroY);
+  store(he, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+
   //fprintf(output, ",Roll,Pitch,GyroX,CompX,KalmanX,GyroY,CompY,KalmanY\r\n");
 	fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
+  //init();
+
   int i;
-  for (i = 0; i < 1001; i++) loop(i, accFile, gyroFile, output);
+
+  for (i = 0; i < 100; i++) {   
+    //printf("Memoization!\r\n");
+    //struct hentry* he = (struct hentry*) NULL; 
+    he = (struct hentry*) lookup(accX, accY, accZ, gyroX, gyroY, gyroZ);
+    
+    if (he == nullptr) {           
+      loop(i, accFile, gyroFile, output);
+      
+      he = (struct hentry*) hash(accX, accY, gyroX, gyroY);
+      store(he, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+    }
+    else {      
+      roll = he->roll;
+      pitch = he->pitch;
+      gyroXangle = he->gyroXangle;
+      gyroYangle = he->gyroYangle;
+      compAngleX = he->compAngleX;
+      compAngleY = he->compAngleY;
+      kalAngleX = he->kalAngleX;
+      kalAngleY = he->kalAngleY;
+
+      fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+    }
+  }
+
+  for (i = 0; i < HASHSIZE; i++) {
+    if (hashtab[i].roll > 0) {
+      printf("%d -- %f \r\n", i, hashtab[i].roll);
+    }
+  }
+
+  int count = 0;
+  for (i = 0; i < HASHSIZE; i++) {
+    if (hashtab[i].roll > 0) {
+      count++;
+    }
+  }
+  printf("%d / %d\r\n", count, HASHSIZE);
 
   fclose(accFile);
   fclose(gyroFile);

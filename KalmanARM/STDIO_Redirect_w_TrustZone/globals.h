@@ -12,9 +12,10 @@
 
 #include "Kalman/kalman_struct.h"
 
-#define LINE_LENGTH 256
+#define LINE_LENGTH 128
+
 #define DO_DELAY
-#define DELAY_DURATION 1000
+#define DELAY_DURATION 250
 
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;
@@ -25,5 +26,7 @@ double compAngleX;
 double compAngleY; // Calculated angle using a complementary filter
 double kalAngleX;
 double kalAngleY; // Calculated angle using a Kalman filter
+
+
 
 #endif /* MAIN_H_ */
