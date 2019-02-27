@@ -1,5 +1,6 @@
 #include <atmel_start.h>
 #include <hal_gpio.h>
+#include <hal_delay.h>
 
 #include "serial_interface.h"
 
@@ -8,22 +9,57 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
+	delay_ms(100);
+	gpio_set_pin_level(DGI_GPIO0, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO1, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+	
+	delay_ms(100);
+	gpio_set_pin_level(DGI_GPIO0, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO1, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
+	delay_ms(10);
+	
+	delay_ms(100);
+	gpio_set_pin_level(DGI_GPIO0, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO0, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO1, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO1, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+	delay_ms(10);
+	gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
+	
+	delay_ms(100);
+	
 	//test_aes_write_flash(64);
 	
 	/* Replace with your application code */
-	char command[CMD_MAX_LEN + 1];
-	while (1) {
-		serial_command(command);
+	//char command[CMD_MAX_LEN + 1];
+	//while (1) {
+		//serial_command(command);
 		//delay_ms(100);
 		//gpio_toggle_pin_level(DGI_GPIO0);
-		//delay_ms(10);
 		//gpio_toggle_pin_level(DGI_GPIO1);
-		//delay_ms(10);
 		//gpio_toggle_pin_level(DGI_GPIO2);
-		//delay_ms(10);
-		gpio_toggle_pin_level(DGI_GPIO3);
+		//gpio_toggle_pin_level(DGI_GPIO3);
 		//gpio_toggle_pin_level(LED0);
-	}
+	//}
 }
 
 //int main(void)
