@@ -15,6 +15,6 @@ config_dict = {
 }
 
 with DGILibExtra(**config_dict) as dgilib:
-	data = dgilib.logger(10)
+	data = dgilib.logger(1)
 
 	while True: a = 2+2
