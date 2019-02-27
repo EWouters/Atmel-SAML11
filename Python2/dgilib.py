@@ -9,12 +9,12 @@ config_dict = {
     "write_mode": [False, False, False, False],
     "loggers": [LOGGER_PLOT],
     "verbose": 0,
-    "plot_xmax": 50,
+    "plot_xmax": 10,
     "plot_ymax": 0.01,
     "plot_pins": [2]
 }
 
 with DGILibExtra(**config_dict) as dgilib:
-	data = dgilib.logger(50, 5)
+	data = dgilib.logger(10)
 
 	while True: a = 2+2
