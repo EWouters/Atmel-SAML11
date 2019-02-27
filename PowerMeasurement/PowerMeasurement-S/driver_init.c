@@ -44,10 +44,10 @@ void TARGET_IO_PORT_init(void)
 	gpio_set_pin_function(PA25, PINMUX_PA25C_SERCOM0_PAD3);
 	
 	
-	gpio_set_pin_level(DGI_GPIO0, false);
-	gpio_set_pin_level(DGI_GPIO1, false);
-	gpio_set_pin_level(DGI_GPIO2, false);
-	gpio_set_pin_level(DGI_GPIO3, false);
+	gpio_set_pin_level(DGI_GPIO0, GPIO_LOW);
+	gpio_set_pin_level(DGI_GPIO1, GPIO_LOW);
+	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
+	gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 
 	// Set pin direction to output
 	gpio_set_pin_direction(DGI_GPIO0, GPIO_DIRECTION_OUT);
@@ -60,7 +60,7 @@ void TARGET_IO_PORT_init(void)
 	gpio_set_pin_function(DGI_GPIO2, GPIO_PIN_FUNCTION_OFF);
 	gpio_set_pin_function(DGI_GPIO3, GPIO_PIN_FUNCTION_OFF);
 	
-	gpio_set_pin_level(LED0, false);
+	gpio_set_pin_level(LED0, LED_OFF);
 
 	// Set pin direction to output
 	gpio_set_pin_direction(LED0, GPIO_DIRECTION_OUT);

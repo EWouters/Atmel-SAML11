@@ -25,6 +25,12 @@
 #define PA24 GPIO(GPIO_PORTA, 24)
 #define PA25 GPIO(GPIO_PORTA, 25)
 
+
+#define GPIO_HIGH true
+#define GPIO_LOW false
+#define LED_ON false
+#define LED_OFF true
+
 #define DGI_GPIO0 GPIO(GPIO_PORTA,  8)
 #define DGI_GPIO1 GPIO(GPIO_PORTA,  9)
 #define DGI_GPIO2 GPIO(GPIO_PORTA, 10)
