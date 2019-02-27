@@ -7,9 +7,9 @@
 
 #include <atmel_start.h>
 #include <tgmath.h>
+#include "../globals.h"
 #include "kalman.h"
 #include "kalman_main.h"
-#include "../globals.h"
 //#include "kalman_globals.h"
 #include "stdio_start.h"
 //#include "globals.h"
@@ -26,16 +26,14 @@ double abs2(double val) {
 
 void loop(int idx) {
 	//char output[LINE_LENGTH] = { '\n' };
+		
+	DONT_MEASURE();
 	
 	/* Update all the values */
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
 	
-	#ifdef DO_DELAY
-	delay_ms(DELAY_DURATION);
-	#endif
-	
-	gpio_set_pin_level(DGI_GPIO3, true);
+	MEASURE();
 
 	double dt = 1; // Calculate delta time
 
@@ -95,12 +93,10 @@ void loop(int idx) {
 	if (gyroYangle < -180 || gyroYangle > 180)
 	gyroYangle = kalAngleY;
 	
-	gpio_set_pin_level(DGI_GPIO3, false);
-	
-	#ifdef DO_DELAY
-	delay_ms(DELAY_DURATION);
-	#endif
+	DONT_MEASURE();
 
 	/* Print Data */
 	printValuesExtended(idx+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+	
+	MEASURE();
 }
