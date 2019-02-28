@@ -153,6 +153,7 @@ void serial_command(char * command)
 	
 	/* Attempt to get a command from the serial port */
 	if (get_command(command) == 0) {
+		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 		debug_print("Received command \"%s\"\n", command, &debug);
 		if (strcmp(command, CMD_STATUS) == 0) {
 			printf("Status:\tDebug mode is %s\n", debug ? "ON":"OFF");
@@ -163,7 +164,10 @@ void serial_command(char * command)
 			toggle_debug(&debug);
 		} else if (strcmp(command, CMD_TEST_AES) == 0) {
 			//mbedtls_cmac_self_test(1); // Note: Cannot compile this due to undefined reference.
-			if (test_aes() == ERR_NONE) {
+			gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+			int32_t rc = test_aes();
+			gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
+			if (rc == ERR_NONE) {
 				printf(RESP_OK);
 			} else {
 				printf(ERR_TEST_AES);
@@ -182,5 +186,6 @@ void serial_command(char * command)
 		} else {
 			printf(ERR_UNKNOWN_CMD);
 		}
+		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 	}
 }
