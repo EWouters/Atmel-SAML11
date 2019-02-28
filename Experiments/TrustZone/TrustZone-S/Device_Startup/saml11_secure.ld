@@ -37,15 +37,15 @@ SEARCH_DIR(.)
 
 /* Memory Spaces Definitions based on Memories Security Attribution:
  * BOOTPROT = 0x00
- * AS       = 0xFF
+ * AS       = 0x80
  * ANSC     = 0x20
- * RS       = 0x7F
+ * RS       = 0x40
  */
 MEMORY
 {
-  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x0000FB00
-  rom_nsc  (rx)  : ORIGIN = 0x0000FB00, LENGTH = 0x00000400
-  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00003F80
+  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00007C00
+  rom_nsc  (rx)  : ORIGIN = 0x00007C00, LENGTH = 0x00000400
+  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00002000
   userrow  (rw)  : ORIGIN = 0x00804000, LENGTH = 0x00000100
 }
 

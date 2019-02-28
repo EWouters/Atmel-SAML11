@@ -74,8 +74,8 @@ middlewares:
       port_nonsec_pa07: false
       port_nonsec_pa08: false
       port_nonsec_pa09: false
-      port_nonsec_pa10: false
-      port_nonsec_pa11: false
+      port_nonsec_pa10: true
+      port_nonsec_pa11: true
       port_nonsec_pa12: false
       port_nonsec_pa13: false
       port_nonsec_pa14: false
@@ -138,9 +138,9 @@ middlewares:
       urow_bootrom_rxn: true
       urow_fuse_programming_enable: Enable
       urow_idau_ansc: 32
-      urow_idau_as: 255
+      urow_idau_as: 128
       urow_idau_ds: 8
-      urow_idau_rs: 127
+      urow_idau_rs: 64
       urow_non_trustzone_setting_enable: false
       urow_nvmctrl_bod33_dis: false
       urow_nvmctrl_nsulck: 7
@@ -511,12 +511,6 @@ drivers:
 pads: {}
 toolchain_options:
 - definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
-  configuration: {}
-- definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
-  configuration: {}
-- definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Atmel.Studio:7.0.0
   configuration:
     compiler_config:
@@ -524,3 +518,9 @@ toolchain_options:
     linker_config:
       armgcc_linker_miscellaneous_LinkerFlags: -Wl,--out-implib=libsecure_gateway_veneer.lib
         -Wl,--cmse-implib
+- definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
+  configuration: {}
+- definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
+  configuration: {}

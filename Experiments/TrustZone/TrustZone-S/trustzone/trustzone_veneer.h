@@ -74,4 +74,22 @@ extern int32_t nsc_ext_irq_init(struct ext_irq_setting irq_setting);
 /* ======== Non-secure callable functions defined by customer ======== */
 /* Add your function declaration here */
 
+/* ------------------------------------------------------
+- NAME :		void nsc_store_data(uint8_t *data, size_t num_bytes);
+- DESCRIPTION : (Secure Gateway) Get data from non secure world and store it in *secure_data
+- PARAMETERS :	uint8_t *data : pointer to data array
+- PARAMETERS :	size_t num_bytes : number of bytes in data array
+- RETURN :		None
+------------------------------------------------------ */
+void nsc_store_data(uint8_t *data, size_t num_bytes);
+
+/* ------------------------------------------------------
+- NAME :		void nsc_load_data(uint8_t *data, size_t num_bytes);
+- DESCRIPTION : (Secure Gateway) Return secure_data to non secure world
+- PARAMETERS :	uint8_t *data : pointer to data array
+- PARAMETERS :	size_t num_bytes : number of bytes in data array
+- RETURN :		None
+------------------------------------------------------ */
+void nsc_load_data(uint8_t *data, size_t num_bytes);
+
 #endif /* _TRUSTZONE_VENEER_H_INCLUDED */
