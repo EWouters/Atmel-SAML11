@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// static pointer for data array
+static uint8_t *secure_data;
+
 /**
  * \brief Get data from non secure world and store it in *secure_data
  */
