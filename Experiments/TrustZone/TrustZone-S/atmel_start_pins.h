@@ -22,4 +22,10 @@
 #define GPIO_PIN_FUNCTION_H 7
 #define GPIO_PIN_FUNCTION_I 8
 
+#define GPIO_HIGH true
+#define GPIO_LOW false
+
+#define DGI_GPIO2 GPIO(GPIO_PORTA, 11)
+#define DGI_GPIO3 GPIO(GPIO_PORTA, 10)
+
 #endif // ATMEL_START_PINS_H_INCLUDED
