@@ -1,11 +1,12 @@
 #include <atmel_start.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mbedtls/aes.h"
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 400
+#define MAX_AES_BLOCKS 10
 
 #ifndef FLASH_PAGE_SIZE
 #define FLASH_PAGE_SIZE 64
@@ -42,12 +43,12 @@ int main(void)
 	mbedtls_aes_setkey_enc( &aes, key, 256 );
 	mbedtls_aes_setkey_dec( &aes2, key, 256 );
 	
-	for (int num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
+	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
 	//int num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
 		// Allocate num_bytes bytes.
 		uint8_t *input = malloc(sizeof(uint8_t) * num_bytes);
 		// Fill with sequential data.
-		for (int byte = 0; byte < num_bytes; byte++) {
+		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = byte; // Will wrap at 0xff.
 			//input[byte] = 0xfa;
 		}
@@ -87,7 +88,7 @@ int main(void)
 		// Sleep here
 	
 		// Overwrite the memory
-		for (int byte = 0; byte < num_bytes; byte++) {
+		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = 0xfe;
 		}
 		// Free the memory
@@ -116,10 +117,10 @@ int main(void)
 		delay_ms(10);
 	
 		//// Check if memory has correct data
-		//for (int byte = 0; byte < num_bytes; byte++) {
-		//if (input[byte] != 0xff) { // byte % 0xff
-		//gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-		//}
+		//for (size_t byte = 0; byte < num_bytes; byte++) {
+		//	if (output[byte] != byte % 0xff) {
+		//		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		//	}
 		//}
 	
 		// Free the memory

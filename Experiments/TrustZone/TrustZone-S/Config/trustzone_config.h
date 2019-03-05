@@ -69,7 +69,7 @@
 // <i> Flash Application Secure Size = AS*0x100
 // <id> urow_idau_as
 #ifndef CONF_UROW_IDAU_AS
-#define CONF_UROW_IDAU_AS 0xff
+#define CONF_UROW_IDAU_AS 0x80
 #endif
 
 // <o> USER_WORD_2.IDAU_ANSC <0x0-0x3F>
@@ -90,7 +90,7 @@
 // <i> RAM Secure Size = RS*0x80
 // <id> urow_idau_rs
 #ifndef CONF_UROW_IDAU_RS
-#define CONF_UROW_IDAU_RS 0x7f
+#define CONF_UROW_IDAU_RS 0x40
 #endif
 
 // PAC: The PAC Peripheral is always secured regardless of its bit value
@@ -894,13 +894,13 @@
 // <q> PA10 Non-Secure I/O enable
 // <id> port_nonsec_pa10
 #ifndef CONF_PORT_NONSEC_PA10
-#define CONF_PORT_NONSEC_PA10 0
+#define CONF_PORT_NONSEC_PA10 1
 #endif
 
 // <q> PA11 Non-Secure I/O enable
 // <id> port_nonsec_pa11
 #ifndef CONF_PORT_NONSEC_PA11
-#define CONF_PORT_NONSEC_PA11 0
+#define CONF_PORT_NONSEC_PA11 1
 #endif
 
 // <q> PA12 Non-Secure I/O enable

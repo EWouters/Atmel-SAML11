@@ -35,6 +35,8 @@
 #include "trustzone_veneer.h"
 #include "trustzone_config.h"
 
+#include "transfer_data.h"
+
 /* ======== Non-secure callable common driver functions ======== */
 
 /*
@@ -103,3 +105,27 @@ int32_t __attribute__((cmse_nonsecure_entry)) nsc_ext_irq_init(struct ext_irq_se
  * You may add your secure gateway veneer functions in this file
  * and the function declaration into trustzone_veneer.h.
  */
+
+/* ------------------------------------------------------
+- NAME :		void nsc_store_data(uint8_t *data, size_t num_bytes);
+- DESCRIPTION : (Secure Gateway) Get data from non secure world and store it in *secure_data
+- PARAMETERS :	uint8_t *data : pointer to data array
+- PARAMETERS :	size_t num_bytes : number of bytes in data array
+- RETURN :		None
+------------------------------------------------------ */
+void __attribute__((cmse_nonsecure_entry)) nsc_store_data(uint8_t *data, size_t num_bytes)
+{
+	secure_store_data(data, num_bytes);
+}
+
+/* ------------------------------------------------------
+- NAME :		void nsc_load_data(uint8_t *data, size_t num_bytes);
+- DESCRIPTION : (Secure Gateway) Return secure_data to non secure world
+- PARAMETERS :	uint8_t *data : pointer to data array
+- PARAMETERS :	size_t num_bytes : number of bytes in data array
+- RETURN :		None
+------------------------------------------------------ */
+void __attribute__((cmse_nonsecure_entry)) nsc_load_data(uint8_t *data, size_t num_bytes)
+{
+	secure_load_data(data, num_bytes);
+}

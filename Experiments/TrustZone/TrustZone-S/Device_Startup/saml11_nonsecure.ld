@@ -37,14 +37,14 @@ SEARCH_DIR(.)
 
 /* Memory Spaces Definitions based on Memories Security Attribution:
  * BOOTPROT = 0x00
- * AS       = 0xFF
+ * AS       = 0x80
  * ANSC     = 0x20
- * RS       = 0x7F
+ * RS       = 0x40
  */
 MEMORY
 {
-  rom      (rx)  : ORIGIN = 0x0000FF00, LENGTH = 0x00000100
-  ram      (rwx) : ORIGIN = 0x20003F80, LENGTH = 0x00000080
+  rom      (rx)  : ORIGIN = 0x00008000, LENGTH = 0x00008000
+  ram      (rwx) : ORIGIN = 0x20002000, LENGTH = 0x00002000
 }
 
 /* The stack size used by the application. NOTE: you need to adjust according to your application. */
