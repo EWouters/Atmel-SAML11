@@ -844,3 +844,6 @@ Python2/dgilib.dll
 Python/pydgilib/tests_dragos/dgilib.dll
 Python/pydgilib/log_gpio.csv
 Python/pydgilib/log_power.csv
+
+# vscode settings
+.vscode
