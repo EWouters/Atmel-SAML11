@@ -843,5 +843,4 @@ Python/pydgilib/log_power.csv
 Python/log_gpio.csv
 Python/log_power.csv
 
-# vscode settings
-.vscode
+Python/settings.json
