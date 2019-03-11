@@ -852,5 +852,5 @@ Python/log_power.csv
 # KDE Dolphin on Linux
 .directory
 
-# Custom
-PythonCSV/wtf.txt
+# Don't upload experiment csv's
+exeriment_*.csv
