@@ -6,7 +6,7 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 4
+#define MAX_AES_BLOCKS 10
 
 int main(void)
 {
