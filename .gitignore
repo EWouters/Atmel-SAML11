@@ -503,5 +503,8 @@ Python/pydgilib/tests_dragos/dgilib.dll
 log_*.csv
 experiment_*.csv
 
+# Pickles
+*_charge.p
+
 # KDE Dolphin on Linux
 .directory
