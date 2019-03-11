@@ -154,9 +154,9 @@
     </AcmeProjectConfig>
     <AdditionalModules>
       <Module>
-  <File>..\..\TrustZone-NS\Debug\TrustZone-NS.elf</File>
-</Module>
-</AdditionalModules>
+        <File>..\..\TrustZone-NS\Debug\TrustZone-NS.elf</File>
+      </Module>
+    </AdditionalModules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
