@@ -833,16 +833,24 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
-PythonCSV/wtf.txt
+
+# User settings
+Python/pydgilib/settings.json
+Python/pydgilib/UnitTest/UnitTest/UnitTest.cproj
+
+# dgilib.dll
 PythonCSV/dgilib.dll
-PythonCSV/.directory
 Python2/dgilib.dll
 Python/pydgilib/tests_dragos/dgilib.dll
+
+# csv's
 Python/pydgilib/log_gpio.csv
 Python/pydgilib/log_power.csv
 Python/log_gpio.csv
 Python/log_power.csv
 
-# User settings
-Python/pydgilib/settings.json
-Python/pydgilib/UnitTest/UnitTest/UnitTest.cproj
+# KDE Dolphin on Linux
+.directory
+
+# Custom
+PythonCSV/wtf.txt
