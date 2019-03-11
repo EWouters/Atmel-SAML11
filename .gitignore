@@ -853,4 +853,4 @@ Python/log_power.csv
 .directory
 
 # Don't upload experiment csv's
-exeriment_*.csv
+experiment_*.csv
