@@ -6,7 +6,7 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 10
+#define MAX_AES_BLOCKS 100
 
 #ifndef FLASH_PAGE_SIZE
 #define FLASH_PAGE_SIZE 64
