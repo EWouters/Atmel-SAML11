@@ -8,12 +8,15 @@
 #define MIN_AES_BLOCKS 1
 #define MAX_AES_BLOCKS 100
 
+#define DELAY delay_ms(10);
+#define SLEEP
+
 int main(void)
 {
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-	delay_ms(10);
+	DELAY
 	
 	mbedtls_aes_context aes;
 	mbedtls_aes_context aes2;
@@ -36,7 +39,7 @@ int main(void)
 			input[byte] = byte; // Will wrap at 0xff.
 		}
 
-		delay_ms(10);
+		DELAY
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
@@ -45,7 +48,11 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 	
-		delay_ms(10);
+		DELAY
+		
+		SLEEP
+		
+		DELAY
 	
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
@@ -54,7 +61,7 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 		
-		delay_ms(10);
+		DELAY
 	
 		//// Check if memory has correct data
 		//for (int byte = 0; byte < num_bytes; byte++) {
@@ -67,7 +74,8 @@ int main(void)
 		free(input);
 	}
 
-	delay_ms(200);
+	DELAY
+	
 	// Signal end of test
 	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);

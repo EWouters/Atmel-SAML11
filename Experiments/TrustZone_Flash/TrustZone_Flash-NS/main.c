@@ -4,14 +4,18 @@
 #include "trustzone_veneer.h"
 
 #define MIN_NUM_BYTES 1
-#define MAX_NUM_BYTES 8000
+#define MAX_NUM_BYTES 1600 //8000
+
+#define DELAY delay_ms(10);
+#define SLEEP
 
 int main(void)
 {
 	/* Initializes MCU, drivers and middleware */
+
 	atmel_start_init();
 	
-	delay_ms(10);
+	DELAY
 	
 	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes++) {
 		//size_t num_bytes = MAX_NUM_BYTES;
@@ -21,7 +25,7 @@ int main(void)
 			input[byte] = byte; // Will wrap at 0xff.
 		}
 
-		delay_ms(10);
+		DELAY
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
@@ -30,9 +34,9 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 		
-		delay_ms(10);
+		DELAY
 		
-		// Sleep here
+		SLEEP
 		
 		// Overwrite the memory
 		for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -43,7 +47,7 @@ int main(void)
 		// And reallocate
 		uint8_t *output = malloc(sizeof(unsigned char) * num_bytes);
 		
-		delay_ms(10);
+		DELAY
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
@@ -52,7 +56,7 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 		
-		delay_ms(10);
+		DELAY
 		
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -65,7 +69,8 @@ int main(void)
 		free(output);
 	}
 
-	delay_ms(200);
+	DELAY
+	
 	// Signal end of test
 	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);

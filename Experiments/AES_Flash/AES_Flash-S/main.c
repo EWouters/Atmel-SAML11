@@ -8,6 +8,9 @@
 #define MIN_AES_BLOCKS 1
 #define MAX_AES_BLOCKS 100
 
+#define DELAY delay_ms(10);
+#define SLEEP
+
 #ifndef FLASH_PAGE_SIZE
 #define FLASH_PAGE_SIZE 64
 #endif
@@ -29,7 +32,7 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-	delay_ms(10);
+	DELAY
 	
 	mbedtls_aes_context aes;
 	mbedtls_aes_context aes2;
@@ -53,7 +56,7 @@ int main(void)
 			//input[byte] = 0xfa;
 		}
 
-		delay_ms(10);
+		DELAY
 	
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
@@ -62,7 +65,7 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 	
-		delay_ms(10);
+		DELAY
 	
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
@@ -83,9 +86,9 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 	
-		delay_ms(10);
+		DELAY
 	
-		// Sleep here
+		SLEEP
 	
 		// Overwrite the memory
 		for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -96,7 +99,7 @@ int main(void)
 		// And reallocate
 		uint8_t *output = malloc(sizeof(unsigned char) * num_bytes);
 	
-		delay_ms(10);
+		DELAY
 	
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
@@ -105,7 +108,7 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 	
-		delay_ms(10);
+		DELAY
 	
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
@@ -114,7 +117,7 @@ int main(void)
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 	
-		delay_ms(10);
+		DELAY
 	
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -127,7 +130,8 @@ int main(void)
 		free(output);
 	}
 
-	delay_ms(200);
+	DELAY
+	
 	// Signal end of test
 	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
