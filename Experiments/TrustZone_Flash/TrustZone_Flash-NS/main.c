@@ -4,7 +4,7 @@
 #include "trustzone_veneer.h"
 
 #define MIN_NUM_BYTES 1
-#define MAX_NUM_BYTES 800
+#define MAX_NUM_BYTES 8000
 
 int main(void)
 {
@@ -25,7 +25,7 @@ int main(void)
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-		// Store data in secure RAM
+		// Store data in secure Flash
 		nsc_store_data(input, num_bytes);
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
@@ -47,7 +47,7 @@ int main(void)
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-		// Read from secure RAM
+		// Read from secure Flash
 		nsc_load_data(output, num_bytes);
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);

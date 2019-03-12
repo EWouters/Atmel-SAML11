@@ -23,8 +23,6 @@ WEAK int32_t nsc_periph_clock_init(uint32_t gclk_id, uint32_t gclk_src)
 
 void TARGET_IO_init(void)
 {
-	
-	
 	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
 	gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 
@@ -34,13 +32,6 @@ void TARGET_IO_init(void)
 
 	gpio_set_pin_function(DGI_GPIO2, GPIO_PIN_FUNCTION_OFF);
 	gpio_set_pin_function(DGI_GPIO3, GPIO_PIN_FUNCTION_OFF);
-	
-	gpio_set_pin_level(LED0, LED_OFF);
-
-	// Set pin direction to output
-	gpio_set_pin_direction(LED0, GPIO_DIRECTION_OUT);
-
-	gpio_set_pin_function(LED0, GPIO_PIN_FUNCTION_OFF);
 }
 
 void system_init(void)
