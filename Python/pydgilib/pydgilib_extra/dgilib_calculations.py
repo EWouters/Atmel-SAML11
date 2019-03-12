@@ -335,10 +335,54 @@ class HoldTimes(StreamingCalculation):
 ###############################
 # Calculate average leftpoint #
 ###############################
+def calculate_average_leftpoint_single_interval(data_power, start_time=None, end_time=None, start_index=0):
+    if start_time is None:
+        start_time = data_power.timestamps[0]
+    else:
+        (_, start_time, _, left_index) = data_power.get_next_available_timestamps(start_time, start_index)
 
+    if end_time is None:
+        end_time = data_power.timestamps[-1]
+    else:
+        (end_time, _, right_index, _) = data_power.get_next_available_timestamps(end_time, start_index)
+
+    if start_time is None: return None
+    if end_time is None: return None
+    if left_index is None: return None
+    if right_index is None: return None
+
+    last_time = start_time
+
+    sum = 0
+
+    for i in range(left_index, right_index+1):
+        timestamp = data_power.timestamps[i]
+        power_value = data_power.values[i]
+
+        sum += power_value * (timestamp - last_time)
+        last_time = timestamp
+    
+    return sum / (end_time - start_time)
+
+def calculate_average_leftpoint_multiple_intervals(data_power, intervals, start_time=None, end_time=None):
+    # Calculate average value using midpoint Riemann sum
+    sum = 0
+    to_divide = 0
+
+    for intv in intervals:
+        if ((intv[0] >= start_time) and (intv[0] <= end_time) and (intv[1] >= start_time) and (intv[1] <= end_time)):
+            sum += calculate_average_leftpoint_single_interval( 
+                data_power, intv[0], intv[1])
+            to_divide += 1
+
+    return sum / to_divide
 
 def calculate_average(power_data, start_time=None, end_time=None):
+
     """Calculate average value of the power_data using the left Riemann sum."""
+    # print("Start time: " + str(start_time))
+    # print("End time: " + str(end_time))
+    # print("Timestamps: " + str(data_power.timestamps))
     if start_time is None:
         start_index = 1
     else:

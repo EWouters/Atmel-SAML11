@@ -2,10 +2,12 @@ from time import sleep
 import csv
 
 from pydgilib_extra.dgilib_extra_config import *
-from pydgilib_extra.dgilib_calculations import HoldTimes #, calculate_average_leftpoint_single_interval, calculate_average_midpoint_multiple_intervals
+from pydgilib_extra.dgilib_calculations import HoldTimes, calculate_average_leftpoint_single_interval
 
 import matplotlib.pyplot as plt; plt.ion()
 from matplotlib.widgets import Slider, Button, TextBox
+
+from threading import Lock
 
 # TODO:
 # - Make the plot scrolling in a frame of plot_xmax, as the data comes along
@@ -61,13 +63,17 @@ class DGILibPlot(object):
 
         self.plot_pins = kwargs.get("plot_pins", None)
         self.plot_pins_values = kwargs.get("plot_pins_values", None)
-        self.plot_pins_method =  kwargs.get("plot_pins_method", "highlight")
-        self.plot_pins_colors =  kwargs.get("plot_pins_colors", ["red", "orange", "blue", "green"])
-        self.average_function =  kwargs.get("average_function", "leftpoint")
-        self.axvspans = []
-        self.annotations = []
-        self.averages = []
-        self.iterations = 0
+        self.plot_pins_method = kwargs.get("plot_pins_method", "highlight") # or "line"
+        self.plot_pins_colors = kwargs.get("plot_pins_colors", ["red", "orange", "blue", "green"])
+        self.automove_method = kwargs.get("automove_method", "latest_data") # or "page"
+        self.average_function = kwargs.get("average_function", "leftpoint")
+        self.axvspans = [[], [], [], []]
+        self.annotations = [[], [], [], []]
+        self.averages = [[], [], [], []]
+        self.total_average = [0,0,0,0]
+        self.iterations = [0,0,0,0]
+        self.last_xpos = 0
+        self.xylim_mutex = Lock()
 
         # We need this since pin toggling is not aligned with power values changing when blinking a LED on the board, for example
         self.plot_pins_correction_forward = kwargs.get("plot_pins_correction_forward", 0.00075)
@@ -200,58 +206,80 @@ class DGILibPlot(object):
 
         # I'm not sure how to detach these without them forgetting their parents (sliders)
         def update_pos(val):
-            pos = self.spos.val
-            width = self.swidth.val
+            if self.xylim_mutex.acquire(False):
+                pos = self.spos.val
+                width = self.swidth.val
 
-            self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
+                self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
+
+                self.xylim_mutex.release()
 
         def update_width(val):
-            pos = self.spos.val
-            width = self.swidth.val
+            if self.xylim_mutex.acquire(False):
+                pos = self.spos.val
+                width = self.swidth.val
 
-            # if pos > width:
-            #     pos = width
+                self.axpos.clear()
+                self.spos.__init__(self.axpos, 'x', 0, width, valinit=pos, valstep=self.plot_xstep)
+                self.spos.on_changed(update_pos)
+                self.spos.set_val(pos)
 
-            self.axpos.clear()
-            self.spos.__init__(self.axpos, 'x', 0, width, valinit=pos, valstep=self.plot_xstep)
-            self.spos.on_changed(update_pos)
-            self.spos.set_val(pos)
+                self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
 
-            self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
-
-            # TODO: Update
-            # visible_average = calculate_average_midpoint_multiple_intervals(self.data, all_hold_times, i, i+width) * 1000
-            # all_average = calculate_average_midpoint_multiple_intervals(self.data, all_hold_times, min(xdata), max(xdata)) * 1000
-
-            # self.axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
-
-            # self.fig.canvas.draw_idle()
+                self.xylim_mutex.release()
 
         self.spos.on_changed(update_pos)
         self.swidth.on_changed(update_width)
 
+        def see_all(event):
+            if self.xylim_mutex.acquire(False):
+
+                self.ax.axis([0, self.last_timestamp, self.plot_ymin, self.plot_ymax])
+                self.last_xpos = -1
+
+                self.xylim_mutex.release()
+
+
         def reset(event):
-            self.swidth.set_val(self.plot_xmax)
+            if self.xylim_mutex.acquire(False):
+                self.swidth.set_val(self.plot_xmax)
+                
+                self.axpos.clear()
+                self.spos.__init__(self.axpos, 'x', 0, self.plot_xmax, valinit=0, valstep=self.plot_xstep_default)
+                self.spos.on_changed(update_pos)
+        
+                self.xsteptb.set_val(str(self.plot_xstep_default))
 
-            #width = self.plot_xmax
-            self.axpos.clear()
-            self.spos.__init__(self.axpos, 'x', 0, self.plot_xmax, valinit=0, valstep=self.plot_xstep_default)
-            self.spos.on_changed(update_pos)
-            
-            self.xsteptb.set_val(str(self.plot_xstep_default))
-            #self.spos.reset()
+                self.ax.axis([self.plot_xmin, self.plot_xmax, self.plot_ymin, self.plot_ymax])
+                self.last_xpos = -1
 
-
-            # TODO: Update parameters
-            # visible_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, i, i+width) * 1000
-            # all_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
-
-            # self.axes.set_title("Visible average: %.6f mA;\n Total average: %.6f mA." % (visible_average, all_average))
+                self.xylim_mutex.release()                
 
         self.resetbtn.on_clicked(reset)
 
         self.spos.set_val(0)
         self.swidth.set_val(self.plot_xmax)
+
+        # Auto-change the sliders/buttons when using plot tools
+        def on_xlims_change(axes):
+            if self.xylim_mutex.acquire(False): # Non-blocking
+                xlim_left = self.ax.get_xlim()[0]
+                xlim_right = self.ax.get_xlim()[1]
+
+                pos = xlim_left
+                width = xlim_right - xlim_left
+
+                self.spos.set_val(pos)
+                self.swidth.set_val(width)
+                self.last_xpos = -1
+            
+                self.xylim_mutex.release()
+
+        def on_ylims_change(axes):
+            print(self.ax.get_ylim())
+
+        self.ax.callbacks.connect('xlim_changed', on_xlims_change)
+        #self.ax.callbacks.connect('ylim_changed', on_ylims_change)
 
     def update_plot(self, data):
         verbose = self.verbose
@@ -283,11 +311,33 @@ class DGILibPlot(object):
         self.ln.set_xdata(data.power.timestamps)
         self.ln.set_ydata(data.power.values)
 
-        pos = self.spos.val
-        width = self.swidth.val
+        automove = True
+        current_xpos = self.ax.get_xlim()[0]
 
-        #print("Scaling: " + str([pos, pos + width, self.plot_ymin, self.plot_ymax]))
-        self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
+        if self.last_xpos != current_xpos:
+            automove = False
+
+        if automove and self.xylim_mutex.acquire(False):
+            last_timestamp = data.power.timestamps[-1]
+
+            pos = self.spos.val
+            width = self.swidth.val
+            
+            if (last_timestamp > (pos + width)):
+                if self.automove_method == "page":
+                    self.spos.set_val(pos + width)
+                elif self.automove_method == "latest_data":
+                    arbitrary_amount = 0.15
+                    if last_timestamp > width:
+                        self.spos.set_val(last_timestamp + arbitrary_amount - width)
+
+            pos = self.spos.val
+            width = self.swidth.val
+
+            self.ax.axis([pos, pos + width, self.plot_ymin, self.plot_ymax])
+            self.last_xpos = pos
+
+            self.xylim_mutex.release()
 
         # visible_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, i, i+width) * 1000
         # all_average = calculate_average_midpoint_multiple_intervals([xdata,ydata], all_hold_times, min(xdata), max(xdata)) * 1000
@@ -300,7 +350,6 @@ class DGILibPlot(object):
         
         for axvsp in self.axvspans:
             axvsp.remove()
-
 
     def draw_pins(self, data):
         # Here we set defaults (with or ...)
@@ -333,22 +382,25 @@ class DGILibPlot(object):
 
                 if plot_pins[pin_idx] == True: # If we want them plotted
                         
+                    start_index = self.hold_times_obj.index
                     hold_times = self.hold_times_obj.identify_hold_times(pin_idx, plot_pins_values[pin_idx], data.gpio)
+
+                    # print("Hold times:" + str(hold_times))
+                    # print("Power: " + str(data.power.timestamps))
 
                     if hold_times is not None:
                         for ht in hold_times:
                             axvsp = ax.axvspan(ht[0], ht[1], color=plot_pins_colors[pin_idx], alpha=0.5)
-                            self.axvspans.append(axvsp)
+                            self.axvspans[pin_idx].append(axvsp)
 
                             x_halfway = (ht[1] - ht[0]) / 4 + ht[0]
                             y_halfway = (self.plot_ymax - self.plot_ymin) / 2 + self.plot_ymin
-                            annon = ax.annotate(str(self.iterations + 1), xy=(x_halfway, y_halfway))
-                            self.annotations.append(annon)
+                            annon = ax.annotate(str(self.iterations[pin_idx] + 1), xy=(x_halfway, y_halfway))
+                            self.annotations[pin_idx].append(annon)
                             
-                            average = calculate_average_leftpoint_single_interval(data.power, ht[0], ht[1])
-                            self.averages.append((ht, average*1000))
-
-                            self.iterations += 1
+                            #average = calculate_average_leftpoint_single_interval(data.power, ht[0], ht[1], start_index)
+                            self.iterations[pin_idx] += 1
+                            self.averages[pin_idx].append((self.iterations[pin_idx], ht, start_index, None))
 
         elif self.plot_pins_method == "line":
             for pin, plot_pin in enumerate(self.plot_pins):
@@ -356,14 +408,51 @@ class DGILibPlot(object):
                     self.ln_pins[pin].set_xdata(data.gpio.timestamps)
                     self.ln_pins[pin].set_ydata(
                         data.gpio.get_select_in_value(pin))
-            self.fig.show()
+            self.fig.show()      
         else:
             raise ValueError(f"Unrecognized plot_pins_method: {self.plot_pins_method}")
 
-    def print_averages(self):
-        print("Averages shown: ")
-        for i in range(len(self.averages)):
-            print(str(i+1) + ": " + str(self.averages[i][0]) + "\t\t" + str(self.averages[i][1]) + "mA")
+    def print_averages(self, pin_idx):
+
+        for i in range(len(self.averages[pin_idx])):
+            iteration_idx = self.averages[pin_idx][i][0]
+            hold_times_0 = round(self.averages[pin_idx][i][1][0], 5)
+            hold_times_1 = round(self.averages[pin_idx][i][1][1], 5)
+            #start_index = self.averages[i][2]
+            average = round(self.averages[pin_idx][i][3], 6)
+            #print(iteration_idx, "|", hold_times_0, "|", hold_times_1, "|", average)
+            # '{message:{fill}{align}{width}}'.format(
+            #     message='Hi',
+            #     fill=' ',
+            #     align='<',
+            #     width=16,
+            # )
+            print("{0: >5}: ({1: >10}, {2: >10}) {3: >15} mA".format(iteration_idx, hold_times_0, hold_times_1, average))
+        print("Total average: {0} mA".format(round(self.total_average[pin_idx], 6)))
+
+    def calculate_averages(self, pin_idx, data=None):
+        # TODO: Why does this not work?
+        if data is None:
+            data = self.dgilib_extra.data
+
+        for i in range(len(self.averages[pin_idx])):
+            iteration_idx = self.averages[pin_idx][i][0]
+            hold_times = self.averages[pin_idx][i][1]
+            start_index = self.averages[pin_idx][i][2]
+            #print(iteration_idx, start_index, hold_times)
+
+            average = calculate_average_leftpoint_single_interval(data.power, hold_times[0], hold_times[1], start_index)
+
+            if average is not None:
+                average_scaled = 1000 * average
+            else:
+                average_scaled = -1
+            self.averages[pin_idx][i] = (iteration_idx, hold_times, start_index, average_scaled)
+
+            self.total_average[pin_idx] += average_scaled
+
+        if len(self.averages[pin_idx]) > 0: 
+            self.total_average[pin_idx] /= len(self.averages[pin_idx]) #self.iterations[pin_idx]
 
     def plot_still_exists(self):
         return plt.fignum_exists(self.fig.number)
