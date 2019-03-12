@@ -4,7 +4,7 @@
 #include "trustzone_veneer.h"
 
 #define MIN_NUM_BYTES 1
-#define MAX_NUM_BYTES 8000
+#define MAX_NUM_BYTES 100 //8000
 
 int main(void)
 {

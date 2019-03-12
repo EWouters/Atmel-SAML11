@@ -144,9 +144,9 @@
     </AcmeProjectConfig>
     <AdditionalModules>
       <Module>
-  <File>..\..\TrustZone_Flash-NS\Debug\TrustZone_Flash-NS.elf</File>
-</Module>
-</AdditionalModules>
+        <File>..\..\TrustZone_Flash-NS\Debug\TrustZone_Flash-NS.elf</File>
+      </Module>
+    </AdditionalModules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
