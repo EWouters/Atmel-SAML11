@@ -508,3 +508,9 @@ experiment_*.csv
 
 # KDE Dolphin on Linux
 .directory
+
+# Kalman version that works on computer
+KalmanC++/kalman-hash.exe
+KalmanC++/kalman-hash
+KalmanC++/kalman.exe
+KalmanC++/kalman
