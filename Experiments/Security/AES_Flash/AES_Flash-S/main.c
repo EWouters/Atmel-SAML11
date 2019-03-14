@@ -8,6 +8,7 @@
 #define MIN_AES_BLOCKS 1
 #define MAX_AES_BLOCKS 100
 
+#define PULSE_GPIO
 #define DELAY delay_ms(10);
 #define SLEEP
 
@@ -41,7 +42,9 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-	DELAY
+	#ifdef PULSE_GPIO
+		DELAY
+	#endif
 	
 	mbedtls_aes_setkey_enc( &aes, key, 256 );
 	mbedtls_aes_setkey_dec( &aes2, key, 256 );
@@ -56,19 +59,23 @@ int main(void)
 			//input[byte] = 0xfa;
 		}
 
-		DELAY
+		#ifdef PULSE_GPIO
+			DELAY
+			// Set GPIO pin high.
+			gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		#endif
 	
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 		// Encrypt in place.
 		mbedtls_aes_crypt_cbc( &aes, MBEDTLS_AES_ENCRYPT, num_bytes, iv, input, input);
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-	
-		DELAY
-	
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+		
+		#ifdef PULSE_GPIO
+			// Set GPIO pin low.
+			gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
+			DELAY
+			// Set GPIO pin high.
+			gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+		#endif
+		
 		// Save to flash
 		// Put data at end of flash.
 		uint32_t target_addr = FLASH_ADDR + FLASH_SIZE - num_bytes;
@@ -83,10 +90,11 @@ int main(void)
 			// TODO: decrease FLASH_PAGE_SIZE to correct number on last write if not multiple of FLASH_PAGE_SIZE.
 		}
 	
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-	
-		DELAY
+		#ifdef PULSE_GPIO
+			// Set GPIO pin high.
+			gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
+			DELAY
+		#endif
 	
 		SLEEP
 	
@@ -99,25 +107,31 @@ int main(void)
 		// And reallocate
 		uint8_t *output = malloc(sizeof(unsigned char) * num_bytes);
 	
-		DELAY
-	
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+		#ifdef PULSE_GPIO
+			DELAY
+			// Set GPIO pin high.
+			gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+		#endif
+		
 		// Read from flash
 		FLASH_0_read(target_addr, output, num_bytes);
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-	
-		DELAY
-	
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		
+		#ifdef PULSE_GPIO
+			// Set GPIO pin low.
+			gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
+			DELAY
+			// Set GPIO pin high.
+			gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		#endif
+		
 		// Decrypt in place.
 		mbedtls_aes_crypt_cbc( &aes2, MBEDTLS_AES_DECRYPT, num_bytes, iv2, output, output);
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-	
-		DELAY
+		
+		#ifdef PULSE_GPIO
+			// Set GPIO pin low.
+			gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
+			DELAY
+		#endif
 	
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -130,13 +144,10 @@ int main(void)
 		free(output);
 	}
 
-	DELAY
-	
-	// Signal end of test
-	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-
-	/* Replace with your application code */
-	//while (1) {
-	//}
+	#ifdef PULSE_GPIO
+		DELAY
+		// Signal end of test
+		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+	#endif
 }
