@@ -22,13 +22,7 @@ extern "C" {
 #include <hal_sleep.h>
 #include <hpl_crya.h>
 
-#include <hal_usart_sync.h>
-
-extern struct usart_sync_descriptor TARGET_IO;
-
 void TARGET_IO_PORT_init(void);
-void TARGET_IO_CLOCK_init(void);
-void TARGET_IO_init(void);
 
 /**
  * \brief Perform system initialization, initialize pins and clocks for

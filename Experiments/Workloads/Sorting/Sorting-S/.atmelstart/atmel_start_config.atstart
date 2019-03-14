@@ -157,14 +157,6 @@ middlewares:
     functionality: TrustZone_Manager
     api: TrustZone:Manager:API
     dependencies: {}
-  STDIO_REDIRECT_0:
-    user_label: STDIO_REDIRECT_0
-    configuration: {}
-    definition: Atmel:STDIO_redirect:0.0.1::STDIO_Redirect
-    functionality: STDIO_Redirect
-    api: STDIO:Redirect:IO
-    dependencies:
-      Target IO: TARGET_IO
 drivers:
   DMAC:
     user_label: DMAC
@@ -516,69 +508,11 @@ drivers:
     variant: null
     clocks:
       domain_group: null
-  TARGET_IO:
-    user_label: TARGET_IO
-    definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::SERCOM0::driver_config_definition::UART::HAL:Driver:USART.Sync
-    functionality: USART
-    api: HAL:Driver:USART_Sync
-    configuration:
-      usart_advanced: false
-      usart_arch_clock_mode: USART with internal clock
-      usart_arch_cloden: false
-      usart_arch_dbgstop: Keep running
-      usart_arch_dord: LSB is transmitted first
-      usart_arch_enc: No encoding
-      usart_arch_fractional: 0
-      usart_arch_ibon: false
-      usart_arch_lin_slave_enable: Disable
-      usart_arch_runstdby: false
-      usart_arch_sampa: 7-8-9 (3-4-5 8-bit over-sampling)
-      usart_arch_sampr: 16x arithmetic
-      usart_arch_sfde: false
-      usart_baud_rate: 9600
-      usart_character_size: 8 bits
-      usart_parity: No parity
-      usart_rx_enable: true
-      usart_stop_bit: One stop bit
-      usart_tx_enable: true
-    optional_signals: []
-    variant:
-      specification: TXPO=1, RXPO=3, CMODE=0
-      required_signals:
-      - name: SERCOM0/PAD/2
-        pad: PA24
-        label: TX
-      - name: SERCOM0/PAD/3
-        pad: PA25
-        label: RX
-    clocks:
-      domain_group:
-        nodes:
-        - name: Core
-          input: Generic clock generator 0
-          external: false
-          external_frequency: 0
-        - name: Slow
-          input: Generic clock generator 3
-          external: false
-          external_frequency: 0
-        configuration:
-          core_gclk_selection: Generic clock generator 0
-          slow_gclk_selection: Generic clock generator 3
-pads:
-  PA24:
-    name: PA24
-    definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::pad::PA24
-    mode: Peripheral IO
-    user_label: PA24
-    configuration: null
-  PA25:
-    name: PA25
-    definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::pad::PA25
-    mode: Peripheral IO
-    user_label: PA25
-    configuration: null
+pads: {}
 toolchain_options:
+- definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
+  configuration: {}
 - definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
   configuration: {}
@@ -590,6 +524,3 @@ toolchain_options:
     linker_config:
       armgcc_linker_miscellaneous_LinkerFlags: -Wl,--out-implib=libsecure_gateway_veneer.lib
         -Wl,--cmse-implib
-- definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
-  configuration: {}
