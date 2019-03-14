@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/kalman",
             "args": ["-arch","i386"],
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
@@ -21,7 +21,9 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            "preLaunchTask": "Kalman Hash",
+            "postDebugTask": "cat debug.txt"
         },
         {
             "name": "Kalman Hash",
@@ -29,7 +31,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/kalman-hash",
             "args": ["-arch","i386"],
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
@@ -40,7 +42,9 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            "preLaunchTask": "Kalman Hash",
+            "postDebugTask": "cat debug.txt"
         }
     ]
 }

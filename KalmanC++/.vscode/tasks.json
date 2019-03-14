@@ -33,6 +33,19 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "cat debug.txt",
+            "type": "shell",
+            "command": "cat",
+            "args": [
+                "${workspaceFolder}/debug.txt"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }
