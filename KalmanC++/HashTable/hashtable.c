@@ -6,15 +6,31 @@
  */ 
 
 #include <math.h>
+#include "../kalman.hpp"
 #include "hashtable.h"
 
-int AreSame(double a, double b)
+HASHTABLE_ITER_TYPE selectedIter = NOT_FOUND;
+
+extern Kalman kalmanX; // Create the Kalman instances
+extern Kalman kalmanY;
+
+extern double accX, accY, accZ;
+extern double gyroX, gyroY, gyroZ;
+
+extern double roll, pitch;
+extern double gyroXangle, gyroYangle; // Angle calculate using the gyro only
+extern double compAngleX, compAngleY; // Calculated angle using a complementary filter
+extern double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
+
+struct hentry hashtab[HASHSIZE] = {{ 0 }};
+
+unsigned char AreSame(double a, double b)
 {
 	if (fabs(a - b) < EPSILON) {
 		return 0;
 	}
 	else {
-		return -1;
+		return 1;
 	}
 }
 
@@ -40,56 +56,92 @@ int AreSame(double a, double b)
 // }
 
 /* hash: form hash value for double d*/
-struct hentry *hash(double ax, double ay, double bx, double by) {
-	//unsigned int ax_ = (int)(ax * MOD_PRECISION) % HASHSIZE;
-	unsigned int ay_ = (int)(ay * MOD_PRECISION) % HASHSIZE;
+void hash() {
+	unsigned int ax_ = ((unsigned int)(accX * MOD_PRECISION)) % HASHSIZE;
+	unsigned int ay_ = ((unsigned int)(accY * MOD_PRECISION)) % HASHSIZE;
 	//unsigned int bx_ = fmod((bx * MOD_PRECISION), HASHSIZE);
 	//unsigned int by_ = fmod((by * MOD_PRECISION), HASHSIZE);
 	
-	//unsigned int id = (ax_ + ay_) % HASHSIZE;
-	
+	unsigned int id = (ax_ + ay_) % HASHSIZE;
 
-	return &(hashtab[ay_]);
+	selectedIter = (HASHTABLE_ITER_TYPE) (hashtab+id);
 }
 
-void store(struct hentry *he, double i1x, double i1y, double i2x,  double i2y, double i3x, double i3y, double i4x, double i4y) {
-	he->roll = i1x;
-	he->pitch = i1y;
-	he->gyroXangle = i2x;
-	he->gyroYangle = i2y;
-	he->compAngleX = i3x;
-	he->compAngleY = i3y;
-	he->kalAngleX = i4x;
-	he->kalAngleY = i4y;
+void store() {
+	// hashtab[i].accX = accX;
+	// hashtab[i].accY = accY;
+	// hashtab[i].accZ = accZ;
+	// hashtab[i].gyroX = gyroX;
+	// hashtab[i].gyroY = gyroY;
+	// hashtab[i].gyroZ = gyroZ;
+	// hashtab[i].roll = roll;
+	// hashtab[i].pitch = pitch;
+	// hashtab[i].gyroXangle = gyroXangle;
+	// hashtab[i].gyroYangle = gyroYangle;
+	// hashtab[i].compAngleX = compAngleX;
+	// hashtab[i].compAngleY = compAngleY;
+	// hashtab[i].kalAngleX = kalAngleX;
+	// hashtab[i].kalAngleY = kalAngleY;
+	selectedIter->accX = accX;
+	selectedIter->accY = accY;
+	selectedIter->accZ = accZ;
+	selectedIter->gyroX = gyroX;
+	selectedIter->gyroY = gyroY;
+	selectedIter->gyroZ = gyroZ;
+	selectedIter->roll = roll;
+	selectedIter->pitch = pitch;
+	selectedIter->gyroXangle = gyroXangle;
+	selectedIter->gyroYangle = gyroYangle;
+	selectedIter->compAngleX = compAngleX;
+	selectedIter->compAngleY = compAngleY;
+	selectedIter->kalAngleX = kalAngleX;
+	selectedIter->kalAngleY = kalAngleY;
 }
 
 /* lookup: look for s in hashtab */
-struct hentry *lookup(double ax, double ay, double az, double bx, double by, double bz) {	
-	struct hentry *he = hash(ax, ay, bx, by);
+void lookup() {	
+	hash();
 	
-	if (AreSame(ax, he->accX) != -1) {
-		return (struct hentry*) nullptr;
+	// if (AreSame(ax, hashtab[idx].accX) == -1) {
+	// 	return NOT_FOUND;
+	// }
+	
+	// if (AreSame(ay, hashtab[idx].accY) == -1) {
+	// 	return NOT_FOUND;
+	// }
+	
+	// if (AreSame(az, hashtab[idx].accZ) == -1) {
+	// 	return NOT_FOUND;
+	// }
+	
+	// if (AreSame(bx, hashtab[idx].gyroX) == -1) {
+	// 	return NOT_FOUND;
+	// }
+	
+	// if (AreSame(by, hashtab[idx].gyroY) == -1) {
+	// 	return NOT_FOUND;
+	// }
+	
+	// if (AreSame(bz, hashtab[idx].gyroZ) == -1) {
+	// 	return NOT_FOUND;
+	// }
+
+	if (AreSame(accX, selectedIter->accX) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	if (AreSame(ay, he->accY) == -1) {
-		return (struct hentry*) nullptr;
+	else if (AreSame(accY, selectedIter->accY) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	if (AreSame(az, he->accZ) == -1) {
-		return (struct hentry*) nullptr;
+	else if (AreSame(accZ, selectedIter->accZ) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	if (AreSame(bx, he->gyroX) == -1) {
-		return (struct hentry*) nullptr;
+	else if (AreSame(gyroX, selectedIter->gyroX) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	if (AreSame(by, he->gyroY) == -1) {
-		return (struct hentry*) nullptr;
+	else if (AreSame(gyroY, selectedIter->gyroY) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	if (AreSame(bz, he->gyroZ) == -1) {
-		return (struct hentry*) nullptr;
+	else if (AreSame(gyroZ, selectedIter->gyroZ) == 1) {
+		selectedIter = NOT_FOUND;
 	}
-	
-	return he;
 }

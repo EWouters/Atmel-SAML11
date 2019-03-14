@@ -33,9 +33,13 @@ Kalman kalmanY;
 double accX, accY, accZ;
 double gyroX, gyroY, gyroZ;
 
+double roll, pitch;
 double gyroXangle, gyroYangle; // Angle calculate using the gyro only
 double compAngleX, compAngleY; // Calculated angle using a complementary filter
 double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
+
+extern HASHTABLE_ITER_TYPE selectedIter;
+extern struct hentry hashtab[HASHSIZE];
 
 static void readline(char * line, FILE * fp) {
     fgets(line, 1000, fp);
@@ -87,8 +91,8 @@ static void readGyro(FILE * fp) {
 
 void loop(int idx, FILE *accFile, FILE *gyroFile, FILE *output) {
   /* Update all the values */
-  readAcc(accFile);
-  readGyro(gyroFile);
+  //readAcc(accFile);
+  //readGyro(gyroFile);
 
   double dt = 1; // Calculate delta time
 
@@ -96,11 +100,11 @@ void loop(int idx, FILE *accFile, FILE *gyroFile, FILE *output) {
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
   // It is then converted from radians to degrees
 #ifdef RESTRICT_PITCH // Eq. 25 and 26
-  double roll  = atan2(accY, accZ) * RAD_TO_DEG;
-  double pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
+  roll  = atan2(accY, accZ) * RAD_TO_DEG;
+  pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
 #else // Eq. 28 and 29
-  double roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
-  double pitch = atan2(-accX, accZ) * RAD_TO_DEG;
+  roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
+  pitch = atan2(-accX, accZ) * RAD_TO_DEG;
 #endif
 
   double gyroXrate = gyroX / 131.0; // Convert to deg/s
@@ -159,6 +163,7 @@ int main() {
   FILE *accFile = fopen("input_acc.csv", "r");
   FILE *gyroFile = fopen("input_gyro.csv", "r");
   FILE *output = fopen("output_pc_32_hash.csv", "w");
+  FILE *debug = fopen("debug.txt", "w");
 
   // Skip CSV header
   skipline(accFile);
@@ -172,11 +177,11 @@ int main() {
   // atan2 outputs the value of -π to π (radians) - see http://en.wikipedia.org/wiki/Atan2
   // It is then converted from radians to degrees
 #ifdef RESTRICT_PITCH // Eq. 25 and 26
-  double roll  = atan2(accY, accZ) * RAD_TO_DEG;
-  double pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
+  roll  = atan2(accY, accZ) * RAD_TO_DEG;
+  pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
 #else // Eq. 28 and 29
-  double roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
-  double pitch = atan2(-accX, accZ) * RAD_TO_DEG;
+  roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
+  pitch = atan2(-accX, accZ) * RAD_TO_DEG;
 #endif
 
   kalmanX.setAngle(roll); // Set starting angle
@@ -186,9 +191,8 @@ int main() {
   compAngleX = roll;
   compAngleY = pitch;
 
-  struct hentry* he = (struct hentry*) NULL; 
-  he = (struct hentry*) hash(accX, accY, gyroX, gyroY);
-  store(he, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+  hash();
+  store();
 
   //fprintf(output, ",Roll,Pitch,GyroX,CompX,KalmanX,GyroY,CompY,KalmanY\r\n");
 	fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
@@ -197,48 +201,63 @@ int main() {
 
   int i;
 
-  for (i = 0; i < 100; i++) {   
+  int found = 0;
+  int stored = 0;
+
+  for (i = 0; i < 100; i++) {  
+    readAcc(accFile);
+    readGyro(gyroFile);
+
     //printf("Memoization!\r\n");
     //struct hentry* he = (struct hentry*) NULL; 
-    he = (struct hentry*) lookup(accX, accY, accZ, gyroX, gyroY, gyroZ);
+    selectedIter = NOT_FOUND;
+    lookup();
+    //fprintf(debug, "%d -- %p", i, idx);
     
-    if (he == nullptr) {           
+    if (selectedIter == NOT_FOUND) {           
       loop(i, accFile, gyroFile, output);
       
-      he = (struct hentry*) hash(accX, accY, gyroX, gyroY);
-      store(he, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+      hash();
+      store();
+
+      stored++;
     }
     else {      
-      roll = he->roll;
-      pitch = he->pitch;
-      gyroXangle = he->gyroXangle;
-      gyroYangle = he->gyroYangle;
-      compAngleX = he->compAngleX;
-      compAngleY = he->compAngleY;
-      kalAngleX = he->kalAngleX;
-      kalAngleY = he->kalAngleY;
+      roll = selectedIter->roll;
+      pitch = selectedIter->pitch;
+      gyroXangle = selectedIter->gyroXangle;
+      gyroYangle = selectedIter->gyroYangle;
+      compAngleX = selectedIter->compAngleX;
+      compAngleY = selectedIter->compAngleY;
+      kalAngleX = selectedIter->kalAngleX;
+      kalAngleY = selectedIter->kalAngleY;
 
-      fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+      found++;
+
+      fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", i, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
     }
   }
 
-  for (i = 0; i < HASHSIZE; i++) {
-    if (hashtab[i].roll > 0) {
-      printf("%d -- %f \r\n", i, hashtab[i].roll);
-    }
-  }
+  // for (i = 0; i < HASHSIZE; i++) {
+  //   if (hashtab[i].gyroXangle != 0) {
+  //     fprintf(debug, "%d -- %f \r\n", i, hashtab[i].gyroXangle);
+  //   }
+  // }
 
   int count = 0;
   for (i = 0; i < HASHSIZE; i++) {
-    if (hashtab[i].roll > 0) {
+    if (hashtab[i].gyroXangle != 0) {
       count++;
     }
   }
-  printf("%d / %d\r\n", count, HASHSIZE);
+  fprintf(debug, "HashTable population: %d / %d\r\n", count, HASHSIZE);
+  fprintf(debug, "No. of times found: %d\r\n", found);
+  fprintf(debug, "No. of times stored: %d\r\n", stored);
 
   fclose(accFile);
   fclose(gyroFile);
   fclose(output);
+  fclose(debug);
 
   return 0;
 }
