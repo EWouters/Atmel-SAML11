@@ -7,19 +7,19 @@
 
 SRC = ${CURDIR}
 
-all: kalman
+all:
 
-run: kalman
+run-kalman-hash: kalman-hash
+	./kalman-hash
+
+run-kalman: kalman
 	./kalman
 
 kalman: $(SRC)/main.cpp $(SRC)/kalman.hpp clean-kalman
-	g++ -m32 -g -Wall -I. -I$(SRC) -o kalman $(SRC)/main.cpp -lm
+	g++ -m32 -g -Wall -I. -I$(SRC) -o kalman $(SRC)/main.cpp -lm -O0
 
 kalman-hash: $(SRC)/main_hash.cpp $(SRC)/kalman.hpp $(SRC)/HashTable/hashtable.c $(SRC)/HashTable/hashtable.h clean-kalman-hash
-	g++ -m32 -g -Wall -I. -I$(SRC) -I$(SRC)/HashTable/ -o kalman-hash $(SRC)/main_hash.cpp $(SRC)/HashTable/hashtable.c -lm
-
-edit:
-	vim kalman.cpp
+	g++ -m32 -g -Wall -I. -I$(SRC) -I$(SRC)/HashTable/ -o kalman-hash $(SRC)/main_hash.cpp $(SRC)/HashTable/hashtable.c -lm -O0
 
 clean-kalman:
 	rm -f kalman *.o *~
