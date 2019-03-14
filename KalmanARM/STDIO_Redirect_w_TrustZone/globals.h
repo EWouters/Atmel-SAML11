@@ -20,6 +20,8 @@
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;
 
+double roll;
+double pitch;
 double gyroXangle;
 double gyroYangle; // Angle calculate using the gyro only
 double compAngleX;

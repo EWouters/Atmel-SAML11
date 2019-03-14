@@ -5,12 +5,14 @@
  *  Author: Dragos
  */ 
 
-
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_
 
-#define HASHSIZE 32
-#define EPSILON 0.0001
+#define NOT_FOUND 0
+#define HASHSIZE 124 // Max: 124
+#define EPSILON 0.5
+#define MOD_PRECISION 1000000
+#define HASHTABLE_ITER_TYPE struct hentry*
 
 struct hentry { /* table entry: */
 	double accX;
@@ -30,13 +32,11 @@ struct hentry { /* table entry: */
 	double kalAngleY;
 };
 
+extern struct hentry hashtab[HASHSIZE];
 
-static struct hentry hashtab[HASHSIZE];
-
-int AreSame(double a, double b);
-void init();
-struct hentry *hash(double ax, double ay, double bx, double by);
-void store(struct hentry *he, double i1x, double i1y, double i2x,  double i2y, double i3x, double i3y, double i4x, double i4y);
-struct hentry *lookup(double ax, double ay, double az, double bx, double by, double bz);
+unsigned char AreSame(double a, double b);
+void hash(); // the hash function
+void store();
+void lookup();
 
 #endif /* HASHTABLE_H_ */
