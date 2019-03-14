@@ -6,7 +6,9 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 100
+#define MAX_AES_BLOCKS 875
+
+#define AES_KEY_SIZE 256
 
 #define PULSE_GPIO
 #define DELAY delay_ms(10);
@@ -16,9 +18,17 @@
 static mbedtls_aes_context aes;
 static mbedtls_aes_context aes2;
 
+#if(AES_KEY_SIZE == 128)
+static const uint8_t key[16] = {
+	0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73, 0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81 };
+#elif(AES_KEY_SIZE == 256)
 static const uint8_t key[32] = {
 	0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73, 0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81,
 	0x1f, 0x35, 0x2c, 0x07, 0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14, 0xdf, 0xf4 };
+#else
+#error Only 128 and 256 are supported for AES_KEY_SIZE
+#endif
+
 static uint8_t iv[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 static uint8_t iv2[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 
@@ -31,11 +41,11 @@ int main(void)
 		DELAY
 	#endif
 	
-	mbedtls_aes_setkey_enc( &aes, key, 256 );
-	mbedtls_aes_setkey_dec( &aes2, key, 256 );
+	mbedtls_aes_setkey_enc( &aes, key, AES_KEY_SIZE );
+	mbedtls_aes_setkey_dec( &aes2, key, AES_KEY_SIZE );
 	
 	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
-	//size_t num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
+		//num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
 		// Allocate num_bytes bytes.
 		uint8_t *input = malloc(sizeof(uint8_t) * num_bytes);
 		// Fill with sequential data.

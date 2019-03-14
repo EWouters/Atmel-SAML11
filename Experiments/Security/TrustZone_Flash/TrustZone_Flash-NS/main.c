@@ -4,7 +4,8 @@
 #include "trustzone_veneer.h"
 
 #define MIN_NUM_BYTES 1
-#define MAX_NUM_BYTES 1600 //8000
+#define MAX_NUM_BYTES 4080 // This value works in the loop
+//#define MAX_NUM_BYTES 6400 // This value works for a single run
 
 #define DELAY delay_ms(10);
 #define SLEEP

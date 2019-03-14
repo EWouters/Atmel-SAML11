@@ -6,7 +6,7 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 100
+#define MAX_AES_BLOCKS 875
 
 #define PULSE_GPIO
 #define DELAY delay_ms(10);
@@ -50,7 +50,7 @@ int main(void)
 	mbedtls_aes_setkey_dec( &aes2, key, 256 );
 	
 	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
-	//int num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
+		num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
 		// Allocate num_bytes bytes.
 		uint8_t *input = malloc(sizeof(uint8_t) * num_bytes);
 		// Fill with sequential data.

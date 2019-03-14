@@ -11,8 +11,6 @@ def experiment_aes_flash(project_root=getcwd(), verbose=1):
 
     config_dict = {
         "interfaces": [INTERFACE_POWER, INTERFACE_GPIO],
-        "power_buffers": [{"channel": CHANNEL_A, "power_type": POWER_CURRENT}],
-        "read_mode": [True, True, True, True],
         "loggers": [LOGGER_OBJECT, LOGGER_CSV],
         "gpio_delay_time" : 0.0007,
         "file_name_base": "experiment_aes_flash",

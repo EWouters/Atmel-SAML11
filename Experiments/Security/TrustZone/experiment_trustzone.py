@@ -13,8 +13,6 @@ def experiment_trustzone(project_root=getcwd(), verbose=1):
 
     config_dict = {
         "interfaces": [INTERFACE_POWER, INTERFACE_GPIO],
-        "power_buffers": [{"channel": CHANNEL_A, "power_type": POWER_CURRENT}],
-        "read_mode": [True, True, True, True],
         "loggers": [LOGGER_OBJECT, LOGGER_CSV],
         "gpio_delay_time" : 0.0007,
         "file_name_base": "experiment_trustzone",
@@ -31,7 +29,7 @@ def experiment_trustzone(project_root=getcwd(), verbose=1):
     data = []
     with DGILibExtra(**config_dict) as dgilib:
         dgilib.device_reset()
-        dgilib.logger.log(1000,stop_fn)
+        dgilib.logger.log(500,stop_fn)
         data = dgilib.data
         
     if verbose:
