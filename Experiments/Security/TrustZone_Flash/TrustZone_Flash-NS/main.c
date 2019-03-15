@@ -72,8 +72,4 @@ int main(void)
 	// Signal end of test
 	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-
-	/* Replace with your application code */
-	//while (1) {
-	//}
 }
