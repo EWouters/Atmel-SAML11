@@ -17,6 +17,10 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
+	DELAY
+	DELAY
+	DELAY
+	
 #ifdef PULSE_GPIO
 	DELAY
 	// Set GPIO pin high.
