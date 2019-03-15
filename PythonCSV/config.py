@@ -1,9 +1,5 @@
-from pydgilib_extra import *
 
-import numpy as np
-import queue
-
-config_dict = {
+dgilib_config_dict = {
     "interfaces": [INTERFACE_POWER, INTERFACE_GPIO],
     "power_buffers": [{"channel": CHANNEL_A, "power_type": POWER_CURRENT}],
     "read_mode": [True, True, True, True],
@@ -19,14 +15,6 @@ config_dict = {
     "gpio_delay_time": 0.0007,
 }
 
-# import pydgilib_extra.dgilib_logger
-# print(pydgilib_extra.dgilib_logger)
-# print(pydgilib_extra.dgilib_logger.__file__)
-
-with DGILibExtra(**config_dict) as dgilib:
-    data = dgilib.logger.log(1)
-
-    dgilib.logger.calculate_averages_for_pin(2)
-    dgilib.logger.print_averages_for_pin(2)
-
-    dgilib.logger.keep_plot_alive()
+config = {
+    "measurement_duration": 10
+}
