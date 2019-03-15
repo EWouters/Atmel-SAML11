@@ -14,9 +14,9 @@ typedef uint8_t Item;
 
 #define key(A) (A)
 #define less(A, B) (key(A) < key(B))
-//#define exch(A, B) {Item t = A; A = B; B = t;} # This function is hijacked to check the stack pointer value
+//#define exch(A, B) {Item t = A; A = B; B = t;} // This function is hijacked to check the stack pointer value
 
-#define GET_MAX_STACK_POINTER
+//#define GET_MAX_STACK_POINTER
 #ifdef GET_MAX_STACK_POINTER
 static int max_sp = 0;
 #define exch(A, B) {Item t = A; register int sp asm ("sp"); max_sp = (sp > max_sp)? sp : max_sp; A = B; B = t;}
