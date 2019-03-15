@@ -27,14 +27,6 @@ double abs2(double val) {
 
 void loop(int idx) {
 	//char output[LINE_LENGTH] = { '\n' };
-		
-	//DONT_MEASURE();
-	//
-	///* Update all the values */
-	//readValues(&accX, &accY, &accZ);
-	//readValues(&gyroX, &gyroY, &gyroZ);
-	//
-	//MEASURE();
 
 	double dt = 1; // Calculate delta time
 
