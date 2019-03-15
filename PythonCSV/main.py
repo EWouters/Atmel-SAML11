@@ -1,10 +1,10 @@
+import sys
 import threading
 import queue
-from serial_csv import *
 
-from dgilib_energy import *
-from dgilib_plotter import *
-from dgilib_csv import *
+import serial
+from atmel_csv_sender import *
+
 
 q = queue.Queue()
 q2 = queue.Queue()
