@@ -4,30 +4,42 @@ import queue
 
 import serial
 from atmel_csv_sender import *
+from workers import *
 
-
-q = queue.Queue()
-q2 = queue.Queue()
+##########
+# Queues #
+##########
+send_receive_queue = queue.Queue()
+#power_data_queue = queue.Queue()
 q3 = queue.Queue()
 
-kalmanThread = threading.Thread(target=kalman_worker, kwargs={'queue': q})
-csvThread = threading.Thread(target=csv_worker, kwargs={'queue': q})
-#plotThread = threading.Thread(target=plot_worker, kwargs={'queue': q})
+logger_start_stop_queue = queue.Queue()
+sender_start_stop_queue = queue.Queue()
 
-powerThread = threading.Thread(target=energy_measurements_worker, kwargs={'queue1': q2, 'queue2': q3})
-powerPlotThread = threading.Thread(target=power_plot_worker, kwargs={'queue': q2})
-powerCsvThread = threading.Thread(target=power_csv_worker, kwargs={'queue': q3})
+####################################
+# Threads initialization and start #
+####################################
+dgilib_logger_thread = threading.Thread(target=dgilib_logger_worker, kwargs={'cmdQueue': logger_start_stop_queue})
+sender_thread = threading.Thread(target=send_worker, kwargs={'queue': send_receive_queue, 'cmdQueue': sender_start_stop_queue})
+receive_thread = threading.Thread(target=receive_worker, kwargs={'queue': send_receive_queue})
 
-#plotThread.start()
-csvThread.start()
-kalmanThread.start()
-powerThread.start()
-powerPlotThread.start()
-powerCsvThread.start()
+dgilib_logger_thread.start()
+sender_thread.start()
+receive_thread.start()
 
-csvThread.join()
-kalmanThread.join()
-#plotThread.join()
-powerThread.join()
-powerPlotThread.join()
-powerCsvThread.join()
+
+########
+# Main #
+########
+logger_start_stop_queue.put("start")
+sender_start_stop_queue.put("start")
+send_receive_queue.put("start")
+
+
+################
+# Threads stop #
+################
+dgilib_logger_thread.join()
+sender_thread.join()
+receive_thread.join()
+

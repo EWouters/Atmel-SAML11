@@ -1,3 +1,5 @@
+from atmel_csv_sender.csv_sender import sendline
+
 __author__ = "DPerju <dsperju(at)kth.se>"
 __url__ = "https://github.com/EWouters/Atmel-SAML11/tree/master/PythonCSV/"
 __credits__ = "Atmel Corporation. / Rev.: Atmel-42771A-DGILib_User Guide-09/" \
