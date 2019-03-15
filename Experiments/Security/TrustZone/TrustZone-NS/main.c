@@ -4,10 +4,9 @@
 #include "trustzone_veneer.h"
 
 #define MIN_NUM_BYTES 1
-#define MAX_NUM_BYTES 4080 // This value works in the loop
-//#define MAX_NUM_BYTES 6400 // This value works for a single run
+#define MAX_NUM_BYTES 6496 // Fills memory completely
 
-#define DELAY delay_ms(10);
+#define DELAY delay_ms(1);
 #define SLEEP
 
 int main(void)
@@ -17,9 +16,10 @@ int main(void)
 	
 	DELAY
 	
+	uint8_t *input = malloc(sizeof(uint8_t) * MAX_NUM_BYTES);
+	
 	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes++) {
-	//size_t num_bytes = MAX_NUM_BYTES;
-		uint8_t *input = malloc(sizeof(uint8_t) * num_bytes);
+		//num_bytes = MAX_NUM_BYTES;
 		// Fill with sequential data.
 		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = byte; // Will wrap at 0xff.
@@ -42,17 +42,13 @@ int main(void)
 		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = 0xfe;
 		}
-		// Free the memory
-		free(input);
-		// And reallocate
-		uint8_t *output = malloc(sizeof(unsigned char) * num_bytes);
 		
 		DELAY
 		
 		// Set GPIO pin high.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
 		// Read from secure RAM
-		nsc_load_data(output, num_bytes);
+		nsc_load_data(input, num_bytes);
 		// Set GPIO pin low.
 		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
 		
@@ -60,14 +56,15 @@ int main(void)
 		
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
-		//	if (output[byte] !=  byte % 0xff) {
+		//	if (input[byte] !=  byte % 0xff) {
 		//		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 		//	}
 		//}
 		
-		// Free the memory
-		free(output);
 	}
+	
+	// Free the memory
+	free(input);
 
 	DELAY
 	

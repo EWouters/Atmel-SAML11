@@ -6,12 +6,12 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 875
+#define MAX_AES_BLOCKS 880
 
 #define AES_KEY_SIZE 256
 
 #define PULSE_GPIO
-#define DELAY delay_ms(10);
+#define DELAY delay_ms(1);
 #define SLEEP
 
 
@@ -44,10 +44,11 @@ int main(void)
 	mbedtls_aes_setkey_enc( &aes, key, AES_KEY_SIZE );
 	mbedtls_aes_setkey_dec( &aes2, key, AES_KEY_SIZE );
 	
+	// Allocate MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZEbytes.
+	uint8_t *input = malloc(sizeof(uint8_t) * MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE);
+	
 	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
 		//num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
-		// Allocate num_bytes bytes.
-		uint8_t *input = malloc(sizeof(uint8_t) * num_bytes);
 		// Fill with sequential data.
 		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = byte; // Will wrap at 0xff.
@@ -93,11 +94,11 @@ int main(void)
 				//gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
 			//}
 		//}
-	
-		// Free the memory/
-		free(input);
+
 	}
 
+	// Free the memory
+	free(input);
 
 	#ifdef PULSE_GPIO
 		DELAY
