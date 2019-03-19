@@ -87,11 +87,11 @@ middlewares:
       port_nonsec_pa20: false
       port_nonsec_pa21: false
       port_nonsec_pa22: false
-      port_nonsec_pa23: false
+      port_nonsec_pa23: true
       port_nonsec_pa24: false
       port_nonsec_pa25: false
       port_nonsec_pa26: false
-      port_nonsec_pa27: false
+      port_nonsec_pa27: true
       port_nonsec_pa28: false
       port_nonsec_pa29: false
       port_nonsec_pa30: false
@@ -534,6 +534,9 @@ drivers:
 pads: {}
 toolchain_options:
 - definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
+  configuration: {}
+- definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Atmel.Studio:7.0.0
   configuration:
     compiler_config:
@@ -541,9 +544,6 @@ toolchain_options:
     linker_config:
       armgcc_linker_miscellaneous_LinkerFlags: -Wl,--out-implib=libsecure_gateway_veneer.lib
         -Wl,--cmse-implib
-- definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
-  configuration: {}
 - definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
   configuration: {}
