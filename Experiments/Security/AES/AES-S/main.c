@@ -10,10 +10,7 @@
 
 #define AES_KEY_SIZE 256
 
-#define PULSE_GPIO
-#define DELAY delay_ms(1);
 #define SLEEP
-
 
 static mbedtls_aes_context aes;
 static mbedtls_aes_context aes2;
@@ -37,10 +34,6 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-	#ifdef PULSE_GPIO
-		DELAY
-	#endif
-	
 	mbedtls_aes_setkey_enc( &aes, key, AES_KEY_SIZE );
 	mbedtls_aes_setkey_dec( &aes2, key, AES_KEY_SIZE );
 	
@@ -54,39 +47,17 @@ int main(void)
 			input[byte] = byte; // Will wrap at 0xff.
 		}
 
-		#ifdef PULSE_GPIO
-			DELAY
-			// Set GPIO pin high.
-			gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-		#endif
-		
+		START_MEASURE(DGI_GPIO2);
 		// Encrypt in place.
 		mbedtls_aes_crypt_cbc( &aes, MBEDTLS_AES_ENCRYPT, num_bytes, iv, input, input);
-		
-		#ifdef PULSE_GPIO
-			// Set GPIO pin low.
-			gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-			DELAY
-		#endif
+		STOP_MEASURE(DGI_GPIO2);
 		
 		SLEEP
 		
-
-		#ifdef PULSE_GPIO
-			DELAY
-			// Set GPIO pin high.
-			gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-		#endif
-		
+		START_MEASURE(DGI_GPIO3);
 		// Decrypt in place.
 		mbedtls_aes_crypt_cbc( &aes2, MBEDTLS_AES_DECRYPT, num_bytes, iv2, input, input);
-		
-		
-		#ifdef PULSE_GPIO
-			// Set GPIO pin low.
-			gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-			DELAY
-		#endif
+		STOP_MEASURE(DGI_GPIO3);
 	
 		//// Check if memory has correct data
 		//for (int byte = 0; byte < num_bytes; byte++) {
@@ -100,10 +71,5 @@ int main(void)
 	// Free the memory
 	free(input);
 
-	#ifdef PULSE_GPIO
-		DELAY
-		// Signal end of test
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-	#endif
+	END_MEASUREMENT;
 }

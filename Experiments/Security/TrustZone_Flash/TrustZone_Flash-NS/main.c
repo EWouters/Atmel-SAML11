@@ -6,7 +6,6 @@
 #define MIN_NUM_BYTES 1
 #define MAX_NUM_BYTES 6496
 
-#define DELAY delay_ms(1);
 #define SLEEP
 
 int main(void)
@@ -14,8 +13,6 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 
 	atmel_start_init();
-	
-	DELAY
 	
 	uint8_t *input = malloc(sizeof(uint8_t) * MAX_NUM_BYTES);
 	
@@ -26,16 +23,10 @@ int main(void)
 			input[byte] = byte; // Will wrap at 0xff.
 		}
 
-		DELAY
-		
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
+		START_MEASURE(DGI_GPIO2);
 		// Store data in secure Flash
 		nsc_store_data(input, num_bytes);
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-		
-		DELAY
+		STOP_MEASURE(DGI_GPIO2);
 		
 		SLEEP
 		
@@ -44,16 +35,10 @@ int main(void)
 			input[byte] = 0xfe;
 		}
 			
-		DELAY
-		
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+		START_MEASURE(DGI_GPIO3);
 		// Read from secure Flash
 		nsc_load_data(input, num_bytes);
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-		
-		DELAY
+		STOP_MEASURE(DGI_GPIO3);
 		
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -67,9 +52,5 @@ int main(void)
 	// Free the memory
 	free(input);
 
-	DELAY
-	
-	// Signal end of test
-	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
+	END_MEASUREMENT;
 }

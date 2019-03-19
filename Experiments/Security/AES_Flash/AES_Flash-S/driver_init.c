@@ -34,25 +34,6 @@ void FLASH_0_clock_init(void)
 #endif
 }
 
-void TARGET_IO_PORT_init(void)
-{
-	gpio_set_pin_level(DGI_GPIO0, GPIO_LOW);
-	gpio_set_pin_level(DGI_GPIO1, GPIO_LOW);
-	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-	gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-
-	// Set pin direction to output
-	gpio_set_pin_direction(DGI_GPIO0, GPIO_DIRECTION_OUT);
-	gpio_set_pin_direction(DGI_GPIO1, GPIO_DIRECTION_OUT);
-	gpio_set_pin_direction(DGI_GPIO2, GPIO_DIRECTION_OUT);
-	gpio_set_pin_direction(DGI_GPIO3, GPIO_DIRECTION_OUT);
-
-	gpio_set_pin_function(DGI_GPIO0, GPIO_PIN_FUNCTION_OFF);
-	gpio_set_pin_function(DGI_GPIO1, GPIO_PIN_FUNCTION_OFF);
-	gpio_set_pin_function(DGI_GPIO2, GPIO_PIN_FUNCTION_OFF);
-	gpio_set_pin_function(DGI_GPIO3, GPIO_PIN_FUNCTION_OFF);
-}
-
 void system_init(void)
 {
 #if (defined(__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U))
@@ -62,6 +43,4 @@ void system_init(void)
 
 	FLASH_0_clock_init();
 	FLASH_0_init();
-	
-	TARGET_IO_PORT_init();
 }
