@@ -13,7 +13,7 @@
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AssemblyName>STDIO_Redirect_w_TrustZone</AssemblyName>
-    <Name>KalmanHash</Name>
+    <Name>STDIO_Redirect_w_TrustZone</Name>
     <RootNamespace>STDIO_Redirect_w_TrustZone</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -784,13 +784,10 @@
     <Compile Include="Kalman\kalman_struct.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main_hash.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="globals.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main_baseline.c">
+    <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Measurements\measurements.h">
