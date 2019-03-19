@@ -14,10 +14,13 @@ dgilib_config_dict = {
     "plot_pins_values": [False, False, False, False],
     "plot_pins_method": "highlight",
     "automove_method" : "latest_data",
-    "gpio_delay_time": 0.0007,
+    "gpio_delay_time": 0.0015,
 }
 
 config = {
-    "measurement_duration": 10,
-    "measurement_iterations": 20
+    "input_acc_file": "input/input_acc.csv",
+    "input_gyro_file": "input/input_gyro.csv",
+    "output_file": "output/output_arm.csv",
+    "measurement_duration": 3,
+    "measurement_iterations": 5
 }
