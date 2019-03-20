@@ -6,4 +6,6 @@
 void atmel_start_init(void)
 {
 	system_init();
+	
+	gpio_init();
 }

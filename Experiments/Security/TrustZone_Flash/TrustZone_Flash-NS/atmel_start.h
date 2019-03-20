@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "driver_init.h"
+#include "gpio_init.h"
 
 /**
  * Initializes MCU, drivers and middleware in the project

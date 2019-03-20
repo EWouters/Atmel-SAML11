@@ -10,8 +10,6 @@
 
 #define AES_KEY_SIZE 256
 
-#define PULSE_GPIO
-#define DELAY delay_ms(1);
 #define SLEEP
 
 #ifndef FLASH_PAGE_SIZE
@@ -70,23 +68,12 @@ int main(void)
 			//input[byte] = 0xfa;
 		}
 
-#ifdef PULSE_GPIO
-		DELAY
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-#endif
-	
+		START_MEASURE(DGI_GPIO2);
 		// Encrypt in place.
 		mbedtls_aes_crypt_cbc( &aes, MBEDTLS_AES_ENCRYPT, num_bytes, iv, input, input);
+		STOP_MEASURE(DGI_GPIO2);
 		
-#ifdef PULSE_GPIO
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-		DELAY
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-#endif
-		
+		START_MEASURE(DGI_GPIO3);
 		// Save to flash
 		// Put data at end of flash.
 		uint32_t target_addr = FLASH_ADDR + FLASH_SIZE - num_bytes;
@@ -100,12 +87,7 @@ int main(void)
 			FLASH_0_write_page(target_addr + page_index * FLASH_PAGE_SIZE, &input[page_index * FLASH_PAGE_SIZE], FLASH_PAGE_SIZE);
 			// TODO: decrease FLASH_PAGE_SIZE to correct number on last write if not multiple of FLASH_PAGE_SIZE.
 		}
-	
-#ifdef PULSE_GPIO
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-		DELAY
-#endif
+		STOP_MEASURE(DGI_GPIO3);
 	
 		SLEEP
 	
@@ -113,32 +95,16 @@ int main(void)
 		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = 0xfe;
 		}
-	
-#ifdef PULSE_GPIO
-		DELAY
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-#endif
 		
+		START_MEASURE(DGI_GPIO3);
 		// Read from flash
 		FLASH_0_read(target_addr, input, num_bytes);
+		STOP_MEASURE(DGI_GPIO3);
 		
-#ifdef PULSE_GPIO
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO3, GPIO_LOW);
-		DELAY
-		// Set GPIO pin high.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-#endif
-		
+		START_MEASURE(DGI_GPIO2);
 		// Decrypt in place.
 		mbedtls_aes_crypt_cbc( &aes2, MBEDTLS_AES_DECRYPT, num_bytes, iv2, input, input);
-		
-#ifdef PULSE_GPIO
-		// Set GPIO pin low.
-		gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-		DELAY
-#endif
+		STOP_MEASURE(DGI_GPIO2);
 	
 		//// Check if memory has correct data
 		//for (size_t byte = 0; byte < num_bytes; byte++) {
@@ -151,10 +117,5 @@ int main(void)
 	// Free the memory
 	free(input);
 
-#ifdef PULSE_GPIO
-	DELAY
-	// Signal end of test
-	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-#endif
+	END_MEASUREMENT;
 }

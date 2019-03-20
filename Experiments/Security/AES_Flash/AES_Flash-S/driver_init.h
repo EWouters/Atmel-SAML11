@@ -27,8 +27,6 @@ extern "C" {
 void    FLASH_0_CLOCK_init(void);
 int32_t FLASH_0_init(void);
 
-void TARGET_IO_PORT_init(void);
-
 /**
  * \brief Perform system initialization, initialize pins and clocks for
  * peripherals

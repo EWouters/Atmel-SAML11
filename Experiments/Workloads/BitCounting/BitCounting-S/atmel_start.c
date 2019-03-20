@@ -7,4 +7,6 @@ void atmel_start_init(void)
 {
 	system_init();
 	trustzone_manager_init();
+	
+	gpio_init();
 }

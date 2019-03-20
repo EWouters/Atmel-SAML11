@@ -22,8 +22,6 @@ extern "C" {
 #include <hal_sleep.h>
 #include <hpl_crya.h>
 
-void TARGET_IO_PORT_init(void);
-
 /**
  * \brief Perform system initialization, initialize pins and clocks for
  * peripherals

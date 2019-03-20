@@ -972,7 +972,7 @@
 // <q> PA23 Non-Secure I/O enable
 // <id> port_nonsec_pa23
 #ifndef CONF_PORT_NONSEC_PA23
-#define CONF_PORT_NONSEC_PA23 0
+#define CONF_PORT_NONSEC_PA23 1
 #endif
 
 // <q> PA24 Non-Secure I/O enable
@@ -996,7 +996,7 @@
 // <q> PA27 Non-Secure I/O enable
 // <id> port_nonsec_pa27
 #ifndef CONF_PORT_NONSEC_PA27
-#define CONF_PORT_NONSEC_PA27 0
+#define CONF_PORT_NONSEC_PA27 1
 #endif
 
 // <q> PA28 Non-Secure I/O enable

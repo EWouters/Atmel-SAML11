@@ -37,8 +37,6 @@ const static uint8_t sorted[N] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 #endif
 #endif
 
-#define PULSE_GPIO
-#define DELAY delay_ms(10);
 #define SLEEP
 
 int main(void)
@@ -46,19 +44,9 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-#ifdef PULSE_GPIO
-	DELAY
-	// Set GPIO pin high.
-	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-#endif
-
+	START_MEASURE(DGI_GPIO2);
 	quicksort(values, 0, N-1);
-	
-#ifdef PULSE_GPIO
-	// Set GPIO pin low.
-	gpio_set_pin_level(DGI_GPIO2, GPIO_LOW);
-	DELAY
-#endif
+	STOP_MEASURE(DGI_GPIO2);
 
 #ifdef CHECK_RESULT
 	for (size_t i = 0; i < N; i++) {
@@ -68,10 +56,5 @@ int main(void)
 	}
 #endif
 
-#ifdef PULSE_GPIO
-	DELAY
-	// Signal end of test
-	gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH);
-	gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH);
-#endif
+	END_MEASUREMENT;
 }

@@ -147,7 +147,7 @@
           <AcmeProjectActionInfo Action="File" Source="config/hpl_oscctrl_config.h" IsConfig="true" Hash="/btkEy27Vp2uPmIhmC3DPA" />
           <AcmeProjectActionInfo Action="File" Source="config/hpl_port_config.h" IsConfig="true" Hash="RZW3kJE9DV2Pt1QsLR2RSQ" />
           <AcmeProjectActionInfo Action="File" Source="config/peripheral_clk_config.h" IsConfig="true" Hash="cZMGOExaWXY+qbKba73/GA" />
-          <AcmeProjectActionInfo Action="File" Source="config/trustzone_config.h" IsConfig="true" Hash="0vB6KxcLd8JXVWsX1fFD7g" />
+          <AcmeProjectActionInfo Action="File" Source="config/trustzone_config.h" IsConfig="true" Hash="FrIKBEqWk7vhgArpz+Q+tA" />
         </AcmeActionInfos>
         <NonsecureFilesInfo />
       </AcmeProjectConfig>
@@ -673,6 +673,7 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Device_Startup\" />
+    <Folder Include="documentation\" />
     <Folder Include="examples\" />
     <Folder Include="hal\" />
     <Folder Include="hal\include\" />
@@ -698,6 +699,9 @@
       <SubType>compile</SubType>
     </None>
     <None Include="Device_Startup\saml11_secure.ld">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="documentation\trustzone.rst">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>
