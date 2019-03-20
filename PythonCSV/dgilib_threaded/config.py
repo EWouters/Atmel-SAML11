@@ -21,6 +21,6 @@ config = {
     "input_acc_file": "input/input_acc.csv",
     "input_gyro_file": "input/input_gyro.csv",
     "output_file": "output/output_arm.csv",
-    "measurement_duration": 3,
-    "measurement_iterations": 5
+    "measurement_duration": 5,
+    "measurement_iterations": 3
 }

@@ -1,8 +1,8 @@
 import queue
 
-def waitForStart(cmdQueue, function_name = ""):
+def waitForCmd(cmdQueue, cmd="start", function_name = ""):
     msg = cmdQueue.get()
-    if (msg == "start"):
+    if (msg == cmd):
             return # Start
     else:
         if function_name != "":

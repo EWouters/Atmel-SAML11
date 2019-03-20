@@ -1,0 +1,18 @@
+Hash size: 8
+Mod precision: 10000
+Epsilon: 0.5
+
+HashTable population: 8 / 8
+No. of times found: 8
+No. of times stored: 91
+
+======
+
+Hash size: 32
+Mod precision: 100000
+Epsilon: 0.5
+
+HashTable population: 31 / 32
+No. of times found: 1
+No. of times stored: 98
+

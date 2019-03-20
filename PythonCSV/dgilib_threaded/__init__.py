@@ -1,4 +1,4 @@
-from dgilib_threaded.main import start, wait
+from dgilib_threaded.main import start, wait_main, wait_plot
 from dgilib_threaded.workers import *
 
 __author__ = "DPerju <dsperju(at)kth.se>"
