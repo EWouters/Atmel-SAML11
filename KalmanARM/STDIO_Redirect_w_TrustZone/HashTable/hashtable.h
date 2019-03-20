@@ -9,7 +9,7 @@
 #define HASHTABLE_H_
 
 #define NOT_FOUND 0
-#define HASHSIZE 124 // Max: 124
+#define HASHSIZE 32 // Max: 120-123
 #define EPSILON 0.5
 #define MOD_PRECISION 1000000
 #define HASHTABLE_ITER_TYPE struct hentry*

@@ -31,22 +31,20 @@ int main(void)
 
 	DONT_MEASURE();
 	
-	printf("RDY\r\n");
-	
+	printf("Hash:%d\r\n", HASHSIZE);
+
 	readValues(&accX, &accY, &accZ);
 	readValues(&gyroX, &gyroY, &gyroZ);
-	
-	MEASURE();
 
 	// Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
 	// atan2 outputs the value of -? to ? (radians) - see http://en.wikipedia.org/wiki/Atan2
 	// It is then converted from radians to degrees
 	#ifdef RESTRICT_PITCH // Eq. 25 and 26
-	double roll  = atan2(accY, accZ) * RAD_TO_DEG;
-	double pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
+	roll  = atan2(accY, accZ) * RAD_TO_DEG;
+	pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
 	#else // Eq. 28 and 29
-	double roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
-	double pitch = atan2(-accX, accZ) * RAD_TO_DEG;
+	roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
+	pitch = atan2(-accX, accZ) * RAD_TO_DEG;
 	#endif
 	
 	initializeKalman(&kalmanX);
@@ -58,17 +56,11 @@ int main(void)
 	gyroYangle = pitch;
 	compAngleX = roll;
 	compAngleY = pitch;
-	
-	DONT_MEASURE();
 
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
-	
-	MEASURE();
 
 	int i;
 	for (i = 0; i < 1000; i++) {
-		
-		DONT_MEASURE();
 		
 		/* Update all the values */
 		readValues(&accX, &accY, &accZ);
@@ -86,7 +78,6 @@ int main(void)
 			store();
 		}
 		else {
-			MEASURE(); 
 			
 			roll = selectedIter->roll;
 			pitch = selectedIter->pitch;
@@ -101,8 +92,6 @@ int main(void)
 		DONT_MEASURE();
 		
 		printValuesExtended(i, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
-		
-		MEASURE();
 		
 	}
 	

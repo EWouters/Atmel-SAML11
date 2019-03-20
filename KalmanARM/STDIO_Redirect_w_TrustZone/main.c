@@ -1,4 +1,12 @@
-﻿#include <atmel_start.h>
+/*
+ * main_baseline.c
+ *
+ * Created: 2019-02-25 11:33:56
+ *  Author: Dragos
+ */ 
+
+#include <atmel_start.h>
+
 
 #include "stdio_start.h"
 #include "PrintLines/printlines.h"
@@ -7,17 +15,12 @@
 #include "Kalman/kalman_main.h"
 #include "Kalman/kalman_globals.h"
 
-#include "HashTable/hashtable.h"
+#include "Measurements/measurements.h"
 
 #include "globals.h"
-
-#include "Measurements/measurements.h"
 #include <hal_gpio.h>
 
 #include <tgmath.h>
-
-extern HASHTABLE_ITER_TYPE selectedIter;
-extern struct hentry hashtab[HASHSIZE];
 
 int main(void)
 {
@@ -34,9 +37,7 @@ int main(void)
 	printf("RDY\r\n");
 	
 	readValues(&accX, &accY, &accZ);
-	readValues(&gyroX, &gyroY, &gyroZ);
-	
-	MEASURE();
+	readValues(&gyroX, &gyroY, &gyroZ);	
 
 	// Source: http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf eq. 25 and eq. 26
 	// atan2 outputs the value of -? to ? (radians) - see http://en.wikipedia.org/wiki/Atan2
@@ -59,51 +60,22 @@ int main(void)
 	compAngleX = roll;
 	compAngleY = pitch;
 	
-	DONT_MEASURE();
-
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
-	
-	MEASURE();
 
 	int i;
 	for (i = 0; i < 1000; i++) {
-		
-		DONT_MEASURE();
-		
+			
 		/* Update all the values */
 		readValues(&accX, &accY, &accZ);
 		readValues(&gyroX, &gyroY, &gyroZ);
-		
+			
 		MEASURE();
 		
-		selectedIter = NOT_FOUND;
-		lookup();
-		
-		if (selectedIter == NOT_FOUND) {
-			loop(i);
-			
-			hash();
-			store();
-		}
-		else {
-			MEASURE(); 
-			
-			roll = selectedIter->roll;
-			pitch = selectedIter->pitch;
-			gyroXangle = selectedIter->gyroXangle;
-			gyroYangle = selectedIter->gyroYangle;
-			compAngleX = selectedIter->compAngleX;
-			compAngleY = selectedIter->compAngleY;
-			kalAngleX = selectedIter->kalAngleX;
-			kalAngleY = selectedIter->kalAngleY;
-		}
+		loop(i);
 		
 		DONT_MEASURE();
 		
-		printValuesExtended(i, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
-		
-		MEASURE();
-		
+		printValuesExtended(i, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);	
 	}
 	
 	/* Replace with your application code */
