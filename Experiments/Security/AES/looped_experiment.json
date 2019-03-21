@@ -37,10 +37,10 @@
     "analysis": {
         "pins": {
             "2": [
-                "Encrypt"
+                "AES Encrypt"
             ],
             "3": [
-                "Decrypt"
+                "AES Decrypt"
             ]
         },
         "result_types": [

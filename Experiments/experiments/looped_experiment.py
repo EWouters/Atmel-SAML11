@@ -161,7 +161,7 @@ def looped_experiment(config_file=path.abspath(
             num_bytes = range(x_step, (length+1)*x_step, x_step)
             if verbose:
                 print(
-                    f"Fitting model to {config.get('name')} {parameter_name}" +
+                    f"Fitting model to {parameter_name}" +
                     f" with maximum {max(num_bytes)} bytes.")
             model_result = {}
             for result_type in result_types:
@@ -178,7 +178,7 @@ def looped_experiment(config_file=path.abspath(
                         ylabel=f"{labels[result_type]['y']} " +
                                f"[{labels[result_type]['y_unit']}]")
                     fig.canvas.set_window_title(
-                        f"Residuals of {config.get('name')} {parameter_name}")
+                        f"Residuals of {parameter_name}")
                     fig.tight_layout()
                     fig.show()
                 model_results[parameter_name] = model_result
