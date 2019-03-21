@@ -35,14 +35,12 @@ def looped_experiment(config_file=path.abspath(
             in case the log_stop_function never returns True (default: {1000})
         log_stop_function {function} -- Function that will be evaluated on the
             collected data. If it returns True the logging will be stopped
-            even if the duration has not been reached (default: Uses exec on
-            string from json file. If you want to be extra safe specify a
-            function to avoid the exec call).
+            even if the duration has not been reached (default: Stops when all
+            GPIO pins are high).
         analysis_stop_function {[type]} -- Function that will be evaluated on
             the collected data. If it returns True the logging will be stopped
-            even if the duration has not been reached (default: Uses exec on
-            string from json file. If you want to be extra safe specify a
-            function to avoid the exec call).
+            even if the duration has not been reached (default: Stops when all
+            GPIO pins are high).
         dump_pickle {bool} -- Wether to store the results in pickle files (
             default: {True}).
         fit_lm {bool} -- Wether to fit a model to the data (default: {True}).
@@ -81,9 +79,15 @@ def looped_experiment(config_file=path.abspath(
     _config_dict.update(config_dict)
     config_dict = _config_dict
 
+    # Set the log folder for the csvs
+    log_folder = config_dict.get(
+        "log_folder", path.join(path.dirname(config_file)))
+    config_dict["log_folder"] = log_folder
+
     # Get stop function for logger
     if log_stop_function is None:
-        exec(config.get("stop_functions").get("log"))
+        def log_stop_function(logger_data):
+            return all(logger_data.gpio.values[-1])
 
     if verbose:
         print(f"Starting DGILibExtra with config: \n{config_dict}\n")
@@ -99,7 +103,8 @@ def looped_experiment(config_file=path.abspath(
 
     # Get stop function for logger
     if analysis_stop_function is None:
-        exec(config.get("stop_functions").get("analysis"))
+        def analysis_stop_function(pin_values):
+            return all(pin_values)
 
     # Parse data
     analysis_config = config.get("analysis")

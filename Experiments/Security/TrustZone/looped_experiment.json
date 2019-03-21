@@ -1,0 +1,70 @@
+{
+    "name": "TrustZone",
+    "project_paths": [
+        [
+            ".",
+            "TrustZone-NS"
+        ],
+        [
+            ".",
+            "TrustZone-S"
+        ]
+    ],
+    "config_dict": {
+        "interfaces": [
+            256,
+            48
+        ],
+        "loggers": [
+            1,
+            0
+        ],
+        "gpio_delay_time": 0.0007,
+        "file_name_base": "experiment_trustzone"
+    },
+    "config_dict_plot": {
+        "loggers": [
+            1,
+            2,
+            0
+        ],
+        "plot_pins": [
+            false,
+            false,
+            true,
+            true
+        ],
+        "plot_pins_method": "line",
+        "plot_xmax": 1,
+        "window_title": "Experiment TrustZone"
+    },
+    "analysis": {
+        "pins": {
+            "2": [
+                "TrustZone Store"
+            ],
+            "3": [
+                "TrustZone Load"
+            ]
+        },
+        "result_types": [
+            "Charge",
+            "Time"
+        ],
+        "labels": {
+            "Charge": {
+                "x": "Data Size",
+                "x_unit": "byte",
+                "y": "Charge",
+                "y_unit": "C"
+            },
+            "Time": {
+                "x": "Data Size",
+                "x_unit": "byte",
+                "y": "Time",
+                "y_unit": "s"
+            }
+        },
+        "x_step": 1
+    }
+}
