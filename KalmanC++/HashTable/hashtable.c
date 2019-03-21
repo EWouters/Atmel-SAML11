@@ -36,9 +36,10 @@ unsigned char AreSame(double a, double b)
 
 void hash() {
 	unsigned int ax_ = ((unsigned int)(accX * MOD_PRECISION)) % HASHSIZE;
-	unsigned int ay_ = ((unsigned int)(accY * MOD_PRECISION)) % HASHSIZE;
+	//unsigned int ay_ = ((unsigned int)(accY * MOD_PRECISION)) % HASHSIZE;
+	//unsigned int az_ = ((unsigned int)(accZ * MOD_PRECISION)) % HASHSIZE;
 	
-	unsigned int id = (ax_ + ay_) % HASHSIZE;
+	unsigned int id = (ax_) % HASHSIZE;
 
 	selectedIter = (HASHTABLE_ITER_TYPE) (hashtab+id);
 }

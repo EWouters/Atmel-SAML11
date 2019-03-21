@@ -352,8 +352,6 @@ def calculate_average_multiple_intervals(data_power, intervals, start_time=None,
 
     return sum / to_divide
 
-# fixup_end_index can be -1 so that we don't get the power data point that's after a pin toggle
-#  (of which the timestamp we usually use as the end_time for the power timestamp)
 def calculate_average(power_data, start_time=None, end_time=None, initial_search_index = 1):
     """Calculate average value of the power_data using the left Riemann sum."""
     # print("Start time: " + str(start_time))
@@ -380,41 +378,40 @@ def calculate_average(power_data, start_time=None, end_time=None, initial_search
             (power_data.timestamps[end_index] -
              power_data.timestamps[start_index]))
 
-### Obsolete for now
-# def calculate_average_leftpoint_single_interval(data_power, start_time=None, end_time=None, start_index=0):
-#     if start_time is None:
-#         start_time = data_power.timestamps[0]
-#     else:
-#         (_, start_time, _, left_index) = data_power.get_next_available_timestamps(
-#             start_time, start_index)
+def calculate_average_leftpoint_single_interval(data_power, start_time=None, end_time=None, start_index=0):
+    if start_time is None:
+        start_time = data_power.timestamps[0]
+    else:
+        (_, start_time, _, left_index) = data_power.get_next_available_timestamps(
+            start_time, start_index)
 
-#     if end_time is None:
-#         end_time = data_power.timestamps[-1]
-#     else:
-#         (end_time, _, right_index, _) = data_power.get_next_available_timestamps(
-#             end_time, start_index)
+    if end_time is None:
+        end_time = data_power.timestamps[-1]
+    else:
+        (end_time, _, right_index, _) = data_power.get_next_available_timestamps(
+            end_time, start_index)
 
-#     if start_time is None:
-#         return None
-#     if end_time is None:
-#         return None
-#     if left_index is None:
-#         return None
-#     if right_index is None:
-#         return None
+    if start_time is None:
+        return None
+    if end_time is None:
+        return None
+    if left_index is None:
+        return None
+    if right_index is None:
+        return None
 
-#     last_time = start_time
+    last_time = start_time
 
-#     sum = 0
+    sum = 0
 
-#     for i in range(left_index, right_index+1):
-#         timestamp = data_power.timestamps[i]
-#         power_value = data_power.values[i]
+    for i in range(left_index, right_index+1):
+        timestamp = data_power.timestamps[i]
+        power_value = data_power.values[i]
 
-#         sum += power_value * (timestamp - last_time)
-#         last_time = timestamp
+        sum += power_value * (timestamp - last_time)
+        last_time = timestamp
 
-#     return sum / (end_time - start_time)
+    return sum #/ (end_time - start_time)
 
 ##############################
 # Calculate average midpoint #

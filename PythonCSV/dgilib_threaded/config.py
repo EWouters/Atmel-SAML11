@@ -14,10 +14,5 @@ dgilib_config_dict = {
     "plot_pins_values": [False, False, False, False],
     "plot_pins_method": "highlight",
     "automove_method" : "latest_data",
-    "gpio_delay_time": 0.0007,
-}
-
-config = {
-    "measurement_duration": 10,
-    "measurement_iterations": 20
+    "gpio_delay_time": 0.0015,
 }

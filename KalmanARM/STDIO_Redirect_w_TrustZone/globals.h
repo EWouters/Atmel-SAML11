@@ -15,7 +15,7 @@
 #define LINE_LENGTH 128
 
 #define DO_DELAY
-#define DELAY_DURATION 50
+#define DELAY_DURATION 10
 
 Kalman kalmanX; // Create the Kalman instances
 Kalman kalmanY;

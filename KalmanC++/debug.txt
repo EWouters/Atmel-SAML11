@@ -1,0 +1,7 @@
+Mod precision: 100000
+Epsilon: 0.500000
+Hash size: 32
+
+HashTable population: 31 / 32
+No. of times found: 1
+No. of times stored: 98
