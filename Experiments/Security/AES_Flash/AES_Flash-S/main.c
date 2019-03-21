@@ -6,7 +6,7 @@
 #include "mbedtls/cmac.h"
 
 #define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 880
+#define MAX_AES_BLOCKS 800 //880
 
 #define AES_KEY_SIZE 256
 
@@ -61,7 +61,7 @@ int main(void)
 	uint8_t *input = malloc(sizeof(uint8_t) * MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE);
 	
 	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
-		//num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
+		//size_t num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
 		// Fill with sequential data.
 		for (size_t byte = 0; byte < num_bytes; byte++) {
 			input[byte] = byte; // Will wrap at 0xff.
