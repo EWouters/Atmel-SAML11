@@ -5,15 +5,18 @@ import pickle
 import json
 from lmfit import Model
 
-from pydgilib_extra import DGILibExtra, power_and_time_per_pulse
+from pydgilib_extra import (
+    DGILibExtra, power_and_time_per_pulse, LoggerData, LOGGER_OBJECT,
+    LOGGER_CSV)
 from atprogram.atprogram import atprogram
 
 
 def looped_experiment(config_file=path.abspath(
         path.join(path.curdir, "looped_experiment.json")),
         verbose=1, config_dict={}, live_plot=False, max_log_time=1000,
-        log_stop_function=None, analysis_stop_function=None, dump_pickle=True,
-        fit_lm=True, model=None, show_lm_plot=1):
+        log_stop_function=None, analysis_stop_function=None,
+        drop_last_samples=1, dump_pickle=True, fit_lm=True, model=None,
+        show_lm_plot=1):
     """looped_experiment.
 
     This function reads a json file with parameters. This file describes how
@@ -41,7 +44,9 @@ def looped_experiment(config_file=path.abspath(
             the collected data. If it returns True the logging will be stopped
             even if the duration has not been reached (default: Stops when all
             GPIO pins are high).
-        dump_pickle {bool} -- Wether to store the results in pickle files (
+        drop_last_samples {bool} -- Number of samples to drop from the end of
+            the parsed data (default: {1}).
+        dump_pickle {int} -- Wether to store the results in pickle files (
             default: {True}).
         fit_lm {bool} -- Wether to fit a model to the data (default: {True}).
         model {Model} -- Model to fit to the data (default: Simple line model
@@ -87,16 +92,26 @@ def looped_experiment(config_file=path.abspath(
     # Get stop function for logger
     if log_stop_function is None:
         def log_stop_function(logger_data):
-            return all(logger_data.gpio.values[-1])
+            return len(logger_data.gpio) and all(logger_data.gpio.values[-1])
 
     if verbose:
         print(f"Starting DGILibExtra with config: \n{config_dict}\n")
 
-    logger_data = []
+    logger_data = LoggerData()
     with DGILibExtra(**config_dict) as dgilib:
         dgilib.device_reset()
         dgilib.logger.log(max_log_time, log_stop_function)
-        logger_data = dgilib.data
+
+        # Get data from object
+        if LOGGER_OBJECT in dgilib.logger.loggers:
+            logger_data = dgilib.data
+        # Get data from csv files
+        elif LOGGER_CSV in dgilib.logger.loggers:
+            for interface_id, interface in dgilib.interfaces.items():
+                logger_data[interface_id] += interface.csv_read_file(
+                    path.join(dgilib.logger.log_folder,
+                              (interface.file_name_base + '_' +
+                               interface.name + ".csv")))
 
     if verbose:
         print(f"DGILibExtra logger_data: {logger_data}")
@@ -116,9 +131,10 @@ def looped_experiment(config_file=path.abspath(
             logger_data, int(pin), stop_function=analysis_stop_function)
         num_names = len(parameter_names)
         for i, parameter_name in enumerate(parameter_names):
+            end_index = -drop_last_samples * num_names or None
             parsed_data[parameter_name] = {
-                result_types[0]: data[0][i::num_names],
-                result_types[1]: data[1][i::num_names],
+                result_types[0]: data[0][i:end_index:num_names],
+                result_types[1]: data[1][i:end_index:num_names],
                 "x_step": x_step}
     if dump_pickle:
         pickle.dump(parsed_data, open(
@@ -143,6 +159,10 @@ def looped_experiment(config_file=path.abspath(
             length = len(parsed_data[parameter_name][result_types[0]])
             x_step = parsed_data[parameter_name]["x_step"]
             num_bytes = range(x_step, (length+1)*x_step, x_step)
+            if verbose:
+                print(
+                    f"Fitting model to {config.get('name')} {parameter_name}" +
+                    f" with maximum {max(num_bytes)} bytes.")
             model_result = {}
             for result_type in result_types:
                 model_result[result_type] = model.fit(
