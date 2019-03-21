@@ -142,7 +142,7 @@ def looped_experiment(config_file=path.abspath(
         for parameter_name in parsed_data.keys():
             length = len(parsed_data[parameter_name][result_types[0]])
             x_step = parsed_data[parameter_name]["x_step"]
-            num_bytes = range(1, length*x_step, x_step)
+            num_bytes = range(x_step, (length+1)*x_step, x_step)
             model_result = {}
             for result_type in result_types:
                 model_result[result_type] = model.fit(
@@ -190,7 +190,7 @@ def looped_experiment(config_file=path.abspath(
             for parameter_name in parsed_data.keys():
                 length = len(parsed_data[parameter_name][result_types[0]])
                 x_step = parsed_data[parameter_name]["x_step"]
-                num_bytes = range(1, length*x_step, x_step)
+                num_bytes = range(x_step, (length+1)*x_step, x_step)
                 model_result = {}
                 line_style = next(line_styles)
                 for result_type in result_types:
