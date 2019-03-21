@@ -13,31 +13,16 @@ from time import time, sleep
 from shutil import copy
 import os
 
-def dgilib_averages_worker(queue, typeQueue):
-	preprocessed_data = queue.get()
-	data = queue.get()
+config = {
+    "input_acc_file": "input/input_acc.csv",
+    "input_gyro_file": "input/input_gyro.csv",
+    "output_file": "output/output_arm.csv",
+    "measurement_duration": 5,
+    "measurement_iterations": 3
+}
 
-	avg = DGILibAverages(None, preprocessed_data = preprocessed_data)
-	print("Calculating averages...")
-	start_time = time()
-	avg.calculate_averages_for_pin(2, data = data)
-	duration = start_time - time()
-	print("Time spent on calculate_averages_for_pin: {0} s", duration)
-	avg.print_averages_for_pin(2)
-
-	print(data)
-
-	start_time = time()
-	power_and_time_per_pulse(data, 2, 0.01, data.power.timestamps[-1]-1, pulse_direction=False)
-	duration = start_time - time()
-	print("Time spent on power_and_time_per_pulse: {0} s", duration)
-
-	hash_ = typeQueue.get()
-	avg.write_to_csv(os.getcwd() + "\\output\\exp1\\exp1-averages-" + hash_ + ".csv")
-	
-	
-
-def dgilib_logger_worker(cmdQueue, averagesQueue, measurement_duration=config["measurement_duration"], yield_rate=0):
+def dgilib_logger_worker(cmdQueue, returnQueue,
+	measurement_duration=config["measurement_duration"], yield_rate=0):
 
 	with DGILibExtra(**dgilib_config_dict) as dgilib:
 		# plot = DGILibPlot(**dgilib_config_dict)
@@ -53,10 +38,6 @@ def dgilib_logger_worker(cmdQueue, averagesQueue, measurement_duration=config["m
 		end_time = time() + measurement_duration
 		while time() < end_time:
 			dgilib.logger.update_callback()
-			# plot.update_plot(dgilib.data)
-
-			# queue1.put(dgilib.data)
-			# queue2.put(dgilib.data)
 			sleep(yield_rate)
 
 		if timeToStop(cmdQueue, "dgilib_logger_worker") or not(plot.plot_still_exists()):
@@ -65,8 +46,8 @@ def dgilib_logger_worker(cmdQueue, averagesQueue, measurement_duration=config["m
 
 		dgilib.logger.stop()
 
-		averagesQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
-		averagesQueue.put(dgilib.data)
+		# averagesQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
+		# averagesQueue.put(dgilib.data)
 
 		while keepItUp:
 			if timeToStop(cmdQueue, "dgilib_logger_worker"):
@@ -76,6 +57,9 @@ def dgilib_logger_worker(cmdQueue, averagesQueue, measurement_duration=config["m
 				plot.refresh_plot()
 			else:
 				keepItUp = False
+	
+	returnQueue.put(dgilib.data)
+	returnQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
 
 def receive_worker(queue, max_iterations=config["measurement_iterations"], output_file=config["output_file"]):
 	with open(output_file, "w") as f:
@@ -86,7 +70,7 @@ def receive_worker(queue, max_iterations=config["measurement_iterations"], outpu
 		print("Written Kalman output to CSV")
 
 
-def send_worker(queue, cmdQueue, typeQueue, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], max_iterations=config["measurement_iterations"] + 1, verbose=1):
+def send_worker(queue, cmdQueue, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], max_iterations=config["measurement_iterations"] + 1, verbose=1):
 	with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
 
 		waitForCmd(cmdQueue, "start", "send_worker")
@@ -100,7 +84,7 @@ def send_worker(queue, cmdQueue, typeQueue, input_acc_file=config["input_acc_fil
 		gyro_file.readline()
 
 		line = None
-		hash = None
+		#hash = None
 
 		for i in range(max_iterations):
 			if verbose >= 1: sys.stdout.write( \
@@ -112,8 +96,8 @@ def send_worker(queue, cmdQueue, typeQueue, input_acc_file=config["input_acc_fil
 			if verbose == 2: print("[RECV] " + line)
 
 			if ("Hash" in line):
-				hash = line.split(":")[1]
-				print("Hash is {0}".format(hash))
+				hash_ = line.split(":")[1]
+				print("Hash is {0}".format(hash_))
 			elif not ("RDY" in line): 
 				queue.put(line.split(","))
 
@@ -125,10 +109,10 @@ def send_worker(queue, cmdQueue, typeQueue, input_acc_file=config["input_acc_fil
 			sendline(ser, send)
 			if verbose == 2: print("[SENT] " + send)
 			
-		if hash is None:
-			typeQueue.put("baseline")
-		else:
-			typeQueue.put("hash-" + hash)
+		# if hash is None:
+		# 	typeQueue.put("baseline")
+		# else:
+		# 	typeQueue.put("hash-" + hash)
 
 		acc_file.close()
 		gyro_file.close()
