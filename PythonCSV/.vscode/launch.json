@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Experiment 1",
+            "name": "Debug",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/exp1.py",
+            "program": "${workspaceFolder}/debug.py",
             "console": "integratedTerminal"
         },
         {

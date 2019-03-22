@@ -17,7 +17,7 @@ logger_main_queue = queue.Queue()
 
 dgilib_logger_thread = None
 sender_thread = None
-receive_thread = None
+receiver_thread = None
 
 config = {
     "input_acc_file": "input/input_acc.csv",
@@ -30,7 +30,11 @@ config = {
 ########
 # Main #
 ########
-def start(duration=config["measurement_duration"]):
+def start(duration=config["measurement_duration"], iterations=config["measurement_iterations"]):
+    global dgilib_logger_thread
+    global sender_thread
+    global receiver_thread
+
     dgilib_logger_thread = threading.Thread(target=dgilib_logger_worker,
         kwargs={'cmdQueue': logger_start_stop_queue,
         'returnQueue': logger_main_queue,
@@ -38,26 +42,31 @@ def start(duration=config["measurement_duration"]):
         })
     sender_thread = threading.Thread(target=send_worker,
         kwargs={'queue': send_receive_queue,
-        'cmdQueue': sender_start_stop_queue
+        'cmdQueue': sender_start_stop_queue,
+        'max_iterations': iterations
         })
-    receive_thread = threading.Thread(target=receive_worker,
-        kwargs={'queue': send_receive_queue
+    receiver_thread = threading.Thread(target=receive_worker,
+        kwargs={'queue': send_receive_queue,
+        'max_iterations': iterations
         })
     # averages_thread = threading.Thread(target=dgilib_averages_worker,
     #     kwargs={'queue': logger_averages_queue,
     #     'typeQueue': sender_averages_queue
     #     })
     
-    dgilib_logger_thread.start()
+    #dgilib_logger_thread.start()
     sender_thread.start()
-    receive_thread.start()
+    receiver_thread.start()
     # averages_thread.start()
 
     logger_start_stop_queue.put("start")
     sender_start_stop_queue.put("start")
+    dgilib_logger_worker(logger_start_stop_queue, logger_main_queue, duration)
 
     data = logger_main_queue.get()
     preprocessed_data = logger_main_queue.get()
+
+    print("Main thread done!")
 
     return (data, preprocessed_data)
 
@@ -65,11 +74,11 @@ def start(duration=config["measurement_duration"]):
 # Threads stop #
 ################
 def wait_dgilib():
-    dgilib_logger_thread.join()
+    return
     
 def wait_sendrecv():
     sender_thread.join()
-    receive_thread.join()
+    receiver_thread.join()
 
 
 

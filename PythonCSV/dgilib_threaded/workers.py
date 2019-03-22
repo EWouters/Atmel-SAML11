@@ -49,6 +49,11 @@ def dgilib_logger_worker(cmdQueue, returnQueue,
 		# averagesQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
 		# averagesQueue.put(dgilib.data)
 
+		returnQueue.put(dgilib.data)
+		returnQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
+		print("Sent measurement data and preprocessed averages data to main thread.")
+		print("Measurement thread waiting for plot...")
+
 		while keepItUp:
 			if timeToStop(cmdQueue, "dgilib_logger_worker"):
 				keepItUp = False
@@ -57,9 +62,10 @@ def dgilib_logger_worker(cmdQueue, returnQueue,
 				plot.refresh_plot()
 			else:
 				keepItUp = False
+
+		print("Measurement thread done!")
 	
-	returnQueue.put(dgilib.data)
-	returnQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
+	
 
 def receive_worker(queue, max_iterations=config["measurement_iterations"], output_file=config["output_file"]):
 	with open(output_file, "w") as f:
@@ -67,10 +73,13 @@ def receive_worker(queue, max_iterations=config["measurement_iterations"], outpu
 			data = queue.get()
 			f.write(",".join(data) + "\n")
 		
-		print("Written Kalman output to CSV")
+		print("\n\nWritten Kalman output to '" + output_file + "'")
+		print("\nReceiving thread done!")
 
 
-def send_worker(queue, cmdQueue, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], max_iterations=config["measurement_iterations"] + 1, verbose=1):
+def send_worker(queue, cmdQueue, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], max_iterations=config["measurement_iterations"], verbose=1):
+	max_iterations += 1
+	
 	with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
 
 		waitForCmd(cmdQueue, "start", "send_worker")
@@ -117,5 +126,5 @@ def send_worker(queue, cmdQueue, input_acc_file=config["input_acc_file"], input_
 		acc_file.close()
 		gyro_file.close()
 
-		print("\r\nDone!")
+		print("Sending thread done!")
 
