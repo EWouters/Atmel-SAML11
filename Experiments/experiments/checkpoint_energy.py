@@ -6,7 +6,7 @@ from math import ceil
 from experiments.looped_experiment import looped_experiment
 from experiments.repeated_experiment import repeated_experiment
 
-from atprogram.atprogram import get_device_info
+from atprogram.atprogram import (get_device_info, get_project_size)
 
 
 class CheckpointEnergy(object):
@@ -52,7 +52,8 @@ class CheckpointEnergy(object):
         looped_experiment(config_file_path, **kwargs)
 
     def measure_workload_energy(self, workload_project, config_file=None,
-                                **kwargs):
+                                extract_project_size=True,
+                                extract_device_info=True, **kwargs):
         # Get the name of the config file, or use default if not specified
         if config_file is None:
             config_file = self.repeated_config_file
@@ -62,7 +63,9 @@ class CheckpointEnergy(object):
                       workload_project, config_file))
         if not path.isfile(config_file_path):
             raise IOError(f"Config file not found at {config_file_path}")
-        repeated_experiment(config_file_path, **kwargs)
+        repeated_experiment(
+            config_file_path, extract_project_size=extract_project_size,
+            extract_device_info=extract_device_info, **kwargs)
 
     def get_security_energy_function(self, config_file=None):
         if config_file is None:
@@ -152,4 +155,29 @@ class CheckpointEnergy(object):
         return get_workload_energy
 
     def get_device_info(self, *args, **kwargs):
-        self.device_info = get_device_info(*args, **kwargs)
+        return get_device_info(*args, **kwargs)
+
+    def get_workload_info(self, workload_project, config_file=None, *args,
+                          **kwargs):
+        if config_file is None:
+            config_file = self.repeated_config_file
+        config_file_path = path.abspath(
+            path.join(*self.projects_folder, self.workload_folder,
+                      workload_project, config_file))
+        if not path.isfile(config_file_path):
+            raise IOError(f"Config file not found at {config_file_path}")
+        pickle_path_base = ""
+        with open(path.join(config_file_path)) as json_file:
+            config = json.load(json_file)
+            pickle_path_base = path.abspath(path.join(
+                *self.projects_folder, self.workload_folder,
+                workload_project,
+                config["config_dict"].get("file_name_base", "log")))
+        return pickle.load(open(f"{pickle_path_base}_info.p", "rb"))
+
+    def get_all_workload_info(self, config_file=None, *args, **kwargs):
+        workloads_info = {}
+        for workload_project in self.workload_projects:
+            workloads_info[workload_project] = self.get_workload_info(
+                config_file=config_file, *args, **kwargs)
+        return workloads_info
