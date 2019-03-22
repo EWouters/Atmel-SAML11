@@ -15,11 +15,11 @@ def looped_experiment(config_file=path.abspath(
         path.join(path.curdir, "looped_experiment.json")),
         verbose=1, config_dict={}, live_plot=False, max_log_time=1000,
         log_stop_function=None, analysis_stop_function=None,
-        drop_last_samples=1, dump_pickle=True, fit_lm=True, model=None,
+        drop_last_samples=0, dump_pickle=True, fit_lm=True, model=None,
         show_lm_plot=1):
     """looped_experiment.
 
-    This function reads a json file with parameters. This file describes how
+    This function reads a json file with parameters. That file describes how
     to run the looped experiment. Looped experiments have a for loop that loops
     over a parameter. Each of the GPIO pins can be assigned to measure any
     number of code sections. For each pin the code sections have to alternate
@@ -40,7 +40,7 @@ def looped_experiment(config_file=path.abspath(
             collected data. If it returns True the logging will be stopped
             even if the duration has not been reached (default: Stops when all
             GPIO pins are high).
-        analysis_stop_function {[type]} -- Function that will be evaluated on
+        analysis_stop_function {function} -- Function that will be evaluated on
             the collected data. If it returns True the logging will be stopped
             even if the duration has not been reached (default: Stops when all
             GPIO pins are high).
@@ -116,7 +116,7 @@ def looped_experiment(config_file=path.abspath(
     if verbose:
         print(f"DGILibExtra logger_data: {logger_data}")
 
-    # Get stop function for logger
+    # Get stop function for analysis
     if analysis_stop_function is None:
         def analysis_stop_function(pin_values):
             return all(pin_values)
@@ -139,7 +139,7 @@ def looped_experiment(config_file=path.abspath(
     if dump_pickle:
         pickle.dump(parsed_data, open(
             path.join(path.dirname(config_file),
-                      f"{config_dict.get('file_name_base')}.p"), "wb"))
+                      f"{config_dict.get('file_name_base')}_looped.p"), "wb"))
 
     # Fit lm
     if fit_lm:
