@@ -12,6 +12,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Debug (File Replace)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_file_replace.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
             "request": "launch",

@@ -99,7 +99,7 @@ def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueu
 		if hasattr(dgilib.logger, 'plotobj'):
 			return dgilib.data, dgilib.logger.plotobj.preprocessed_averages_data
 		else:
-			return dgilib.data
+			return dgilib.data, None
 
 def receive_worker(queue, stopQueue, max_iterations, output_file):
 	with open(output_file, "w") as f:
