@@ -250,13 +250,13 @@ int main() {
       count++;
     }
   }
-  fprintf(debug, "Mod precision: %d\r\n", MOD_PRECISION);
-  fprintf(debug, "Epsilon: %f\r\n", EPSILON);
-  fprintf(debug, "Hash size: %d\r\n", HASHSIZE);
-  fprintf(debug, "\r\n");
-  fprintf(debug, "HashTable population: %d / %d\r\n", count, HASHSIZE);
-  fprintf(debug, "No. of times found: %d\r\n", found);
-  fprintf(debug, "No. of times stored: %d\r\n", stored);
+  fprintf(debug, "Mod precision: %d\n", MOD_PRECISION);
+  fprintf(debug, "Epsilon: %f\n", EPSILON);
+  fprintf(debug, "Hash size: %d\n", HASHSIZE);
+  fprintf(debug, "\n");
+  fprintf(debug, "HashTable population: %d / %d\n", count, HASHSIZE);
+  fprintf(debug, "No. of times found: %d\n", found);
+  fprintf(debug, "No. of times stored: %d\n", stored);
 
   fclose(accFile);
   fclose(gyroFile);

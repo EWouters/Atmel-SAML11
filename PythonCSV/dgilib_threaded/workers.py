@@ -13,16 +13,7 @@ from time import time, sleep
 from shutil import copy
 import os
 
-config = {
-    "input_acc_file": "input/input_acc.csv",
-    "input_gyro_file": "input/input_gyro.csv",
-    "output_file": "output/output_arm.csv",
-    "measurement_duration": 5,
-    "measurement_iterations": 3
-}
-
-def dgilib_logger_worker(cmdQueue, returnQueue,
-	measurement_duration=config["measurement_duration"], yield_rate=0):
+def dgilib_logger_worker(cmdQueue, returnQueue, measurement_duration, dgilib_config_dict, yield_rate=0):
 
 	with DGILibExtra(**dgilib_config_dict) as dgilib:
 		# plot = DGILibPlot(**dgilib_config_dict)
@@ -65,9 +56,52 @@ def dgilib_logger_worker(cmdQueue, returnQueue,
 
 		print("Measurement thread done!")
 	
-	
+def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueue, waitForPlot = False):
 
-def receive_worker(queue, max_iterations=config["measurement_iterations"], output_file=config["output_file"]):
+	end_time_adjustment = 2
+
+	with DGILibExtra(**dgilib_config_dict) as dgilib:
+		if hasattr(dgilib.logger, 'plotobj'):
+			plot = dgilib.logger.plotobj
+		else:
+			plot = None
+			waitForPlot = False
+
+		dgilib.device_reset()
+
+		dgilib.logger.start()
+
+		#startQueue.put("start")
+
+		end_time = time() + measurement_duration
+		while time() < end_time:
+			#print("Doing {0} out of {1}".format(time(), end_time))
+			dgilib.logger.update_callback()
+			
+			if timeToStop(stopQueue, "dgilib_logger (simple)"):
+				print("Measurement thread: Got stop command!")
+				end_time = time() + end_time_adjustment
+
+		dgilib.logger.stop()
+
+		if LOGGER_CSV in dgilib.logger.loggers:
+			for interface_id, interface in dgilib.interfaces.items():
+				print("Wrote " + interface.name + " data to " + os.path.join(dgilib.logger.log_folder, interface.file_name_base + '_' +
+								interface.name + ".csv'"))
+
+		if waitForPlot and (plot is not None):
+			print("Measurement thread waiting for plot...")
+			while plot.plot_still_exists():
+				plot.refresh_plot()
+
+		print("Measurement thread done!")
+
+		if hasattr(dgilib.logger, 'plotobj'):
+			return dgilib.data, dgilib.logger.plotobj.preprocessed_averages_data
+		else:
+			return dgilib.data, None
+
+def receive_worker(queue, stopQueue, max_iterations, output_file):
 	with open(output_file, "w") as f:
 		for i in range(max_iterations):
 			data = queue.get()
@@ -76,13 +110,14 @@ def receive_worker(queue, max_iterations=config["measurement_iterations"], outpu
 		print("\n\nWritten Kalman output to '" + output_file + "'")
 		print("\nReceiving thread done!")
 
+	stopQueue.put("stop")
 
-def send_worker(queue, cmdQueue, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], max_iterations=config["measurement_iterations"], verbose=1):
+def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations, verbose=1):
 	max_iterations += 1
 	
 	with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
 
-		waitForCmd(cmdQueue, "start", "send_worker")
+		#waitForCmd(cmdQueue, "start", "send_worker")
 
 		ser.setDTR(True)
 		acc_file = open(input_acc_file, "r")
