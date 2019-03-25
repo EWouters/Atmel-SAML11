@@ -49,6 +49,18 @@
             "Charge",
             "Time"
         ],
+        "section_types": {
+            "init": [],
+            "store": [
+                "AES Encrypt",
+                "Flash Write"
+            ],
+            "load": [
+                "Flash Read",
+                "AES Decrypt"
+            ],
+            "exit": []
+        },
         "labels": {
             "Charge": {
                 "x": "Data Size",

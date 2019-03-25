@@ -51,6 +51,16 @@
             "Charge",
             "Time"
         ],
+        "section_types": {
+            "init": [],
+            "store": [
+                "TrustZone Flash Store"
+            ],
+            "load": [
+                "TrustZone Flash Load"
+            ],
+            "exit": []
+        },
         "labels": {
             "Charge": {
                 "x": "Data Size",

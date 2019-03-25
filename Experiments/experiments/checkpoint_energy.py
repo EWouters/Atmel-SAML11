@@ -2,6 +2,7 @@ from os import path, scandir
 import json
 import pickle
 from math import ceil
+import numpy as np
 
 from experiments.looped_experiment import looped_experiment
 from experiments.repeated_experiment import repeated_experiment
@@ -30,60 +31,45 @@ class CheckpointEnergy(object):
                 path.join(*self.projects_folder, self.workload_folder))
                 if f.is_dir()]
 
+        self.workloads_info = None
+        self.workloads_size = None
+        self.workloads_average = None
+        self.workloads_std = None
+
+        self.get_security_energy = self.get_security_energy_function()
+        self.get_workload_energy = self.get_workload_energy_function()
+
     def measure_all_security_energy(self, **kwargs):
         for security_project in self.security_projects:
             self.measure_security_energy(security_project, **kwargs)
+        self.get_security_energy = self.get_security_energy_function()
 
     def measure_all_workload_energy(self, **kwargs):
         for workload_project in self.workload_projects:
             self.measure_workload_energy(workload_project, **kwargs)
+        self.get_workload_energy = self.get_workload_energy_function()
 
     def measure_security_energy(self, security_project, config_file=None,
                                 **kwargs):
-        # Get the name of the config file, or use default if not specified
-        if config_file is None:
-            config_file = self.looped_config_file
-        # Get the full path to the config file
-        config_file_path = path.abspath(
-            path.join(*self.projects_folder, self.security_folder,
-                      security_project, config_file))
-        if not path.isfile(config_file_path):
-            raise IOError(f"Config file not found at {config_file_path}")
-        looped_experiment(config_file_path, **kwargs)
+        looped_experiment(get_config_file_path(path.join(
+            *self.projects_folder, self.security_folder), security_project,
+            config_file), **kwargs)
 
     def measure_workload_energy(self, workload_project, config_file=None,
                                 extract_project_size=True,
                                 extract_device_info=True, **kwargs):
-        # Get the name of the config file, or use default if not specified
-        if config_file is None:
-            config_file = self.repeated_config_file
-        # Get the full path to the config file
-        config_file_path = path.abspath(
-            path.join(*self.projects_folder, self.workload_folder,
-                      workload_project, config_file))
-        if not path.isfile(config_file_path):
-            raise IOError(f"Config file not found at {config_file_path}")
-        repeated_experiment(
-            config_file_path, extract_project_size=extract_project_size,
+        repeated_experiment(get_config_file_path(path.join(
+            *self.projects_folder, self.workload_folder), workload_project,
+            config_file), extract_project_size=extract_project_size,
             extract_device_info=extract_device_info, **kwargs)
 
     def get_security_energy_function(self, config_file=None):
-        if config_file is None:
-            config_file = self.looped_config_file
         security_charge = {}
         for security_project in self.security_projects:
-            config_file_path = path.abspath(
-                path.join(*self.projects_folder, self.security_folder,
-                          security_project, config_file))
-            if not path.isfile(config_file_path):
-                raise IOError(f"Config file not found at {config_file_path}")
-            pickle_path_base = ""
-            with open(path.join(config_file_path)) as json_file:
-                config = json.load(json_file)
-                pickle_path_base = path.abspath(path.join(
-                    *self.projects_folder, self.security_folder,
-                    security_project,
-                    config["config_dict"].get("file_name_base", "log")))
+            config = self.get_security_config(security_project, config_file)
+            pickle_path_base = path.abspath(path.join(
+                *self.projects_folder, self.security_folder, security_project,
+                config["config_dict"].get("file_name_base", "log")))
             security_charge[security_project] = {
                 "parsed_data": pickle.load(open(f"{pickle_path_base}_looped.p",
                                                 "rb")),
@@ -122,22 +108,12 @@ class CheckpointEnergy(object):
 
     def get_workload_energy_function(self, config_file=None,
                                      energy_parameter="Charge"):
-        if config_file is None:
-            config_file = self.repeated_config_file
         workload_charge = {}
         for workload_project in self.workload_projects:
-            config_file_path = path.abspath(
-                path.join(*self.projects_folder, self.workload_folder,
-                          workload_project, config_file))
-            if not path.isfile(config_file_path):
-                raise IOError(f"Config file not found at {config_file_path}")
-            pickle_path_base = ""
-            with open(path.join(config_file_path)) as json_file:
-                config = json.load(json_file)
-                pickle_path_base = path.abspath(path.join(
-                    *self.projects_folder, self.workload_folder,
-                    workload_project,
-                    config["config_dict"].get("file_name_base", "log")))
+            config = self.get_workload_config(workload_project, config_file)
+            pickle_path_base = path.abspath(path.join(
+                *self.projects_folder, self.workload_folder, workload_project,
+                config["config_dict"].get("file_name_base", "log")))
             workload_charge[workload_project] = pickle.load(
                 open(f"{pickle_path_base}_repeated.p", "rb"))
 
@@ -152,6 +128,19 @@ class CheckpointEnergy(object):
                 raise ValueError(
                     f"workload type not recognized. Got {workload_type}, but" +
                     f" have {list(workload_charge.keys())} and 'None'.")
+        self.get_workload_energy = get_workload_energy
+
+        self.workloads_average = {}
+        self.workloads_std = {}
+        for workload_project in self.workload_projects:
+            self.workloads_average[workload_project] = {}
+            self.workloads_std[workload_project] = {}
+            workload_energy = self.get_workload_energy(workload_project)
+            for section in workload_energy.keys():
+                self.workloads_average[workload_project][section] = np.average(
+                    workload_energy[section])
+                self.workloads_std[workload_project][section] = np.std(
+                    workload_energy[section])
         return get_workload_energy
 
     def get_device_info(self, *args, **kwargs):
@@ -159,25 +148,82 @@ class CheckpointEnergy(object):
 
     def get_workload_info(self, workload_project, config_file=None, *args,
                           **kwargs):
-        if config_file is None:
-            config_file = self.repeated_config_file
-        config_file_path = path.abspath(
-            path.join(*self.projects_folder, self.workload_folder,
-                      workload_project, config_file))
-        if not path.isfile(config_file_path):
-            raise IOError(f"Config file not found at {config_file_path}")
-        pickle_path_base = ""
-        with open(path.join(config_file_path)) as json_file:
-            config = json.load(json_file)
-            pickle_path_base = path.abspath(path.join(
-                *self.projects_folder, self.workload_folder,
-                workload_project,
-                config["config_dict"].get("file_name_base", "log")))
+        config = self.get_workload_config(workload_project, config_file)
+        pickle_path_base = path.abspath(path.join(
+            *self.projects_folder, self.workload_folder,
+            workload_project,
+            config["config_dict"].get("file_name_base", "log")))
         return pickle.load(open(f"{pickle_path_base}_info.p", "rb"))
 
     def get_all_workload_info(self, config_file=None, *args, **kwargs):
-        workloads_info = {}
+        self.workloads_info = {}
+        self.workloads_size = {}
         for workload_project in self.workload_projects:
-            workloads_info[workload_project] = self.get_workload_info(
-                config_file=config_file, *args, **kwargs)
-        return workloads_info
+            self.workloads_info[workload_project] = self.get_workload_info(
+                workload_project, config_file=config_file, *args, **kwargs)
+            self.workloads_size[workload_project] = self.workloads_info[
+                workload_project]["size"]
+        return self.workloads_info
+
+    def get_workload_size(self, workload_project):
+        if self.workloads_size is None:
+            self.get_all_workload_info()
+        return self.workloads_size[workload_project]
+
+    def get_workload_average(self, workload_project):
+        return self.workloads_average[workload_project]
+
+    def get_workload_std(self, workload_project):
+        return self.workloads_std[workload_project]
+
+    def get_checkpoint_size(self, workload_project):
+        result = 0 + 12 + 1 + 1  # 12 GPR + LR + PC
+        for project in self.get_workload_size(workload_project).values():
+            for size_type, size in project.items():
+                if size_type in ("data", "bss"):
+                    result += size
+        return result
+
+    def get_checkpoint_energy(self, security_type, workload_project,
+                              energy_parameter="Charge"):
+        if security_type == "None":
+            return 0
+        result = 0
+        checkpoint_sections = []
+        for section_type, section in self.get_security_config(security_type)["analysis"]["section_types"].items():
+            if section_type in ("load", "store"):
+                checkpoint_sections += section
+
+        for security_section_type, security_section in self.get_security_energy(security_type, self.get_checkpoint_size(workload_project), energy_parameter).items():
+            if security_section_type in checkpoint_sections:
+                result += security_section
+        return result
+
+    def get_security_config(self, security_project, config_file=None):
+        # Get the name of the config file, or use default if not specified
+        if config_file is None:
+            config_file = self.looped_config_file
+        return get_config(path.join(*self.projects_folder,
+                                    self.security_folder),
+                          security_project, config_file)
+
+    def get_workload_config(self, workload_project, config_file=None):
+        # Get the name of the config file, or use default if not specified
+        if config_file is None:
+            config_file = self.repeated_config_file
+        return get_config(path.join(*self.projects_folder,
+                                    self.workload_folder),
+                          workload_project, config_file)
+
+
+def get_config(folder, project, config_file):
+    with open(get_config_file_path(folder, project, config_file)) as json_file:
+        return json.load(json_file)
+
+
+def get_config_file_path(folder, project, config_file):
+    # Get the full path to the config file
+    config_file_path = path.abspath(path.join(folder, project, config_file))
+    if not path.isfile(config_file_path):
+        raise IOError(f"Config file not found at {config_file_path}")
+    return config_file_path
