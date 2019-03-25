@@ -1,5 +1,6 @@
-from dgilib_threaded.threads import start, wait_dgilib, wait_sendrecv
+from dgilib_threaded.threads import measure
 from dgilib_threaded.workers import *
+from dgilib_threaded.helpers import show_plot_for_data
 
 __author__ = "DPerju <dsperju(at)kth.se>"
 __url__ = "https://github.com/EWouters/Atmel-SAML11/tree/master/PythonCSV/"
