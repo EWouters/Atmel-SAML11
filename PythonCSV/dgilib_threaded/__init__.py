@@ -1,6 +1,6 @@
 from dgilib_threaded.threads import measure
 from dgilib_threaded.workers import *
-from dgilib_threaded.helpers import show_plot_for_data
+from dgilib_threaded.helpers import show_plot_for_data, show_plot_for_csv, load_from_csv
 
 __author__ = "DPerju <dsperju(at)kth.se>"
 __url__ = "https://github.com/EWouters/Atmel-SAML11/tree/master/PythonCSV/"
