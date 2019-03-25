@@ -14,8 +14,6 @@ bitcount = "".join([bin(n) for n in range(NUM_UINTS)]).count('1')
 
 */
 
-#define SLEEP
-
 int main(void)
 {
 	/* Initializes MCU, drivers and middleware */

@@ -1,11 +1,6 @@
 #include <atmel_start.h>
 #include "kissfft/kiss_fft.h"
 
-//#define GET_MAX_STACK_POINTER
-#ifdef GET_MAX_STACK_POINTER
-static int max_sp = 0;
-#endif
-
 #define NFFT 128
 
 int main(void)

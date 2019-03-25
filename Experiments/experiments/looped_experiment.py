@@ -28,32 +28,32 @@ def looped_experiment(config_file=path.abspath(
 
     Keyword Arguments:
         config_file {path} -- Path (or list of folders) to the json file with
-            parameters (default: {path.abspath(path.join(path.curdir, "looped_experiment.json"))}).
-        verbose {int} -- How much info to print during the run (default: {1}).
+            parameters (default: {path.abspath(path.join(path.curdir, "looped_experiment.json"))})
+        verbose {int} -- How much info to print during the run (default: {1})
         config_dict {dict} -- Parameters for DGILibExtra, in adition to the
-            ones in the json file (default: {{}}).
+            ones in the json file (default: {{}})
         live_plot {bool} -- Whether to show a live plot of the measurement
-            (default: {False}).
+            (default: {False})
         max_log_time {int} -- Time after which the measurement is broken off
             in case the log_stop_function never returns True (default: {1000})
         log_stop_function {function} -- Function that will be evaluated on the
             collected data. If it returns True the logging will be stopped
             even if the duration has not been reached (default: Stops when all
-            GPIO pins are high).
+            GPIO pins are high)
         analysis_stop_function {function} -- Function that will be evaluated on
             the collected data. If it returns True the logging will be stopped
             even if the duration has not been reached (default: Stops when all
-            GPIO pins are high).
+            GPIO pins are high)
         drop_last_samples {bool} -- Number of samples to drop from the end of
-            the parsed data (default: {1}).
-        dump_pickle {int} -- Wether to store the results in pickle files (
-            default: {True}).
-        fit_lm {bool} -- Wether to fit a model to the data (default: {True}).
+            the parsed data (default: {0})
+        dump_pickle {int} -- Whether to store the results in pickle files (
+            default: {True})
+        fit_lm {bool} -- Whether to fit a model to the data (default: {True})
         model {Model} -- Model to fit to the data (default: Simple line model
-            with slope and intercept).
-        show_lm_plot {int} -- Wether to plot the results of the model.
-            1: Plot single view (default: {1}).
-            2: Plot each parameter individually and show the residuals.
+            with slope and intercept)
+        show_lm_plot {int} -- Whether to plot the results of the model
+            1: Plot single view (default: {1})
+            2: Plot each parameter individually and show the residuals
     """
     # The config_file should be a json file with parameters
     with open(path.join(config_file)) as json_file:

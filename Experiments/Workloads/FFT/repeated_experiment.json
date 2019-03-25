@@ -47,6 +47,17 @@
         "result_types": [
             "Charge",
             "Time"
-        ]
+        ],
+        "section_types": {
+            "init": [
+                "Allocate"
+            ],
+            "loop": [
+                "FFT"
+            ],
+            "exit": [
+                "Free"
+            ]
+        }
     }
 }

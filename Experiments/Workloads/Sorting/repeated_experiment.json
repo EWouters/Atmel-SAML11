@@ -43,6 +43,13 @@
         "result_types": [
             "Charge",
             "Time"
-        ]
+        ],
+        "section_types": {
+            "init": [],
+            "loop": [
+                "Sorting"
+            ],
+            "exit": []
+        }
     }
 }
