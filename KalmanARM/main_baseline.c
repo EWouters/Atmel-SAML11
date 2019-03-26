@@ -63,7 +63,7 @@ int main(void)
 	printValuesExtended(1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
 	int i;
-	for (i = 0; i < 1000; i++) {
+	for (i = 0; i < 9999; i++) {
 			
 		/* Update all the values */
 		readValues(&accX, &accY, &accZ);
