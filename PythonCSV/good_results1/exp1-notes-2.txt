@@ -1,0 +1,48 @@
+
+-- Baseline --
+    1: (   0.00892 s,     0.0106 s) =    0.00168 s         ignored mC
+    2: (   1.35427 s,    1.36451 s) =    0.01024 s        0.005089 mC
+    3: (   1.93652 s,    1.94773 s) =    0.01121 s        0.005641 mC
+    4: (   2.44372 s,    2.45517 s) =    0.01145 s        0.005779 mC
+    5: (   3.28043 s,    3.29189 s) =    0.01146 s        0.005789 mC
+Average charge per iteration: 0.057959261 uC
+Average energy per iteration: 0.289796 uJ
+Average time per iteration: 11.483723 ms
+
+Total iterations: 100
+Total average current: 0.005047 mA
+Total average charge: 0.005796 mC
+Total energy: 0.02898 mJ
+Total time: 1.148372 s
+
+-- Hash 8 --
+    1: (   0.01021 s,    0.01189 s) =    0.00168 s         ignored mC
+    2: (   1.34665 s,    1.35773 s) =    0.01108 s        0.005466 mC
+    3: (   2.06305 s,     2.0751 s) =    0.01205 s        0.006056 mC
+    4: (   2.69151 s,    2.70381 s) =     0.0123 s        0.006198 mC
+    5: (   3.48937 s,    3.50168 s) =    0.01231 s        0.006179 mC
+Average charge per iteration: 0.057835818 uC
+Average energy per iteration: 0.289179 uJ
+Average time per iteration: 11.516085 ms
+
+Total iterations: 100
+Total average current: 0.005022 mA
+Total average charge: 0.005784 mC
+Total energy: 0.028918 mJ
+Total time: 1.151609 s
+
+-- Hash 32 --
+    1: (   0.01526 s,    0.01694 s) =    0.00168 s         ignored mC
+    2: (   1.34786 s,    1.35895 s) =    0.01109 s        0.005598 mC
+    3: (   1.73148 s,    1.74354 s) =    0.01206 s        0.006165 mC
+    4: (   2.33774 s,    2.35004 s) =     0.0123 s         0.00629 mC
+    5: (   3.16455 s,    3.17686 s) =    0.01231 s        0.006307 mC
+Average charge per iteration: 0.063071929 uC
+Average energy per iteration: 0.31536 uJ
+Average time per iteration: 12.303472 ms
+
+Total iterations: 100
+Total average current: 0.005126 mA
+Total average charge: 0.006307 mC
+Total energy: 0.031536 mJ
+Total time: 1.230347 s
