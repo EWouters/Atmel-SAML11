@@ -56,7 +56,7 @@ def dgilib_logger_worker(cmdQueue, returnQueue, measurement_duration, dgilib_con
 
 		print("Measurement thread done!")
 	
-def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueue, waitForPlot = False):
+def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueue, waitForPlot = False, verbose=2):
 
 	end_time_adjustment = 2
 
@@ -79,40 +79,40 @@ def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueu
 			dgilib.logger.update_callback()
 			
 			if timeToStop(stopQueue, "dgilib_logger (simple)"):
-				print("Measurement thread: Got stop command!")
+				if verbose >= 2: print("Measurement thread: Got stop command!")
 				end_time = time() + end_time_adjustment
 
 		dgilib.logger.stop()
 
 		if LOGGER_CSV in dgilib.logger.loggers:
 			for interface_id, interface in dgilib.interfaces.items():
-				print("Wrote " + interface.name + " data to " + os.path.join(dgilib.logger.log_folder, interface.file_name_base + '_' +
+				if verbose >= 1:  print("Wrote " + interface.name + " data to " + os.path.join(dgilib.logger.log_folder, interface.file_name_base + '_' +
 								interface.name + ".csv'"))
 
 		if waitForPlot and (plot is not None):
-			print("Measurement thread waiting for plot...")
+			if verbose >= 2: print("Measurement thread waiting for plot...")
 			while plot.plot_still_exists():
 				plot.refresh_plot()
 
-		print("Measurement thread done!")
+		if verbose >= 2: print("Measurement thread done!")
 
 		if hasattr(dgilib.logger, 'plotobj'):
 			return dgilib.data, dgilib.logger.plotobj.preprocessed_averages_data
 		else:
 			return dgilib.data, None
 
-def receive_worker(queue, stopQueue, max_iterations, output_file):
+def receive_worker(queue, stopQueue, max_iterations, output_file, verbose = 2):
 	with open(output_file, "w") as f:
 		for i in range(max_iterations):
 			data = queue.get()
 			f.write(",".join(data) + "\n")
 		
-		print("\n\nWritten Kalman output to '" + output_file + "'")
-		print("\nReceiving thread done!")
+		if verbose >= 1: print("\n\nWritten Kalman output to '" + output_file + "'")
+		if verbose >= 2: print("\nReceiving thread done!")
 
 	stopQueue.put("stop")
 
-def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations, verbose=1):
+def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations, verbose=2):
 	max_iterations += 1
 	
 	with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
@@ -137,21 +137,21 @@ def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations
 
 			line = ser.readline()
 			line = str("".join(map(chr, line))).strip()
-			if verbose == 2: print("[RECV] " + line)
+			if verbose >= 3: print("[RECV] " + line)
 
 			if ("Hash" in line):
 				hash_ = line.split(":")[1]
-				print("Hash is {0}".format(hash_))
+				if verbose >= 1: print("\nHash is {0}\n".format(hash_))
 			elif not ("RDY" in line): 
 				queue.put(line.split(","))
 
 			send = acc_file.readline().strip() + "\0"
 			sendline(ser, send)
-			if verbose == 2: print("[SENT] " + send)
+			if verbose >= 3: print("[SENT] " + send)
 
 			send = gyro_file.readline().strip() + "\0"
 			sendline(ser, send)
-			if verbose == 2: print("[SENT] " + send)
+			if verbose >= 3: print("[SENT] " + send)
 			
 		# if hash is None:
 		# 	typeQueue.put("baseline")
@@ -161,5 +161,5 @@ def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations
 		acc_file.close()
 		gyro_file.close()
 
-		print("Sending thread done!")
+		if verbose >= 2: print("Sending thread done!")
 
