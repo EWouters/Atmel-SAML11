@@ -204,7 +204,7 @@ int main() {
   int found = 0;
   int stored = 0;
 
-  for (i = 0; i < 99; i++) {  
+  for (i = 0; i < ITERATIONS; i++) {  
     readAcc(accFile);
     readGyro(gyroFile);
 
@@ -250,8 +250,9 @@ int main() {
       count++;
     }
   }
-  fprintf(debug, "Mod precision: %d\n", MOD_PRECISION);
+  //fprintf(debug, "Mod precision: %d\n", MOD_PRECISION);
   fprintf(debug, "Epsilon: %f\n", EPSILON);
+  fprintf(debug, "Sub epsilon: %f\n", SUB_EPSILON);
   fprintf(debug, "Hash size: %d\n", HASHSIZE);
   fprintf(debug, "\n");
   fprintf(debug, "HashTable population: %d / %d\n", count, HASHSIZE);

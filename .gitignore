@@ -514,3 +514,5 @@ KalmanC++/kalman-hash.exe
 KalmanC++/kalman-hash
 KalmanC++/kalman.exe
 KalmanC++/kalman
+KalmanC++/output_pc_32_hash.csv
+KalmanC++/debug.txt

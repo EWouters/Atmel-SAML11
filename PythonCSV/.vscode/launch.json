@@ -19,6 +19,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Debug (Experiment Loop)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_loop.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
             "request": "launch",

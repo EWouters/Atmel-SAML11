@@ -9,9 +9,9 @@
 #define HASHTABLE_H_
 
 #define NOT_FOUND 0
-#define HASHSIZE 32 // Max: 120-123
+#define HASHSIZE 100
 #define EPSILON 0.5
-#define MOD_PRECISION 1000000
+#define SUB_EPSILON 20
 #define HASHTABLE_ITER_TYPE struct hentry*
 
 struct hentry { /* table entry: */
