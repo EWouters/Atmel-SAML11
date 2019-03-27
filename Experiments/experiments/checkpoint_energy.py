@@ -51,22 +51,21 @@ class CheckpointEnergy(object):
 
     def measure_security_energy(self, security_project, config_file=None,
                                 **kwargs):
-        looped_experiment(get_config_file_path(path.join(
-            *self.projects_folder, self.security_folder), security_project,
-            config_file), **kwargs)
+        looped_experiment(path.join(self.get_config_file_path(
+            security_project), config_file or self.looped_config_file), **kwargs)
 
     def measure_workload_energy(self, workload_project, config_file=None,
                                 extract_project_size=True,
                                 extract_device_info=True, **kwargs):
-        repeated_experiment(get_config_file_path(path.join(
-            *self.projects_folder, self.workload_folder), workload_project,
-            config_file), extract_project_size=extract_project_size,
+        repeated_experiment(path.join(self.get_config_file_path(
+            workload_project), config_file or self.repeated_config_file),
+            extract_project_size=extract_project_size,
             extract_device_info=extract_device_info, **kwargs)
 
     def get_security_energy_function(self, config_file=None):
         security_charge = {}
         for security_project in self.security_projects:
-            config = self.get_security_config(security_project, config_file)
+            config = self.get_config(security_project, config_file)
             pickle_path_base = path.abspath(path.join(
                 *self.projects_folder, self.security_folder, security_project,
                 config["config_dict"].get("file_name_base", "log")))
@@ -110,7 +109,7 @@ class CheckpointEnergy(object):
                                      energy_parameter="Charge"):
         workload_charge = {}
         for workload_project in self.workload_projects:
-            config = self.get_workload_config(workload_project, config_file)
+            config = self.get_config(workload_project, config_file)
             pickle_path_base = path.abspath(path.join(
                 *self.projects_folder, self.workload_folder, workload_project,
                 config["config_dict"].get("file_name_base", "log")))
@@ -148,7 +147,7 @@ class CheckpointEnergy(object):
 
     def get_workload_info(self, workload_project, config_file=None, *args,
                           **kwargs):
-        config = self.get_workload_config(workload_project, config_file)
+        config = self.get_config(workload_project, config_file)
         pickle_path_base = path.abspath(path.join(
             *self.projects_folder, self.workload_folder,
             workload_project,
@@ -190,40 +189,42 @@ class CheckpointEnergy(object):
             return 0
         result = 0
         checkpoint_sections = []
-        for section_type, section in self.get_security_config(security_type)["analysis"]["section_types"].items():
+        for section_type, section in \
+                self.get_config(security_type)["analysis"]["section_types"].items():
             if section_type in ("load", "store"):
                 checkpoint_sections += section
 
-        for security_section_type, security_section in self.get_security_energy(security_type, self.get_checkpoint_size(workload_project), energy_parameter).items():
+        for security_section_type, security_section in \
+                self.get_security_energy(
+                    security_type, self.get_checkpoint_size(workload_project),
+                    energy_parameter).items():
             if security_section_type in checkpoint_sections:
                 result += security_section
         return result
 
-    def get_security_config(self, security_project, config_file=None):
-        # Get the name of the config file, or use default if not specified
-        if config_file is None:
-            config_file = self.looped_config_file
-        return get_config(path.join(*self.projects_folder,
-                                    self.security_folder),
-                          security_project, config_file)
+    def get_config_file_path(self, project):
+        # Get the full path to the config file
+        if project in self.security_projects:
+            project_folder = self.security_folder
+        elif project in self.workload_projects:
+            project_folder = self.workload_folder
+        else:
+            raise ValueError(f"Project not found: {project}")
+        return path.abspath(path.join(*self.projects_folder, project_folder,
+                                      project))
 
-    def get_workload_config(self, workload_project, config_file=None):
-        # Get the name of the config file, or use default if not specified
-        if config_file is None:
-            config_file = self.repeated_config_file
-        return get_config(path.join(*self.projects_folder,
-                                    self.workload_folder),
-                          workload_project, config_file)
-
-
-def get_config(folder, project, config_file):
-    with open(get_config_file_path(folder, project, config_file)) as json_file:
-        return json.load(json_file)
-
-
-def get_config_file_path(folder, project, config_file):
-    # Get the full path to the config file
-    config_file_path = path.abspath(path.join(folder, project, config_file))
-    if not path.isfile(config_file_path):
-        raise IOError(f"Config file not found at {config_file_path}")
-    return config_file_path
+    def get_config(self, project, config_file=None):
+        if project in self.security_projects:
+            project_folder = self.security_folder
+            config_file = config_file or self.looped_config_file
+        elif project in self.workload_projects:
+            project_folder = self.workload_folder
+            config_file = config_file or self.repeated_config_file
+        else:
+            raise ValueError(f"Project not found: {project}")
+        config_file_path = path.abspath(path.join(
+            *self.projects_folder, project_folder, project, config_file))
+        if not path.isfile(config_file_path):
+            raise IOError(f"Config file not found at {config_file_path}")
+        with open(config_file_path) as json_file:
+            return json.load(json_file)
