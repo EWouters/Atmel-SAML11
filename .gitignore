@@ -512,11 +512,12 @@ experiment_*.csv
 # Kalman version that works on computer
 KalmanC++/kalman-hash.exe
 KalmanC++/kalman-hash
+KalmanC++/hash-experiment
 KalmanC++/kalman.exe
 KalmanC++/kalman
+KalmanC++/output_pc_32.csv
 KalmanC++/output_pc_32_hash.csv
 KalmanC++/debug.txt
 
 # Output files from Kalman hash table experiments are too big to commit
 PythonCSV/output/**
-
