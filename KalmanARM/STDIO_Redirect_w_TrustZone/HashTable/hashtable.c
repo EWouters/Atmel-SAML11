@@ -5,8 +5,8 @@
  *  Author: Dragos
  */ 
 
-#include <tgmath.h>
-#include "../Kalman/kalman_struct.h"
+#include <math.h>
+#include "../kalman.hpp"
 #include "hashtable.h"
 
 HASHTABLE_ITER_TYPE selectedIter = NOT_FOUND;
@@ -24,8 +24,9 @@ extern double kalAngleX, kalAngleY; // Calculated angle using a Kalman filter
 
 struct hentry hashtab[HASHSIZE] = {{ 0 }};
 
-unsigned char AreSame(double a, double b) {
-	if (fabs(a - b) < (a * SUB_EPSILON)) {
+unsigned char AreSame(double a, double b)
+{
+	if (fabs(a - b) < EPSILON) {
 		return 0;
 	}
 	else {
@@ -33,19 +34,18 @@ unsigned char AreSame(double a, double b) {
 	}
 }
 
-
-
 void hash() {
-	unsigned int ax_ = ((unsigned int)(accX / EPSILON));
-	unsigned int ay_ = ((unsigned int)(accY / EPSILON));
-	unsigned int az_ = ((unsigned int)(accZ / EPSILON));
-	unsigned int gx_ = ((unsigned int)(gyroX / EPSILON));
-	unsigned int gy_ = ((unsigned int)(gyroY / EPSILON));
-	unsigned int gz_ = ((unsigned int)(gyroZ / EPSILON));
+	unsigned int ax_ = ((unsigned int)(accX / EPSILON)) % HASHSIZE;
+	//unsigned int ay_ = ((unsigned int)(accY / EPSILON));
+	//unsigned int az_ = ((unsigned int)(accZ / EPSILON));
 
-	unsigned int id = (ax_ + ay_ + az_ + gx_ + gy_ + gz_) % HASHSIZE;
+	//unsigned int gx_ = ((unsigned int)(gyroX / EPSILON));
+	//unsigned int gy_ = ((unsigned int)(gyroY / EPSILON));
+	//unsigned int gz_ = ((unsigned int)(gyroZ / EPSILON));
 
-	selectedIter = (HASHTABLE_ITER_TYPE) (hashtab+id);
+	//unsigned int id = (ax_ + ay_ + az_ + gx_ + gy_ + gz_) % HASHSIZE;
+
+	selectedIter = (HASHTABLE_ITER_TYPE) (hashtab+ax_);
 
 }
 
