@@ -189,7 +189,7 @@ int main() {
 	fprintf(output, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\r\n", 1, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 
   int i;
-  for (i = 0; i < 1001; i++) loop(i, accFile, gyroFile, output);
+  for (i = 0; i < 2888; i++) loop(i, accFile, gyroFile, output);
 
   fclose(accFile);
   fclose(gyroFile);
