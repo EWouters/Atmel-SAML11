@@ -43,11 +43,11 @@ int main(void)
 	// atan2 outputs the value of -? to ? (radians) - see http://en.wikipedia.org/wiki/Atan2
 	// It is then converted from radians to degrees
 	#ifdef RESTRICT_PITCH // Eq. 25 and 26
-	double roll  = atan2(accY, accZ) * RAD_TO_DEG;
-	double pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
+	roll  = atan2(accY, accZ) * RAD_TO_DEG;
+	pitch = atan(-accX / sqrt(accY * accY + accZ * accZ)) * RAD_TO_DEG;
 	#else // Eq. 28 and 29
-	double roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
-	double pitch = atan2(-accX, accZ) * RAD_TO_DEG;
+	roll  = atan(accY / sqrt(accX * accX + accZ * accZ)) * RAD_TO_DEG;
+	pitch = atan2(-accX, accZ) * RAD_TO_DEG;
 	#endif
 	
 	initializeKalman(&kalmanX);

@@ -494,17 +494,10 @@ KalmanC++/kalman
 Python/pydgilib/settings.json
 Python/pydgilib/UnitTest/UnitTest/UnitTest.cproj
 
-# dgilib.dll
-PythonCSV/dgilib.dll
-Python2/dgilib.dll
-Python/pydgilib/tests_dragos/dgilib.dll
-
 # csv's
 log_*.csv
 experiment_*.csv
-
-# Pickles
-*_charge.p
+unit_test_*.csv
 
 # KDE Dolphin on Linux
 .directory
@@ -512,9 +505,12 @@ experiment_*.csv
 # Kalman version that works on computer
 KalmanC++/kalman-hash.exe
 KalmanC++/kalman-hash
+KalmanC++/hash-experiment
 KalmanC++/kalman.exe
 KalmanC++/kalman
+KalmanC++/output_pc_32.csv
 KalmanC++/output_pc_32_hash.csv
 KalmanC++/debug.txt
-Python/pydgilib/unit_test_gpio.csv
-Python/pydgilib/unit_test_power.csv
+
+# Output files from Kalman hash table experiments are too big to commit
+PythonCSV/output/**

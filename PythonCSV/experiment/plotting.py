@@ -14,18 +14,18 @@ from pydgilib_extra import DGILibAverages
 # https://github.com/pandas-dev/pandas/issues/1710
 # https://stackoverflow.com/questions/22483588/how-can-i-plot-separate-pandas-dataframes-as-subplots
 
-def comparison_plot(filename_1, filename_2, max_iter, legend_1="", legend_2=""):
+def output_comparison_plot(filename_1, filename_2, max_iter, legend_1="", legend_2=""):
 	column_names = ['Iteration','Roll', 'Pitch', 'Gyro X Angle', 'Gyro Y Angle', 'Comp Angle X', 'Comp Angle Y', 'Kalman Angle X', 'Kalman Angle Y']
 	df1 = pd.read_csv(filename_1, header = None, names=column_names)
 	df2 = pd.read_csv(filename_2, header = None, names=column_names)
 
-	df1 = df1[1:max_iter]
-	df2 = df2[2:max_iter]
+	df1 = df1[:max_iter]
+	df2 = df2[:max_iter]
 
 	#print(df1[:5])
 	#print(df2[:5])
 
-	df2.Iteration = df2.Iteration + 2
+	#df2.Iteration = df2.Iteration + 2
 
 	fig, axes = plt.subplots(nrows=2, ncols=4)
 
@@ -44,7 +44,7 @@ def comparison_plot(filename_1, filename_2, max_iter, legend_1="", legend_2=""):
 
 	return fig
 
-def comparison_plot_single(filename_1, filename_2, max_iter, column, legend_1="", legend_2=""):
+def output_comparison_plot_single(filename_1, filename_2, max_iter, column, legend_1="", legend_2=""):
 	column_names = ['Iteration','Roll', 'Pitch', 'Gyro X Angle', 'Gyro Y Angle', 'Comp Angle X', 'Comp Angle Y', 'Kalman Angle X', 'Kalman Angle Y']
 	df1 = pd.read_csv(filename_1, header = None, names=column_names)
 	df2 = pd.read_csv(filename_2, header = None, names=column_names)
