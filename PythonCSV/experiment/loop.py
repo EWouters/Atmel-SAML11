@@ -22,15 +22,16 @@ try:
 except:
     pass
 
-def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, epsilon=0.5, program=True, duration=9999, output_dir="output", verbose=1):
-    sleep_time = 0.5
-
+def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilon=50, program=True, duration=9999, output_dir="output", verbose=1):
     # Get hash size in the experiment's name
     hash_size_str = ""
+    epsilon_str=""
+    sub_epsilon_str = ""
     if experiment == "hash":
         hash_size_str = str(hash_size) + "_"
-        mod_precision_str = "mod_" + str(mod_precision) + "_"
-    exprm_file_name_base = experiment + "_" + hash_size_str + mod_precision_str + str(attempt) + "_" + str(iterations) + "iter"
+        epsilon_str = "eps_" + str(epsilon) + "_"
+        sub_epsilon_str = "subeps_" + str(sub_epsilon) + "_"
+    exprm_file_name_base = experiment + "_" + hash_size_str + epsilon_str + sub_epsilon_str + "_" + str(iterations) + "iter" + "_" + str(attempt)
 
     # File locations for experiments
     project_base_dir = os.path.join(os.path.dirname(os.getcwd()),"KalmanARM")
@@ -47,11 +48,11 @@ def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, e
     original_output_path = os.path.join(os.getcwd(), output_dir, "original_output.csv")
 
     exprm_output_name = exprm_file_name_base + "_output.csv"
-    exprm_averages_name_leftpoint = exprm_file_name_base + "_averages_hold.csv"
-    exprm_averages_name_pulse = exprm_file_name_base + "_averages_pulse.csv"
+    exprm_averages_name = exprm_file_name_base + "_averages.csv"
+    #exprm_averages_name_pulse = exprm_file_name_base + "_averages_pulse.csv"
     exprm_output_path = os.path.join(exprm_output_base_folder, exprm_output_name)
-    exprm_averages_path_leftpoint = os.path.join(exprm_output_base_folder, exprm_averages_name_leftpoint)
-    exprm_averages_path_pulse = os.path.join(exprm_output_base_folder, exprm_averages_name_pulse)
+    exprm_averages_path = os.path.join(exprm_output_base_folder, exprm_averages_name)
+    #exprm_averages_path_pulse = os.path.join(exprm_output_base_folder, exprm_averages_name_pulse)
 
     # DGILib constants
     config = {
@@ -70,8 +71,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, e
 
     props_and_values = {
         "HASHSIZE": hash_size,
-        "EPSILON1" : '{0:f}'.format(epsilon),
-        "EPSILON2" : '{0:f}'.format(epsilon2)
+        "EPSILON" : '{0:f}'.format(epsilon),
+        "SUB_EPSILON" : '{0:f}'.format(sub_epsilon)
     }
 
     try:
@@ -101,8 +102,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, e
 
         if verbose >= 2: print("File '" + hashtable_header_file_path + "' now contains:")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define HASHSIZE")
-        if verbose >= 2: print_file(hashtable_header_file_path, "#define MOD_PRECISION")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define SUB_EPSILON")
 
         compile_hash()
         run_hash(verbose=verbose)
@@ -122,8 +123,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, e
 
         if verbose >= 2: print("File '" + hashtable_header_file_path + "' now contains:")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define HASHSIZE")
-        if verbose >= 2: print_file(hashtable_header_file_path, "#define MOD_PRECISION")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define SUB_EPSILON")
 
     copy(main_file_from, main_file_to)
     if verbose >= 2: print("Copied '"+ main_file_from + "' to '" + main_file_to + "'")
@@ -136,8 +137,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, mod_precision=100000, e
     # Averages
     avg = DGILibAverages(data = data, preprocessed_data = preprocessed_data, average_function="leftpoint")
     avg.calculate_averages_for_pin(1)
-    avg.write_to_csv(exprm_averages_path_leftpoint, verbose=verbose)
+    avg.write_to_csv(exprm_averages_path, verbose=verbose)
 
-    avg2 = DGILibAverages(data = data, preprocessed_data = preprocessed_data, average_function="pulse")
-    avg2.calculate_averages_for_pin(1)
-    avg2.write_to_csv(exprm_averages_path_pulse, verbose=verbose)
+    # avg2 = DGILibAverages(data = data, preprocessed_data = preprocessed_data, average_function="pulse")
+    # avg2.calculate_averages_for_pin(1)
+    # avg2.write_to_csv(exprm_averages_path_pulse, verbose=verbose)
