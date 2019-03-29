@@ -114,7 +114,9 @@ class DGILibInterfacePower(DGILibInterface):
         : rtype: InterfaceData()
         """
         # Return the data
-        return self.read_buffer(self.power_buffers[buffer_num])
+        # return self.read_buffer(self.power_buffers[buffer_num])
+        data = self.read_buffer(self.power_buffers[buffer_num])
+        return InterfaceData([timestamp / self.dgilib_extra.timer_factor for timestamp in data.timestamps], data.values)
 
     def read_buffer(self, power_buffer):
         """Read power data of the specified buffer.

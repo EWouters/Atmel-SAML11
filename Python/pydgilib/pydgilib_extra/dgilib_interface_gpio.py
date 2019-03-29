@@ -137,7 +137,8 @@ class DGILibInterfaceGPIO(DGILibInterface):
             INTERFACE_GPIO)
 
         pin_values = [int2bool(pin_value) for pin_value in pin_values]
-        timestamps = [tick * self.dgilib_extra.timer_factor for tick in ticks]
+        # timestamps = [tick * self.dgilib_extra.timer_factor for tick in ticks]
+        timestamps = ticks
 
         if self.verbose >= 2:
             print(f"Collected {len(pin_values)} gpio samples ({NUM_PINS} " +
