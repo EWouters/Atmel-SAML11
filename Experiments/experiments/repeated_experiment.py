@@ -26,7 +26,8 @@ def repeated_experiment(config_file=path.abspath(
 
     Keyword Arguments:
         config_file {path} -- Path (or list of folders) to the json file with
-            parameters (default: {path.abspath(path.join(path.curdir, "repeated_experiment.json"))})
+            parameters (default: {path.abspath(path.join(path.curdir, \
+                "repeated_experiment.json"))})
         verbose {int} -- How much info to print during the run (default: {1})
         config_dict {dict} -- Parameters for DGILibExtra, in adition to the
             ones in the json file (default: {{}})
@@ -59,7 +60,7 @@ def repeated_experiment(config_file=path.abspath(
     # to the json file
     project_paths = config.get("project_paths")
     for i, project_path in enumerate(project_paths):
-        if project_path[0] == '.':
+        if project_path[0] == path.curdir:
             project_paths[i] = path.abspath(
                 path.join(path.dirname(config_file), *project_path))
         else:
