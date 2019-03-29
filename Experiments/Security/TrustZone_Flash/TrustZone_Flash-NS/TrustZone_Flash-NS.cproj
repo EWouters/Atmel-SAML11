@@ -285,6 +285,7 @@
       <Value>../hri</Value>
       <Value>../../TrustZone_Flash-S/trustzone</Value>
       <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>../../../../shared</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -305,6 +306,7 @@
     </ListValues>
   </armgcc.linker.libraries.LibrarySearchPaths>
   <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
+  <armgcc.linker.memorysettings.ExternalRAM />
   <armgcc.linker.miscellaneous.LinkerFlags>-T"../../TrustZone_Flash-S/Device_Startup/saml11_nonsecure.ld"</armgcc.linker.miscellaneous.LinkerFlags>
   <armgcc.assembler.general.IncludePaths>
     <ListValues>
@@ -356,6 +358,14 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\shared\gpio_init.c">
+      <SubType>compile</SubType>
+      <Link>gpio_init.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\shared\gpio_init.h">
+      <SubType>compile</SubType>
+      <Link>gpio_init.h</Link>
+    </Compile>
     <Compile Include="..\TrustZone_Flash-S\trustzone\trustzone_veneer.h">
       <SubType>compile</SubType>
       <Link>Config\trustzone_veneer.h</Link>
@@ -409,12 +419,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="examples\driver_examples.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="gpio_init.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="gpio_init.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hal_atomic.h">

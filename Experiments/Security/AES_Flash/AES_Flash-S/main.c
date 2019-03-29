@@ -50,9 +50,7 @@ int main(void)
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
 	
-#ifdef PULSE_GPIO
-	DELAY
-#endif
+	DELAY;
 	
 	mbedtls_aes_setkey_enc( &aes, key, AES_KEY_SIZE );
 	mbedtls_aes_setkey_dec( &aes2, key, AES_KEY_SIZE );

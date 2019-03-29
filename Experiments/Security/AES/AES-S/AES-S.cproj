@@ -285,6 +285,7 @@
       <Value>../hri</Value>
       <Value>../trustzone</Value>
       <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>../../../../shared</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>

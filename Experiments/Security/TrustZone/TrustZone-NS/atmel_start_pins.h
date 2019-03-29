@@ -22,4 +22,6 @@
 #define GPIO_PIN_FUNCTION_H 7
 #define GPIO_PIN_FUNCTION_I 8
 
+#define INIT_GPIO
+
 #endif // ATMEL_START_PINS_H_INCLUDED
