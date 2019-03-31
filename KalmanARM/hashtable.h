@@ -11,7 +11,8 @@
 #define NOT_FOUND 0
 #define HASHSIZE 100
 #define EPSILON 0.5
-#define SUB_EPSILON 100000
+#define EPSILON_MOD 100000
+#define MOD_PRECISION 1000
 #define HASHTABLE_ITER_TYPE struct hentry*
 
 struct hentry { /* table entry: */

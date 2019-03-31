@@ -91,7 +91,7 @@ int main(void)
 		
 		DONT_MEASURE();
 		
-		printValuesExtended(i, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
+		printValuesExtended(i+2, roll, pitch, gyroXangle, gyroYangle, compAngleX, compAngleY, kalAngleX, kalAngleY);
 		
 	}
 	
