@@ -511,6 +511,7 @@ KalmanC++/kalman
 KalmanC++/output_pc_32.csv
 KalmanC++/output_pc_32_hash.csv
 KalmanC++/debug.txt
+KalmanC++/hash_experiment
 
 # Output files from Kalman hash table experiments are too big to commit
 PythonCSV/output/**
