@@ -12,6 +12,8 @@
 #define NOT_FOUND 0
 #define HASHSIZE 120
 #define EPSILON 0.01
+#define EPSILON_MOD 1.0
+#define MOD_PRECISION 100
 #define SUB_EPSILON 0.000001
 #define ITERATIONS 3000
 #define HASHTABLE_ITER_TYPE struct hentry*

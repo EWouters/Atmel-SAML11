@@ -250,9 +250,10 @@ int main() {
       count++;
     }
   }
-  //fprintf(debug, "Mod precision: %d\n", MOD_PRECISION);
+
   fprintf(debug, "Epsilon: %f\n", EPSILON);
-  fprintf(debug, "Sub epsilon: %f\n", SUB_EPSILON);
+  fprintf(debug, "Epsilon mod: %d\n", EPSILON_MOD);
+  fprintf(debug, "Mod precision: %d\n", MOD_PRECISION);
   fprintf(debug, "Hash size: %d\n", HASHSIZE);
   fprintf(debug, "\n");
   fprintf(debug, "HashTable population: %d / %d\n", count, HASHSIZE);
