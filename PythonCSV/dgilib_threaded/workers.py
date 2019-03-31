@@ -1,5 +1,5 @@
 
-from pydgilib_extra import DGILibExtra, DGILibPlot, DGILibAverages
+from pydgilib_extra import DGILibExtra, DGILibPlot
 from atmel_csv_sender import sendline
 
 from dgilib_threaded.config import *

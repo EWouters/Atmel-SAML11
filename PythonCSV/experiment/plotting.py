@@ -7,7 +7,7 @@ import pandas as pd
 import os
 from sys import platform
 
-from pydgilib_extra import DGILibAverages
+from experiment.averages import Averages
 
 # https://stackoverflow.com/questions/13872533/plot-different-dataframes-in-the-same-figure
 # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html

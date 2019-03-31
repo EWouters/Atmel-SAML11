@@ -1,5 +1,6 @@
 from experiment.helpers import *
 from experiment.plotting import *
+from experiment.averages import *
 
 __author__ = "DPerju <dsperju(at)kth.se>"
 __url__ = "https://github.com/EWouters/Atmel-SAML11/tree/master/PythonCSV/"

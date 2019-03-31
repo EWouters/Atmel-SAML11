@@ -9,7 +9,8 @@ from sys import platform
 from time import time, sleep
 from shutil import copy
 
-from pydgilib_extra import DGILibAverages, LOGGER_OBJECT, LOGGER_CSV, LOGGER_PLOT
+from pydgilib_extra import LOGGER_OBJECT, LOGGER_CSV, LOGGER_PLOT
+from experiment.averages import Averages
 from experiment.plotting import *
 from experiment.helpers import *
 
@@ -22,16 +23,16 @@ try:
 except:
     pass
 
-def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilon=50, program=True, duration=9999, output_dir="output", verbose=1):
+def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, mod_precision=10, program=True, duration=9999, output_dir="output", verbose=1):
     # Get hash size in the experiment's name
     hash_size_str = ""
     epsilon_str=""
-    sub_epsilon_str = ""
+    mod_precision_str = ""
     if experiment == "hash":
         hash_size_str = str(hash_size) + "_"
         epsilon_str = "eps_" + str(epsilon) + "_"
-        sub_epsilon_str = "subeps_" + str(sub_epsilon) + "_"
-    exprm_file_name_base = experiment + "_" + hash_size_str + epsilon_str + sub_epsilon_str + "_" + str(iterations) + "iter" + "_" + str(attempt)
+        mod_precision_str = "mod_" + str(mod_precision) + "_"
+    exprm_file_name_base = experiment + "_" + hash_size_str + epsilon_str + mod_precision_str + str(iterations) + "iter" + "_" + str(attempt)
 
     # File locations for experiments
     project_base_dir = os.path.join(os.path.dirname(os.getcwd()),"KalmanARM")
@@ -71,8 +72,10 @@ def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilo
 
     props_and_values = {
         "HASHSIZE": hash_size,
+        "ITERATIONS": iterations,
         "EPSILON" : '{0:f}'.format(epsilon),
-        "SUB_EPSILON" : '{0:f}'.format(sub_epsilon)
+        "EPSILON_MOD": int(epsilon * mod_precision),
+        "MOD_PRECISION" : mod_precision
     }
 
     try:
@@ -103,7 +106,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilo
         if verbose >= 2: print("File '" + hashtable_header_file_path + "' now contains:")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define HASHSIZE")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON")
-        if verbose >= 2: print_file(hashtable_header_file_path, "#define SUB_EPSILON")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define MOD_PRECISION")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON_MOD")
 
         compile_hash()
         run_hash(verbose=verbose)
@@ -124,7 +128,8 @@ def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilo
         if verbose >= 2: print("File '" + hashtable_header_file_path + "' now contains:")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define HASHSIZE")
         if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON")
-        if verbose >= 2: print_file(hashtable_header_file_path, "#define SUB_EPSILON")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define MOD_PRECISION")
+        if verbose >= 2: print_file(hashtable_header_file_path, "#define EPSILON_MOD")
 
     copy(main_file_from, main_file_to)
     if verbose >= 2: print("Copied '"+ main_file_from + "' to '" + main_file_to + "'")
@@ -135,7 +140,7 @@ def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, sub_epsilo
     data, preprocessed_data = dgi_t.measure(duration, iterations, dgilib_config_dict, input_acc_file=config["input_acc_file"], input_gyro_file=config["input_gyro_file"], output_file=config["output_file"], waitForPlot=True, verbose=verbose)
     
     # Averages
-    avg = DGILibAverages(data = data, preprocessed_data = preprocessed_data, average_function="leftpoint")
+    avg = Averages(data = data, preprocessed_data = preprocessed_data, average_function="leftpoint")
     avg.calculate_averages_for_pin(1)
     avg.write_to_csv(exprm_averages_path, verbose=verbose)
 

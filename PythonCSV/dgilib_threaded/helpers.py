@@ -1,7 +1,7 @@
 import queue
 import os
 
-from pydgilib_extra import DGILibAverages, DGILibPlot, LOGGER_OBJECT, DGILibExtra, LoggerData
+from pydgilib_extra import DGILibPlot, LOGGER_OBJECT, DGILibExtra, LoggerData
 
 def waitForCmd(cmdQueue, cmd="start", function_name = ""):
     msg = cmdQueue.get()
@@ -27,13 +27,13 @@ def timeToStop(cmdQueue, function_name = ""):
     #             raise ValueError("Unknown command received by dgilib_logger_worker")
     return False
 
-def do_averages(data, preprocessed_data, write_to_file):
-	avg = DGILibAverages(data = data, preprocessed_data = preprocessed_data)
+# def do_averages(data, preprocessed_data, write_to_file):
+# 	avg = DGILibAverages(data = data, preprocessed_data = preprocessed_data)
 
-	print("Calculating averages...")
+# 	print("Calculating averages...")
 
-	avg.calculate_averages_for_pin(2)
-	avg.write_to_csv(write_to_file)
+# 	avg.calculate_averages_for_pin(2)
+# 	avg.write_to_csv(write_to_file)
 
 def show_plot_for_data(data):
     config_dict_plot = {

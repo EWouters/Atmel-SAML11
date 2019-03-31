@@ -1,6 +1,7 @@
 from pydgilib_extra.dgilib_calculations import (
-    calculate_average, StreamingCalculation, power_and_time_per_pulse,
+    calculate_average, power_and_time_per_pulse,
     rise_and_fall_times)
+from pydgilib_extra.dgilib_plot import HoldTimes
 from time import time
 
 ITERATION = 0
@@ -10,8 +11,7 @@ HOLD_TIME_TO = 1
 START_INDEX = 2
 AVERAGE = 3
 
-
-class DGILibAverages(object):
+class Averages(object):
 
     def __init__(self, data=None, preprocessed_data=None, *args, **kwargs):
         self.data = data
@@ -72,7 +72,8 @@ class DGILibAverages(object):
             if verbose > 0:
                 print("Wrote averages to: " + filepath)
 
-    def print_averages_for_pin(self, pin_idx, how_many=9999):
+    def print_averages_for_pin(self, pin_idx, print_per_iteration=True, print_total_average=True, 
+        print_benchmark_time=True, print_energy_and_current=True, how_many=0):
 
         if len(self.averages) == 0:
             print("ERROR: Average information missing for all pins")
@@ -113,31 +114,39 @@ class DGILibAverages(object):
 
         if (self.total_iterations[pin_idx] > 0):
 
-            print("Average charge per iteration: {0} uC".format(round(
-                self.total_average[pin_idx] * 1000 * 1000 / self.total_iterations[pin_idx], 9)))
-            print("Average energy per iteration: {0} uJ".format(round(
-                self.total_average[pin_idx]*self.voltage * 1000 * 1000 / self.total_iterations[pin_idx], 6)))
-            print("Average time per iteration: {0} ms".format(
-                round(self.total_duration[pin_idx] / self.total_iterations[pin_idx], 6)))
+            if print_per_iteration:
+                print("Average charge per iteration: {0} uC".format(round(
+                    self.total_average[pin_idx] * 1000 * 1000 / self.total_iterations[pin_idx], 9)))
+                if print_energy_and_current: print("Average energy per iteration: {0} uJ".format(round(
+                    self.total_average[pin_idx]*self.voltage * 1000 * 1000 / self.total_iterations[pin_idx], 6)))
+                print("Average time per iteration: {0} ms".format(
+                    round(self.total_duration[pin_idx] / self.total_iterations[pin_idx], 6)))
             print("")
-            print("Total iterations: {0}".format(
-                self.total_iterations[pin_idx]))
-            print("Total average current: {0} mA".format(
-                round(self.total_average[pin_idx] * 1000 / self.total_duration[pin_idx], 6)))
-            print("Total charge: {0} mC".format(
-                round(self.total_average[pin_idx] * 1000, 6)))
-            print("Total energy: {0} mJ".format(
-                round(self.total_average[pin_idx]*self.voltage * 1000, 6)))
-            print("Total time: {0} s".format(
-                round(self.total_duration[pin_idx], 6)))
-            print("")
-            print("Benchmark time: {0} s".format(
-                round(self.benchmark_time, 8)))
+
+            if print_total_average:
+                print("Total iterations: {0}".format(
+                    self.total_iterations[pin_idx]))
+                if print_energy_and_current:  print("Total average current: {0} mA".format(
+                    round(self.total_average[pin_idx] * 1000 / self.total_duration[pin_idx], 6)))
+                print("Total charge: {0} mC".format(
+                    round(self.total_average[pin_idx] * 1000, 6)))
+                if print_energy_and_current:  print("Total energy: {0} mJ".format(
+                    round(self.total_average[pin_idx] * 1000 * self.voltage, 6)))
+                print("Total time: {0} s".format(
+                    round(self.total_duration[pin_idx], 6)))
+                print("")
+            
+            if print_benchmark_time:
+                print("Benchmark time: {0} s".format(
+                    round(self.benchmark_time, 8)))
         else:
             print(
                 "Averages not calculated or no average data for pin {0}.".format(pin_idx))
 
     def calculate_averages_for_pin(self, pin_idx, pin_value=True, ignore_first_average=True):
+        if self.total_average[pin_idx] > 0:
+            return
+        
         start_time = time()
 
         if self.average_function == "leftpoint":
@@ -209,116 +218,9 @@ class DGILibAverages(object):
 # Identify toggle/hold times #
 ##############################
 
-
 def what_value_is_at_time_t_for_pin(data, pin, t):
     index_of_timestamp = data.gpio.timestamps.index(t)
     return data.gpio.values[index_of_timestamp]
-
-
-class HoldTimes(StreamingCalculation):
-
-    def identify_toggle_times(self, pin, data_gpio=None, gpio_start_index=0):
-        if data_gpio is None:
-            data_gpio = self.data
-        if gpio_start_index == None:
-            gpio_start_index = self.index
-
-        if len(data_gpio.timestamps) <= 1:
-            return []  # We can't identify intervals with only one value
-        if gpio_start_index > (len(data_gpio.timestamps) - 1):
-            return []  # We're being asked to do an index that does not exist yet, so just skip
-
-        toggle_times = []
-        true_to_false_toggle_times = []
-        false_to_true_toggle_times = []
-
-        #last_toggle_timestamp = data_gpio.timestamps[start_index]
-        last_toggle_value = data_gpio.values[gpio_start_index][pin]
-
-        #print("New data, starting on pin " + str(pin) + " at timestamp " + str(data_gpio.timestamps[start_index]) + " of value " + str(last_toggle_value) + ". Index is: " + str(start_index))
-
-        for i in range(gpio_start_index, len(data_gpio)):
-            if last_toggle_value != data_gpio.values[i][pin]:
-                #print("Detected toggle on pin " + str(pin) + " at timestamp " + str(data_gpio.timestamps[i]) + " of value " + str(data_gpio.values[i][pin]) + ". Index is: " + str(i))
-                toggle_times.append(data_gpio.timestamps[i])
-                if last_toggle_value == True:
-                    true_to_false_toggle_times.append(data_gpio.timestamps[i])
-                if last_toggle_value == False:
-                    false_to_true_toggle_times.append(data_gpio.timestamps[i])
-
-                #last_toggle_timestamp = data_gpio.timestamps[i]
-                last_toggle_value = data_gpio.values[i][pin]
-
-        # A smart printing for debugging this function
-        # Either leave 'debug = False' or comment it, but don't lose it
-        debug = False
-        if debug:
-            for (t, v) in data_gpio:
-                # print(str((t,v)))
-                if t in toggle_times:
-                    print("\t" + str(t) + "\t\t" + str(v) + "\t <-- toggled")
-                else:
-                    print("\t" + str(t) + "\t\t" + str(v))
-
-        # , last_toggle_index
-        return toggle_times, true_to_false_toggle_times, false_to_true_toggle_times
-
-    def identify_hold_times(self, pin, pin_value, data_gpio=None):
-        if data_gpio is None:
-            data_gpio = self.data
-        if len(data_gpio.timestamps) <= 1:
-            return []  # We can't identify intervals with only one value
-        if self.index > (len(data_gpio.timestamps) - 1):
-            return []  # We're being asked to do an index that does not exist yet, so just skip
-
-        hold_times = []
-
-        (_, true_to_false_times, false_to_true_times) = self.identify_toggle_times(
-            pin, data_gpio, self.index)
-
-        #print("T2F: " + str(true_to_false_times))
-        #print("F2T: " + str(false_to_true_times))
-
-        if len(false_to_true_times) == 0:
-            return
-        if len(true_to_false_times) == 0:
-            return
-
-        if (pin_value == True):
-            # A fix
-            if false_to_true_times[0] > true_to_false_times[0]:
-                true_to_false_times.pop(0)
-            hold_times = zip(false_to_true_times, true_to_false_times)
-        elif (pin_value == False):
-            # A fix
-            if true_to_false_times[0] > false_to_true_times[0]:
-                false_to_true_times.pop(0)
-            hold_times = zip(true_to_false_times, false_to_true_times)
-
-        # A smart printing for debugging this function
-        # Either leave 'debug = False' or comment it, but don't lose it
-        debug = False
-        if debug:
-            ht_zip = list(zip(*hold_times))
-            for (t, v) in data_gpio:
-                # print(str((t,v)))
-                if t in ht_zip[0]:
-                    print("\t" + str(t) + "\t\t" + str(v) + "\t <-- start")
-                elif t in ht_zip[1]:
-                    print("\t" + str(t) + "\t\t" + str(v) + "\t <-- stop")
-                else:
-                    print("\t" + str(t) + "\t\t" + str(v))
-
-        hold_times_list = list(hold_times)
-
-        try:
-            self.index = data_gpio.timestamps.index(
-                hold_times_list[-1][-1]) + 1
-        except IndexError:
-            # If you remove this, you get an error
-            pass
-
-        return hold_times_list
 
 ###############################
 # Calculate average leftpoint #

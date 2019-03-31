@@ -14,7 +14,7 @@ def replace_define_value_in_file(clone_file_path, file_path, props_and_values, s
             for line in old_file:
                 written = False
                 for prop, value in props_and_values.items():
-                    if (("#define " + prop) in line):
+                    if (("#define " + prop + " ") in line):
                         new_file.write("#define {0} {1}\n".format(prop, str(value)))
                         #print("--> " + line + " <-- changed to: " + "#define {0} {1}\n".format(prop, str(value)), end='')
                         written = True
@@ -43,12 +43,12 @@ def replace_define_value_in_file(clone_file_path, file_path, props_and_values, s
     #         loop = False
     
 
-def print_file(file_path, specific_search=""):
+def print_file(file_path, specific_search="", extra_space=" "):
     with open(file_path) as f:
         for line in f:
             if specific_search == "":
                 print(line.strip())
-            elif specific_search in line:
+            elif specific_search + extra_space in line:
                 print(line.strip())
 
 def compile_hash(verbose = 1):
