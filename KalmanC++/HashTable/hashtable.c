@@ -35,7 +35,7 @@ unsigned char AreSame(double a, double b)
 }
 
 void hash() {
-	unsigned int ax_ = ((unsigned int)((unsigned int)(accX * MOD_PRECISION)) / EPSILON) % HASHSIZE;
+	unsigned int ax_ = ((unsigned int)((unsigned int)(accX * MOD_PRECISION)) / EPSILON_MOD) % HASHSIZE;
 	//unsigned int ay_ = ((unsigned int)(accY / EPSILON));
 	//unsigned int az_ = ((unsigned int)(accZ / EPSILON));
 
