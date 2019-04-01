@@ -407,12 +407,6 @@
     <Compile Include="Device_Startup\system_saml11e16a.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="dijkstra.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="dijkstra.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="driver_init.c">
       <SubType>compile</SubType>
     </Compile>
