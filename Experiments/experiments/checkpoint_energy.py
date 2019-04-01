@@ -7,7 +7,7 @@ import numpy as np
 from experiments.looped_experiment import looped_experiment
 from experiments.repeated_experiment import repeated_experiment
 
-from atprogram.atprogram import (get_device_info, get_project_size)
+from atprogram.atprogram import get_device_info
 
 
 class CheckpointEnergy(object):
@@ -36,8 +36,14 @@ class CheckpointEnergy(object):
         self.workloads_average = None
         self.workloads_std = None
 
-        self.get_security_energy = self.get_security_energy_function()
-        self.get_workload_energy = self.get_workload_energy_function()
+        try:
+            self.get_security_energy = self.get_security_energy_function()
+        except FileNotFoundError:
+            print("Need to run security again")
+        try:
+            self.get_workload_energy = self.get_workload_energy_function()
+        except FileNotFoundError:
+            print("Need to run workload again")
 
     def measure_all_security_energy(self, **kwargs):
         for security_project in self.security_projects:
