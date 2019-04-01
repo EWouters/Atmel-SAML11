@@ -7,15 +7,10 @@
         ]
     ],
     "config_dict": {
-        "interfaces": [
-            256,
-            48
-        ],
         "loggers": [
             1,
             0
         ],
-        "gpio_delay_time": 0.0007,
         "file_name_base": "experiment_bit_counting"
     },
     "config_dict_plot": {

@@ -7,15 +7,10 @@
         ]
     ],
     "config_dict": {
-        "interfaces": [
-            256,
-            48
-        ],
         "loggers": [
             1,
             0
         ],
-        "gpio_delay_time": 0.0007,
         "file_name_base": "experiment_fft"
     },
     "config_dict_plot": {
@@ -50,13 +45,13 @@
         ],
         "section_types": {
             "init": [
-                "Allocate"
+                "Allocate FFT"
             ],
             "loop": [
                 "FFT"
             ],
             "exit": [
-                "Free"
+                "Free FFT"
             ]
         }
     }
