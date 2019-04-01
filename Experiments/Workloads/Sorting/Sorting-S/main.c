@@ -57,4 +57,6 @@ int main(void)
 #endif
 
 	END_MEASUREMENT;
+	
+	return 0
 }

@@ -166,6 +166,10 @@ void print_path (graph_t *g, uint8_t i) {
 #endif // DEBUG_PRINT
 
 int main (void) {
+	/* Initializes MCU, drivers and middleware */
+	atmel_start_init();
+	
+	START_MEASURE(DGI_GPIO3);
 	graph_t *g = calloc(1, sizeof (graph_t));
 	add_edge(g, 36, 21, 147);
 	add_edge(g, 38, 21, 176);
@@ -257,6 +261,7 @@ int main (void) {
 	add_edge(g, 36, 14, 188);
 	add_edge(g, 38, 19, 254);
 	add_edge(g, 38, 1, 242);
+	STOP_MEASURE(DGI_GPIO3);
 	
 	START_MEASURE(DGI_GPIO2);
 	dijkstra(g, 0, 39);

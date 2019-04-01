@@ -40,4 +40,6 @@ int main(void)
 	free(input);
 
 	END_MEASUREMENT;
+	
+	return 0;
 }

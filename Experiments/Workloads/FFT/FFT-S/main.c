@@ -32,4 +32,6 @@ int main(void)
 	STOP_MEASURE(DGI_GPIO2);
 
 	END_MEASUREMENT;
+	
+	return 0;
 }
