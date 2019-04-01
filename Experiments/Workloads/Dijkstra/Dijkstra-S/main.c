@@ -1,168 +1,272 @@
 #include <atmel_start.h>
 
-/*
-These values have been generated using the following python script:
-
-import numpy as np
-np.random.seed(314)
-nodes = 128
-connectedness = 0.5
-int_max = 255
-randints = np.random.randint(int_max/connectedness, size=nodes*nodes)
-randints[randints > int_max] = 0
-s = "{\n"
-	for i in range(nodes):
-	s += "\t{"
-		for j in range(nodes):
-		s += f"{randints[i*nodes+j]:3}, "
-	s += "},\n"
-s += "};"
-print(s)
-*/
-
-
 //#define DEBUG_PRINT
 
 #ifdef DEBUG_PRINT
 #include <stdio.h>
 #endif // DEBUG_PRINT
 
-#define INFINITY 255
-#define NUM_NODES 32
+#include <stdlib.h>
+#include <limits.h>
 
+typedef struct {
+	uint8_t vertex;
+	uint8_t weight;
+} edge_t;
 
-void dijkstra(uint8_t G[NUM_NODES][NUM_NODES], uint8_t startnode);
+typedef struct {
+	edge_t **edges;
+	uint8_t edges_len;
+	uint8_t edges_size;
+	int dist;
+	uint8_t prev;
+	uint8_t visited;
+} vertex_t;
 
-int main(void)
-{
-	int kj = 0;
-	static uint8_t G[NUM_NODES][NUM_NODES] = {
-        {  0,   0,   0,   0, 226,   0,   0,  71,  80,   0,   0,   0,   4,   0,   0,   0,   0, 111,   0,   0,  54,   0,   0,   0,   0,   0,   0,   0,   0,   0, 227,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,   0, 137,   0,   0,   0,   0,   0,   0, 124,   0,   0,   0,   0,   0,  97, 250,   0,   0,   0,   0,   0,   0,   0, 112, },
-        {  0,   0, 145,   0,   0,   0,   0,   3,   0,   0,   0,   0,   0,  42,   0,   0,   0,   0, 225,   0,   0,   0,   0,   0,   0,   0, 101,   0,   0,   0,   0,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 134,   0,   0,   0,   0, 158,  27,  90,  15,   0,   0, },
-        {135,   0,   0,   0,   0,   0,   0, 142,   0,  57,   0,   0,   0, 112,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 222,   0,   0,   0,  27,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,  26,   0,   0,   0,   0, 111,   0,   0, 140,   0,   0,   0,  98,   0, 121,   0,   0,   0,   0,   0,   0,   0, 196,   0,   0, },
-        {  0,   0,   0, 111,   0,  39,   0,   0,   0,  23,   0,   0,  92, 237,   0,   0,   0,   0,   0,   0,   0,   0,   5,   0,   0,   0,   0, 154,   0,   0,   0, 247, },
-        {  0,   0,   0, 231,   0,   0,   0,   0,   0,   0,  89, 126,   0,   0,   0,   0,   0,   0,   0, 232,   0,   0,   0, 221,   0,   0,   0,   0,   0,   0,  78,   0, },
-        {  0,   0, 110,   0,   0,   0,   0,   0,   0,   0, 135,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 253,  28,   0, 141,   0,   0,   0,   0,   0, },
-        {221,   0,   0,  72,   0,   0,   0,   0,   0,   0,   0,   0, 188,   0, 214,   0, 228,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  29, 106, },
-        { 62,   0, 150,   0,   0,   0,   0,   0,  96,  84,   0,  90,   0,   0,   0,   0,   0,   0, 127,   0,  86,   0,   0, 190,   0,   0,   0,   0,   0,  65,   0,   0, },
-        {209,   0, 154,   0,   0,   0, 202,   0,   0, 175,   0,   0,   0,   0,   0,   0, 237, 158,   0,   0,   0,   0, 208,   0,   0,   0, 141,   0,   0,   0,   0,   0, },
-        {  0,   0, 135, 109,   0,   0,  78,   0,   0,   0,   0,   0,   0,   0,   0, 153,   0,   0,   0,   0, 218,   0,   0, 103,   0,   0,   0,   0,   0,   0,   0, 209, },
-        {  0,   0, 199,   0,   0,   0,   0,   0,   0,   0,   0,   0, 171,   0,   0,   0,   0,   0, 219,   0,   0,   0,   0,   0,   0, 101,   0,   0,  82, 161,   0,   0, },
-        {  0,   0,  21,   0,   0,   0,   0, 130,   0,   0,   0,   0,  22,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   6,   0,   0,  13,  34,   0,   0, 195,  98, },
-        {214,   0,  89,   0,   0,   0,   0,   0,   0,  78,   0, 251,   0,  41,   0,   0,   0,   0,   0,   0, 149,   0,   0,   0, 211,   0,   0,   0,   0,  22,   0,   0, },
-        {  0,   0,   0,   0,  19,   0,   0,   0,   0, 234,   0,   0,   0,   0,   0,   0, 132,   0,   0,   0,   0,   0,  87,   0,   0,   0, 185,   0,   0,   0,   0,   0, },
-        {  0,   2,   0,   0,   0,   0,   0,   0,   0,   0,  86,   0,   0, 168,   0,  74,   0,   0,   1,  40,   0,   0,   0, 103,   0,   0,   0,   0,   0,   0,   0,   0, },
-        {  0,   0,  54,  23,  89,   0,  62,  34,   0,   0,   0,   0,  29,   0,   0,   0,   0,   0,   0,   0, 171,   0,   0,   0,   0,   0,   0,   0,   0,   0, 225,   0, },
-        {  0,   0,   0,   0, 143,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 252,   0,   0,   0, 161,   0,   0,   0,   0,   0,   0,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,  22,   0,   0, 112,  56,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 101, },
-        {  0,   0, 230, 137,   0,   0,   0,   0,   0,   0,   0, 172,   0,   0,   0, 137,   0,   0, 186,   0, 213,   0,   0,   0, 117,  18,   0,   0,  14,   0,   0,   0, },
-        {  0,   0,   0, 242,   0,   0,   0,   0, 206,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 243,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 179,  53, 175, 154, 205,   0,   0,   0,   0,   0,   0, 207,   0,   0,   0,   0, },
-        {  7,   0,  76,   0,   0,   0,  22,   0,   0,   0,   0,   0,   0,   0,   0, 219,   0,   0,   0,   0,   0, 115, 179,   0,   0,   0, 208,   0,   0,   0,   0,   0, },
-        {250,   0,   0,   0,   0,   0,   0,   0,   0,   0, 135,   0,   0,   0,  29,   0,   0,   0,   0,   0,   0, 223,   0,   0,   0,   0,   1,   0,   0,  26,   0,   0, },
-        {  0,   0,   0, 196, 235,   0,   0,   0, 159,   0,   0,   0,   0,   0, 113, 165,   0,   0, 158,   0,   0,  23,   0,   0,   0,   0,   0, 162,   0,   0,   0,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,   0, 109,   0,   0,   0,  38,   0, 203,   0,   0,   0, 160,   0, 114,   0,  14,  20,   0,   0,   0,   0, 184,   0,   0, },
-        {243,   0,   0,   0,   6,   0,   0,   0,   0,   0,  28,   0,   0,   0,  87,   0,   0,  93,   0,  36,   0,   0,   0,   0, 247,   0,   0, 214,   0,   0,   0,   0, },
-        {  0,   0,   0,   0,   0,   0,   0,  92,   0,  88,   0,   0,   0,   0,  81,   0,   0, 169,   0,   0,   0,  25,   0,   0, 179,  87,   0,   0,   0,   0,   0,   7, },
-        {  0,   0,   0,   0,   0,   0,   0,   0,  85,   0,   0,  27,  34,   0,   0,   0,   0,   0,   0,   3,   0,   0,   0,  43,   7,   0,  69,   0,   0,   0,   0,  25, },
-        {  0,   0,   0,   0,   0, 181,  27,   0,   0, 155,   0,  88,   0,   0,   0,  48,   0,   0,   0, 125,   0,   0, 188,   0,   0,   0,  36,   0, 133,   0,   0,   0, },
-    };
+typedef struct {
+	vertex_t **vertices;
+	uint8_t vertices_len;
+	uint8_t vertices_size;
+} graph_t;
 
-#ifdef DEBUG_PRINT
-        for(uint8_t i=0;i<NUM_NODES;i++)
-	    {
-			for(uint8_t j=0;j<NUM_NODES;j++)
-			{
-				printf("%4d",G[i][j]);
-			}
-	        printf("\n");
-	    }
-#endif // DEBUG_PRINT
+typedef struct {
+	uint8_t *data;
+	uint8_t *prio;
+	uint8_t *index;
+	uint8_t len;
+	uint8_t size;
+} heap_t;
 
-	uint8_t u = 0;
-	dijkstra(G,u);
-
-	return 0;
+void add_vertex (graph_t *g, uint8_t i) {
+	if (g->vertices_size < i + 1) {
+		uint8_t size = g->vertices_size * 2 > i ? g->vertices_size * 2 : i + 4;
+		g->vertices = realloc(g->vertices, size * sizeof (vertex_t *));
+		for (uint8_t j = g->vertices_size; j < size; j++)
+		g->vertices[j] = NULL;
+		g->vertices_size = size;
+	}
+	if (!g->vertices[i]) {
+		g->vertices[i] = calloc(1, sizeof (vertex_t));
+		g->vertices_len++;
+	}
 }
 
-void dijkstra(uint8_t G[NUM_NODES][NUM_NODES], uint8_t startnode)
-{
-
-	uint8_t cost[NUM_NODES][NUM_NODES],distance[NUM_NODES];
-#ifdef DEBUG_PRINT
-	uint8_t pred[NUM_NODES];
-#endif // DEBUG_PRINT
-	uint8_t visited[NUM_NODES],count,mindistance,i,j;
-	uint8_t nextnode = 0;
-
-	//pred[] stores the predecessor of each node
-	//count gives the number of nodes seen so far
-	//create the cost matrix
-	for(i=0;i<NUM_NODES;i++)
-		for(j=0;j<NUM_NODES;j++)
-			if(G[i][j]==0)
-				cost[i][j]=INFINITY;
-			else
-				cost[i][j]=G[i][j];
-
-	//initialize pred[],distance[] and visited[]
-	for(i=0;i<NUM_NODES;i++)
-	{
-		distance[i]=cost[startnode][i];
-#ifdef DEBUG_PRINT
-		pred[i]=startnode;
-#endif // DEBUG_PRINT
-		visited[i]=0;
+void add_edge (graph_t *g, uint8_t a, uint8_t b, uint8_t w) {
+	add_vertex(g, a);
+	add_vertex(g, b);
+	vertex_t *v = g->vertices[a];
+	if (v->edges_len >= v->edges_size) {
+		v->edges_size = v->edges_size ? v->edges_size * 2 : 4;
+		v->edges = realloc(v->edges, v->edges_size * sizeof (edge_t *));
 	}
+	edge_t *e = calloc(1, sizeof (edge_t));
+	e->vertex = b;
+	e->weight = w;
+	v->edges[v->edges_len++] = e;
+}
 
-	distance[startnode]=0;
-	visited[startnode]=1;
-	count=1;
+heap_t *create_heap (uint8_t n) {
+	heap_t *h = calloc(1, sizeof (heap_t));
+	h->data = calloc(n + 1, sizeof (uint8_t));
+	h->prio = calloc(n + 1, sizeof (uint8_t));
+	h->index = calloc(n, sizeof (uint8_t));
+	return h;
+}
 
-	while(count<NUM_NODES-1)
-	{
-		mindistance=INFINITY;
-
-		//nextnode gives the node at minimum distance
-		for(i=0;i<NUM_NODES;i++)
-			if(distance[i]<mindistance&&!visited[i])
-			{
-				mindistance=distance[i];
-				nextnode=i;
-			}
-
-		//check if a better path exists through nextnode
-		visited[nextnode]=1;
-		for(i=0;i<NUM_NODES;i++)
-			if(!visited[i])
-				if(mindistance+cost[nextnode][i]<distance[i])
-				{
-					distance[i]=mindistance+cost[nextnode][i];
-#ifdef DEBUG_PRINT
-					pred[i]=nextnode;
-#endif // DEBUG_PRINT
-				}
-				count++;
+void push_heap (heap_t *h, uint8_t v, uint8_t p) {
+	uint8_t i = h->index[v] == 0 ? ++h->len : h->index[v];
+	uint8_t j = i / 2;
+	while (i > 1) {
+		if (h->prio[j] < p)
+		break;
+		h->data[i] = h->data[j];
+		h->prio[i] = h->prio[j];
+		h->index[h->data[i]] = i;
+		i = j;
+		j = j / 2;
 	}
+	h->data[i] = v;
+	h->prio[i] = p;
+	h->index[v] = i;
+}
+
+uint8_t min (heap_t *h, uint8_t i, uint8_t j, uint8_t k) {
+	uint8_t m = i;
+	if (j <= h->len && h->prio[j] < h->prio[m])
+	m = j;
+	if (k <= h->len && h->prio[k] < h->prio[m])
+	m = k;
+	return m;
+}
+
+uint8_t pop_heap (heap_t *h) {
+	uint8_t v = h->data[1];
+	uint8_t i = 1;
+	while (1) {
+		uint8_t j = min(h, h->len, 2 * i, 2 * i + 1);
+		if (j == h->len)
+		break;
+		h->data[i] = h->data[j];
+		h->prio[i] = h->prio[j];
+		h->index[h->data[i]] = i;
+		i = j;
+	}
+	h->data[i] = h->data[h->len];
+	h->prio[i] = h->prio[h->len];
+	h->index[h->data[i]] = i;
+	h->len--;
+	return v;
+}
+
+void dijkstra (graph_t *g, uint8_t a, uint8_t b) {
+	uint8_t i, j;
+	for (i = 0; i < g->vertices_len; i++) {
+		vertex_t *v = g->vertices[i];
+		v->dist = INT_MAX;
+		v->prev = 0;
+		v->visited = 0;
+	}
+	vertex_t *v = g->vertices[a];
+	v->dist = 0;
+	heap_t *h = create_heap(g->vertices_len);
+	push_heap(h, a, v->dist);
+	while (h->len) {
+		i = pop_heap(h);
+		if (i == b)
+		break;
+		v = g->vertices[i];
+		v->visited = 1;
+		for (j = 0; j < v->edges_len; j++) {
+			edge_t *e = v->edges[j];
+			vertex_t *u = g->vertices[e->vertex];
+			if (!u->visited && v->dist + e->weight <= u->dist) {
+				u->prev = i;
+				u->dist = v->dist + e->weight;
+				push_heap(h, e->vertex, u->dist);
+			}
+		}
+	}
+}
 
 #ifdef DEBUG_PRINT
-		//print the path and distance of each node
-		for(uint8_t i=0;i<NUM_NODES;i++)
-			if(i!=startnode)
-			{
-				printf("\ndistance of node%d=%d",i,distance[i]);
-				printf("\npath=%d",i);
-
-				j=i;
-				do
-				{
-					j=pred[j];
-					printf("<-%d",j);
-				}while(j!=startnode);
-			}
+void print_path (graph_t *g, uint8_t i) {
+	uint8_t n;
+	vertex_t *v, *u;
+	v = g->vertices[i];
+	if (v->dist == INT_MAX) {
+		printf("no path\n");
+		return;
+	}
+	for (n = 1, u = v; u->dist; u = g->vertices[u->prev], n++)
+	;
+	printf("length: %d hops: %d, path: %d", v->dist, n-1, i);
+	for (u = v; u->dist; u = g->vertices[u->prev])
+	printf("<-%d",u->prev);
+}
 #endif // DEBUG_PRINT
 
+int main (void) {
+	graph_t *g = calloc(1, sizeof (graph_t));
+	add_edge(g, 36, 21, 147);
+	add_edge(g, 38, 21, 176);
+	add_edge(g, 26, 22, 223);
+	add_edge(g, 9, 27, 163);
+	add_edge(g, 10, 39, 249);
+	add_edge(g, 11, 33, 53);
+	add_edge(g, 39, 5, 98);
+	add_edge(g, 20, 12, 171);
+	add_edge(g, 16, 38, 214);
+	add_edge(g, 0, 13, 206);
+	add_edge(g, 21, 9, 105);
+	add_edge(g, 0, 34, 178);
+	add_edge(g, 14, 0, 92);
+	add_edge(g, 12, 23, 80);
+	add_edge(g, 1, 6, 191);
+	add_edge(g, 34, 7, 107);
+	add_edge(g, 38, 25, 188);
+	add_edge(g, 6, 31, 129);
+	add_edge(g, 22, 13, 181);
+	add_edge(g, 7, 24, 21);
+	add_edge(g, 18, 31, 254);
+	add_edge(g, 15, 6, 30);
+	add_edge(g, 19, 23, 159);
+	add_edge(g, 16, 7, 141);
+	add_edge(g, 34, 25, 198);
+	add_edge(g, 38, 29, 101);
+	add_edge(g, 16, 11, 41);
+	add_edge(g, 10, 14, 3);
+	add_edge(g, 21, 11, 67);
+	add_edge(g, 1, 30, 137);
+	add_edge(g, 4, 9, 179);
+	add_edge(g, 1, 8, 163);
+	add_edge(g, 34, 6, 122);
+	add_edge(g, 19, 15, 86);
+	add_edge(g, 32, 11, 219);
+	add_edge(g, 27, 21, 25);
+	add_edge(g, 14, 25, 105);
+	add_edge(g, 31, 17, 55);
+	add_edge(g, 17, 1, 242);
+	add_edge(g, 8, 14, 251);
+	add_edge(g, 22, 24, 46);
+	add_edge(g, 38, 36, 113);
+	add_edge(g, 15, 24, 56);
+	add_edge(g, 23, 5, 90);
+	add_edge(g, 27, 24, 73);
+	add_edge(g, 10, 34, 26);
+	add_edge(g, 27, 31, 227);
+	add_edge(g, 37, 23, 91);
+	add_edge(g, 5, 3, 66);
+	add_edge(g, 32, 28, 110);
+	add_edge(g, 8, 2, 80);
+	add_edge(g, 19, 35, 214);
+	add_edge(g, 6, 8, 152);
+	add_edge(g, 29, 22, 199);
+	add_edge(g, 16, 26, 203);
+	add_edge(g, 32, 35, 173);
+	add_edge(g, 38, 8, 135);
+	add_edge(g, 29, 17, 76);
+	add_edge(g, 11, 26, 219);
+	add_edge(g, 16, 36, 152);
+	add_edge(g, 20, 10, 87);
+	add_edge(g, 19, 24, 134);
+	add_edge(g, 14, 34, 96);
+	add_edge(g, 8, 30, 11);
+	add_edge(g, 0, 25, 5);
+	add_edge(g, 35, 9, 58);
+	add_edge(g, 35, 8, 202);
+	add_edge(g, 35, 10, 58);
+	add_edge(g, 19, 5, 107);
+	add_edge(g, 18, 38, 151);
+	add_edge(g, 18, 11, 176);
+	add_edge(g, 27, 16, 42);
+	add_edge(g, 37, 32, 126);
+	add_edge(g, 34, 37, 106);
+	add_edge(g, 18, 5, 91);
+	add_edge(g, 30, 38, 95);
+	add_edge(g, 19, 1, 122);
+	add_edge(g, 39, 24, 218);
+	add_edge(g, 17, 28, 24);
+	add_edge(g, 24, 30, 186);
+	add_edge(g, 24, 6, 150);
+	add_edge(g, 25, 15, 5);
+	add_edge(g, 27, 14, 5);
+	add_edge(g, 33, 1, 28);
+	add_edge(g, 12, 25, 98);
+	add_edge(g, 22, 26, 70);
+	add_edge(g, 10, 35, 210);
+	add_edge(g, 36, 14, 188);
+	add_edge(g, 38, 19, 254);
+	add_edge(g, 38, 1, 242);
+	
+	START_MEASURE(DGI_GPIO2);
+	dijkstra(g, 0, 39);
+	STOP_MEASURE(DGI_GPIO2);
+	
+	#ifdef DEBUG_PRINT
+	print_path(g, 39);
+	#endif // DEBUG_PRINT
+	
+	END_MEASUREMENT;
+	
+	return 0;
 }

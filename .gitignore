@@ -459,7 +459,6 @@ dmypy.json
 
 
 # specific to CodeBlocks IDE
-*.cbp
 *.layout
 *.depend
 
