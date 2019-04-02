@@ -23,10 +23,10 @@
             false,
             false,
             true,
-            true
+            false
         ],
         "plot_pins_method": "line",
-        "plot_xmax": 1,
+        "plot_xmax": 0.6,
         "window_title": "Experiment Sorting"
     },
     "analysis": {

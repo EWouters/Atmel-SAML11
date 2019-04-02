@@ -32,8 +32,8 @@
     "analysis": {
         "pins": {
             "2": [
-                "Allocate",
-                "Free"
+                "Allocate FFT",
+                "Free FFT"
             ],
             "3": [
                 "FFT"
