@@ -36,14 +36,8 @@ class CheckpointEnergy(object):
         self.workloads_average = None
         self.workloads_std = None
 
-        try:
-            self.get_security_energy = self.get_security_energy_function()
-        except FileNotFoundError:
-            print("Need to run security again")
-        try:
-            self.get_workload_energy = self.get_workload_energy_function()
-        except FileNotFoundError:
-            print("Need to run workload again")
+        self.get_security_energy = self.get_security_energy_function()
+        self.get_workload_energy = self.get_workload_energy_function()
 
     def measure_all_security_energy(self, **kwargs):
         for security_project in self.security_projects:
@@ -75,11 +69,15 @@ class CheckpointEnergy(object):
             pickle_path_base = path.abspath(path.join(
                 *self.projects_folder, self.security_folder, security_project,
                 config["config_dict"].get("file_name_base", "log")))
-            security_charge[security_project] = {
-                "parsed_data": pickle.load(open(f"{pickle_path_base}_looped.p",
-                                                "rb")),
-                "model": pickle.load(open(f"{pickle_path_base}_model.p",
-                                          "rb"))}
+            try:
+                security_charge[security_project] = {
+                    "parsed_data": pickle.load(
+                        open(f"{pickle_path_base}_looped.p", "rb")),
+                    "model": pickle.load(
+                        open(f"{pickle_path_base}_model.p", "rb"))}
+            except FileNotFoundError:
+                print(f"Cached result for {security_project} not found. " +
+                      f"Tried {pickle_path_base}_[looped|model].p")
 
         def get_security_energy(security_type, number_of_bytes,
                                 energy_parameter="Charge"):
@@ -119,8 +117,12 @@ class CheckpointEnergy(object):
             pickle_path_base = path.abspath(path.join(
                 *self.projects_folder, self.workload_folder, workload_project,
                 config["config_dict"].get("file_name_base", "log")))
-            workload_charge[workload_project] = pickle.load(
-                open(f"{pickle_path_base}_repeated.p", "rb"))
+            try:
+                workload_charge[workload_project] = pickle.load(
+                    open(f"{pickle_path_base}_repeated.p", "rb"))
+            except FileNotFoundError:
+                print(f"Cached result for {workload_project} not found. " +
+                      f"Tried {pickle_path_base}_repeated.p")
 
         def get_workload_energy(workload_type, energy_parameter="Charge"):
             if workload_type in workload_charge.keys():
