@@ -9,8 +9,7 @@ typedef unsigned char uint8_t;
 #endif // DEBUG_PRINT
 
 #include <stdlib.h>
-
-#define INT_MAX 255
+#include <limits.h>
 
 typedef struct {
     uint8_t vertex;
