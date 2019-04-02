@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-typedef uint8_t dtype;
+typedef uint16_t dtype;
 
 typedef struct {
 	dtype vertex;
