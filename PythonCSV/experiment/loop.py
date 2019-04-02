@@ -23,7 +23,7 @@ try:
 except:
     pass
 
-def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, mod_precision=10, program=True, duration=9999, output_dir="output", verbose=1):
+def loop(experiment, iterations, output_dir, attempt=1, hash_size=8, epsilon=0.5, mod_precision=10, program=True, duration=9999, verbose=1):
     # Get hash size in the experiment's name
     hash_size_str = ""
     epsilon_str=""
@@ -38,15 +38,15 @@ def loop(experiment, iterations, attempt=1, hash_size=8, epsilon=0.5, mod_precis
     project_base_dir = os.path.join(os.path.dirname(os.getcwd()),"KalmanARM")
     project_dir = os.path.join(project_base_dir, "STDIO_Redirect_w_TrustZone")
 
-    exprm_base_dir = os.path.join(os.getcwd(), output_dir)
+    exprm_base_dir = os.path.join(output_dir)
     main_file_from = os.path.join(project_base_dir, "main_" + experiment + ".c")
     main_file_to = os.path.join(project_dir, "main.c")
 
     initial_output = os.path.join(exprm_base_dir, "output_arm.csv")
 
     # File locations for plotting
-    exprm_output_base_folder = os.path.join(os.getcwd(), output_dir, exprm_file_name_base)
-    original_output_path = os.path.join(os.getcwd(), output_dir, "original_output.csv")
+    exprm_output_base_folder = os.path.join(output_dir, exprm_file_name_base)
+    original_output_path = os.path.join(output_dir, "original_output.csv")
 
     exprm_output_name = exprm_file_name_base + "_output.csv"
     exprm_averages_name = exprm_file_name_base + "_averages.csv"

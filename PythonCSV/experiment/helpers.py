@@ -6,6 +6,8 @@ from time import sleep
 import os
 import subprocess
 
+kalman_c_folder = "C:\\Users\\Dragos\\Dropbox\\College\\MasThesis\\Git\\KalmanC++"
+
 def replace_define_value_in_file(clone_file_path, file_path, props_and_values, sleep_time = 0.01):
     #remove(file_path)
     #sleep(sleep_time)
@@ -52,18 +54,19 @@ def print_file(file_path, specific_search="", extra_space=" "):
                 print(line.strip())
 
 def compile_hash(verbose = 1):
+    global kalman_c_folder
+
     gcc_folder = "C:\\mingw32\\bin"
     gpp = "g++"
     gpp_path = os.path.join(gcc_folder, gpp)
-
-    project_folder = "C:\\Users\\Dragos\\Dropbox\\RISE\\Git\\KalmanC++"
-    hashtable_folder = os.path.join(project_folder, "HashTable")
-    source_files = [os.path.join(project_folder, "main_hash.cpp"),
-                    os.path.join(project_folder, "HashTable", "hashtable.c")]
-    exe_path = os.path.join(project_folder, "kalman-hash")
+    
+    hashtable_folder = os.path.join(kalman_c_folder, "HashTable")
+    source_files = [os.path.join(kalman_c_folder, "main_hash.cpp"),
+                    os.path.join(kalman_c_folder, "HashTable", "hashtable.c")]
+    exe_path = os.path.join(kalman_c_folder, "kalman-hash")
 
     with open("subprocess-call.txt", "w") as f:
-        subprocess.call([gpp_path, "-m32", "-g", "-Wall", "-I" + project_folder, "-I" + hashtable_folder, "-o", exe_path, "-lm", "-O0"] + source_files, stdout=f, stderr=f, shell=True)
+        subprocess.call([gpp_path, "-m32", "-g", "-Wall", "-I" + kalman_c_folder, "-I" + hashtable_folder, "-o", exe_path, "-lm", "-O0"] + source_files, stdout=f, stderr=f, shell=True)
 
     if verbose >= 1:
         with open("subprocess-call.txt", "r") as f:
@@ -71,12 +74,12 @@ def compile_hash(verbose = 1):
                 print(line.strip())
 
 def run_hash(verbose=1):
-    project_folder = "C:\\Users\\Dragos\\Dropbox\\RISE\\Git\\KalmanC++"
-    exe_path = os.path.join(project_folder, "kalman-hash.exe")
+    global kalman_c_folder
+    exe_path = os.path.join(kalman_c_folder, "kalman-hash.exe")
 
     #with open("subprocess-call-2.txt", "w") as f:
     if verbose >= 3: print("Executing " + str([exe_path]))
-    subprocess.call([exe_path], cwd=project_folder, shell=True)
+    subprocess.call([exe_path], cwd=kalman_c_folder, shell=True)
 
     # if print_output:
     #     with open("subprocess-call.txt", "r") as f:
@@ -84,7 +87,7 @@ def run_hash(verbose=1):
     #             print(line.strip())
 
     if verbose >= 2:
-        debug_path = os.path.join(project_folder, "debug.txt")
+        debug_path = os.path.join(kalman_c_folder, "debug.txt")
         with open(debug_path, "r") as f:
             for line in f:
                 print(line.strip())
