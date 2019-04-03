@@ -6,44 +6,29 @@ from time import sleep
 import os
 import subprocess
 
+from experiment.averages import Averages
+
 kalman_c_folder = "C:\\Users\\Dragos\\Dropbox\\College\\MasThesis\\Git\\KalmanC++"
 
-def replace_define_value_in_file(clone_file_path, file_path, props_and_values, sleep_time = 0.01):
-    #remove(file_path)
-    #sleep(sleep_time)
-    with open(clone_file_path,'r') as old_file:
+############################################################
+# Replacing #define values both in KalmanARM and KalmanC++ #
+############################################################
+
+
+def replace_define_value_in_file(clone_file_path, file_path, props_and_values, sleep_time=0.01):
+    with open(clone_file_path, 'r') as old_file:
         with open(file_path, 'w') as new_file:
             for line in old_file:
                 written = False
                 for prop, value in props_and_values.items():
                     if (("#define " + prop + " ") in line):
-                        new_file.write("#define {0} {1}\n".format(prop, str(value)))
-                        #print("--> " + line + " <-- changed to: " + "#define {0} {1}\n".format(prop, str(value)), end='')
+                        new_file.write(
+                            "#define {0} {1}\n".format(prop, str(value)))
                         written = True
                         break
-                if not written: new_file.write(line)
-                        #print(line, end='')
+                if not written:
+                    new_file.write(line)
 
-    # loop = True
-    # while loop:
-    #     try:
-    #         sleep(sleep_time)
-            
-    #     except PermissionError:
-    #         loop = True
-    #     else:
-    #         loop = False
-
-    # loop = True
-    # while loop:
-    #     try:
-    #         sleep(sleep_time)
-            
-    #     except PermissionError:
-    #         loop = True
-    #     else:
-    #         loop = False
-    
 
 def print_file(file_path, specific_search="", extra_space=" "):
     with open(file_path) as f:
@@ -53,41 +38,116 @@ def print_file(file_path, specific_search="", extra_space=" "):
             elif specific_search + extra_space in line:
                 print(line.strip())
 
-def compile_hash(verbose = 1):
+
+###################################################################
+# Dealing with Kalman hash table hits calculation on the computer #
+###################################################################
+
+
+def compile_hash(verbose=1):
     global kalman_c_folder
 
     gcc_folder = "C:\\mingw32\\bin"
     gpp = "g++"
-    gpp_path = os.path.join(gcc_folder, gpp)
-    
-    hashtable_folder = os.path.join(kalman_c_folder, "HashTable")
-    source_files = [os.path.join(kalman_c_folder, "main_hash.cpp"),
-                    os.path.join(kalman_c_folder, "HashTable", "hashtable.c")]
-    exe_path = os.path.join(kalman_c_folder, "kalman-hash")
+    gpp_path = kalman_arm_solution_path.path.join(gcc_folder, gpp)
+
+    hashtable_folder = kalman_arm_solution_path.path.join(
+        kalman_c_folder, "HashTable")
+    source_files = [kalman_arm_solution_path.path.join(kalman_c_folder, "main_hash.cpp"),
+                    kalman_arm_solution_path.path.join(kalman_c_folder, "HashTable", "hashtable.c")]
+    exe_path = kalman_arm_solution_path.path.join(
+        kalman_c_folder, "kalman-hash")
 
     with open("subprocess-call.txt", "w") as f:
-        subprocess.call([gpp_path, "-m32", "-g", "-Wall", "-I" + kalman_c_folder, "-I" + hashtable_folder, "-o", exe_path, "-lm", "-O0"] + source_files, stdout=f, stderr=f, shell=True)
+        subprocess.call([gpp_path, "-m32", "-g", "-Wall", "-I" + kalman_c_folder, "-I" + hashtable_folder,
+                         "-o", exe_path, "-lm", "-O0"] + source_files, stdout=f, stderr=f, shell=True)
 
     if verbose >= 1:
         with open("subprocess-call.txt", "r") as f:
             for line in f:
                 print(line.strip())
 
+
 def run_hash(verbose=1):
     global kalman_c_folder
-    exe_path = os.path.join(kalman_c_folder, "kalman-hash.exe")
+    exe_path = kalman_arm_solution_path.path.join(
+        kalman_c_folder, "kalman-hash.exe")
 
-    #with open("subprocess-call-2.txt", "w") as f:
-    if verbose >= 3: print("Executing " + str([exe_path]))
+    if verbose >= 3:
+        print("Executing " + str([exe_path]))
     subprocess.call([exe_path], cwd=kalman_c_folder, shell=True)
 
-    # if print_output:
-    #     with open("subprocess-call.txt", "r") as f:
-    #         for line in f:
-    #             print(line.strip())
-
     if verbose >= 2:
-        debug_path = os.path.join(kalman_c_folder, "debug.txt")
+        debug_path = kalman_arm_solution_path.path.join(
+            kalman_c_folder, "debug.txt")
         with open(debug_path, "r") as f:
             for line in f:
                 print(line.strip())
+
+
+####################################################################################
+# Dealing with power and gpio **data object** after running experiment with DGILib #
+#  (in order to show plot)                                                         #
+####################################################################################
+
+
+def show_plot_for_data(data):
+    config_dict_plot = {
+        "loggers": [LOGGER_OBJECT],
+        "plot_pins_method": "highlight"
+    }
+
+    with DGILibExtra(**config_dict_plot) as dgilib:
+
+        logger_data = LoggerData()
+        for interface_id, interface in dgilib.interfaces.items():
+            logger_data[interface_id] += interface.csv_read_file(
+                kalman_arm_solution_path.path.join(dgilib.logger.log_folder,
+                                                   (interface.file_name_base + '_' +
+                                                    interface.name + ".csv")))
+
+        plot = DGILibPlot(config_dict_plot)
+
+        plot.update_plot(logger_data)
+
+        plot.keep_plot_alive()
+
+
+##############################################################################
+# Dealing with power and gpio **csv's** after running experiment with DGILib #
+#  (in order to show plots and calculate averages)                           #
+##############################################################################
+
+
+def get_dgilib_data_from_csv(output_dir, experiment_name):
+    config_dict_csv = {
+        "loggers": [LOGGER_OBJECT],
+        "log_folder": kalman_arm_solution_path.path.join(output_dir, experiment_name),
+        "file_name_base": experiment_name
+    }
+
+    with DGILibExtra(**config_dict_csv) as dgilib:
+
+        logger_data = LoggerData()
+        for interface_id, interface in dgilib.interfaces.items():
+            logger_data[interface_id] += interface.csv_read_file(
+                kalman_arm_solution_path.path.join(dgilib.logger.log_folder,
+                                                   (interface.file_name_base + '_' +
+                                                    interface.name + ".csv")))
+
+    return logger_data
+
+
+def show_plot_for_dgilib_data(data):
+    config_dict_plot = {
+        "loggers": [LOGGER_OBJECT],
+        "plot_pins_method": "highlight",
+    }
+
+    plot = DGILibPlot(config_dict_plot)
+
+    plot.update_plot(logger_data)
+
+    plot.keep_plot_alive()
+
+    return logger_data

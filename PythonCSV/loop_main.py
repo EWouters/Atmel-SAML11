@@ -51,7 +51,7 @@ if __name__ == "__main__":
             to_do -= 1
 
         if to_do+1 < len(values):
-            kalman_arm_solution_path.execv(sys.executable, [sys.executable,
+            os.execv(sys.executable, [sys.executable,
                                       __file__] + [str(to_do + 1)])
         else:
             print("!!!!!!!!!!!!!!!!!!!!!!!!!!!")

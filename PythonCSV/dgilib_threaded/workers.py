@@ -1,8 +1,7 @@
 
-from pydgilib_extra import DGILibExtra, DGILibPlot
+from pydgilib_extra import DGILibExtra, DGILibPlot, LOGGER_CSV
 from atmel_csv_sender import sendline
 
-from dgilib_threaded.config import *
 from dgilib_threaded.helpers import waitForCmd, timeToStop
 
 from pydgilib_extra import power_and_time_per_pulse
@@ -13,153 +12,170 @@ from time import time, sleep
 from shutil import copy
 import os
 
-def dgilib_logger_worker(cmdQueue, returnQueue, measurement_duration, dgilib_config_dict, yield_rate=0):
 
-	with DGILibExtra(**dgilib_config_dict) as dgilib:
-		# plot = DGILibPlot(**dgilib_config_dict)
-		plot = dgilib.logger.plotobj
-		keepItUp = True
+def dgilib_logger_worker(cmdQueue, returnQueue, measurement_duration,
+                         dgilib_config_dict, yield_rate=0):
 
-		waitForCmd(cmdQueue, "start", "dgilib_logger_worker")
-		dgilib.device_reset()
+    with DGILibExtra(**dgilib_config_dict) as dgilib:
+        # plot = DGILibPlot(**dgilib_config_dict)
+        plot = dgilib.logger.plotobj
+        keepItUp = True
 
-		dgilib.logger.start()
-		#dgilib.logger.log()
+        waitForCmd(cmdQueue, "start", "dgilib_logger_worker")
+        dgilib.device_reset()
 
-		end_time = time() + measurement_duration
-		while time() < end_time:
-			dgilib.logger.update_callback()
-			sleep(yield_rate)
+        dgilib.logger.start()
+        # dgilib.logger.log()
 
-		if timeToStop(cmdQueue, "dgilib_logger_worker") or not(plot.plot_still_exists()):
-			keepItUp = False
-			end_time = 0
+        end_time = time() + measurement_duration
+        while time() < end_time:
+            dgilib.logger.update_callback()
+            sleep(yield_rate)
 
-		dgilib.logger.stop()
+        if timeToStop(cmdQueue, "dgilib_logger_worker") or not(plot.plot_still_exists()):
+            keepItUp = False
+            end_time = 0
 
-		# averagesQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
-		# averagesQueue.put(dgilib.data)
+        dgilib.logger.stop()
 
-		returnQueue.put(dgilib.data)
-		returnQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
-		print("Sent measurement data and preprocessed averages data to main thread.")
-		print("Measurement thread waiting for plot...")
+        # averagesQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
+        # averagesQueue.put(dgilib.data)
 
-		while keepItUp:
-			if timeToStop(cmdQueue, "dgilib_logger_worker"):
-				keepItUp = False
+        returnQueue.put(dgilib.data)
+        returnQueue.put(dgilib.logger.plotobj.preprocessed_averages_data)
+        print("Sent measurement data and preprocessed averages data to main thread.")
+        print("Measurement thread waiting for plot...")
 
-			if plot.plot_still_exists():
-				plot.refresh_plot()
-			else:
-				keepItUp = False
+        while keepItUp:
+            if timeToStop(cmdQueue, "dgilib_logger_worker"):
+                keepItUp = False
 
-		print("Measurement thread done!")
-	
-def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueue, waitForPlot = False, verbose=2):
+            if plot.plot_still_exists():
+                plot.refresh_plot()
+            else:
+                keepItUp = False
 
-	end_time_adjustment = 2
+        print("Measurement thread done!")
 
-	with DGILibExtra(**dgilib_config_dict) as dgilib:
-		if hasattr(dgilib.logger, 'plotobj'):
-			plot = dgilib.logger.plotobj
-		else:
-			plot = None
-			waitForPlot = False
 
-		dgilib.device_reset()
+def dgilib_logger(measurement_duration, dgilib_config_dict, stopQueue, startQueue, waitForPlot=False, verbose=2):
 
-		dgilib.logger.start()
+    end_time_adjustment = 2
 
-		#startQueue.put("start")
+    with DGILibExtra(**dgilib_config_dict) as dgilib:
+        if hasattr(dgilib.logger, 'plotobj'):
+            plot = dgilib.logger.plotobj
+        else:
+            plot = None
+            waitForPlot = False
 
-		end_time = time() + measurement_duration
-		while time() < end_time:
-			#print("Doing {0} out of {1}".format(time(), end_time))
-			dgilib.logger.update_callback()
-			
-			if timeToStop(stopQueue, "dgilib_logger (simple)"):
-				if verbose >= 2: print("Measurement thread: Got stop command!")
-				end_time = time() + end_time_adjustment
+        dgilib.device_reset()
 
-		dgilib.logger.stop()
+        dgilib.logger.start()
 
-		if LOGGER_CSV in dgilib.logger.loggers:
-			for interface_id, interface in dgilib.interfaces.items():
-				if verbose >= 1:  print("Wrote " + interface.name + " data to " + os.path.join(dgilib.logger.log_folder, interface.file_name_base + '_' +
-								interface.name + ".csv'"))
+        # startQueue.put("start")
 
-		if waitForPlot and (plot is not None):
-			if verbose >= 2: print("Measurement thread waiting for plot...")
-			while plot.plot_still_exists():
-				plot.refresh_plot()
+        end_time = time() + measurement_duration
+        while time() < end_time:
+            #print("Doing {0} out of {1}".format(time(), end_time))
+            dgilib.logger.update_callback()
 
-		if verbose >= 2: print("Measurement thread done!")
+            if timeToStop(stopQueue, "dgilib_logger (simple)"):
+                if verbose >= 2:
+                    print("Measurement thread: Got stop command!")
+                end_time = time() + end_time_adjustment
 
-		if hasattr(dgilib.logger, 'plotobj'):
-			return dgilib.data, dgilib.logger.plotobj.preprocessed_averages_data
-		else:
-			return dgilib.data, None
+        dgilib.logger.stop()
 
-def receive_worker(queue, stopQueue, max_iterations, output_file, verbose = 2):
-	with open(output_file, "w") as f:
-		for i in range(max_iterations):
-			data = queue.get()
-			f.write(",".join(data) + "\n")
-		
-		if verbose >= 1: print("\n\nWritten Kalman output to '" + output_file + "'")
-		if verbose >= 2: print("\nReceiving thread done!")
+        if LOGGER_CSV in dgilib.logger.loggers:
+            for interface_id, interface in dgilib.interfaces.items():
+                if verbose >= 1:
+                    print("Wrote " + interface.name + " data to " + os.path.join(dgilib.logger.log_folder, interface.file_name_base + '_' +
+                                                                                 interface.name + ".csv'"))
 
-	stopQueue.put("stop")
+        if waitForPlot and (plot is not None):
+            if verbose >= 2:
+                print("Measurement thread waiting for plot...")
+            while plot.plot_still_exists():
+                plot.refresh_plot()
+
+        if verbose >= 2:
+            print("Measurement thread done!")
+
+        if hasattr(dgilib.logger, 'plotobj'):
+            return dgilib.data, dgilib.logger.plotobj.preprocessed_averages_data
+        else:
+            return dgilib.data, None
+
+
+def receive_worker(queue, stopQueue, max_iterations, output_file, verbose=2):
+    with open(output_file, "w") as f:
+        for i in range(max_iterations):
+            data = queue.get()
+            f.write(",".join(data) + "\n")
+
+        if verbose >= 1:
+            print("\n\nWrote Kalman output to '" + output_file + "'")
+        if verbose >= 2:
+            print("\nReceiving thread done!")
+
+    stopQueue.put("stop")
+
 
 def send_worker(queue, cmdQueue, input_acc_file, input_gyro_file, max_iterations, verbose=2):
-	max_iterations += 1
-	
-	with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
+    max_iterations += 1
 
-		#waitForCmd(cmdQueue, "start", "send_worker")
+    with serial.Serial(port='COM3', baudrate=9600, dsrdtr=True, bytesize=8, parity='N', stopbits=1) as ser:
 
-		ser.setDTR(True)
-		acc_file = open(input_acc_file, "r")
-		gyro_file = open(input_gyro_file, "r")
+        #waitForCmd(cmdQueue, "start", "send_worker")
 
-		# Ignore first line
-		acc_file.readline()
-		gyro_file.readline()
+        ser.setDTR(True)
+        acc_file = open(input_acc_file, "r")
+        gyro_file = open(input_gyro_file, "r")
 
-		line = None
-		#hash = None
+        # Ignore first line
+        acc_file.readline()
+        gyro_file.readline()
 
-		for i in range(max_iterations):
-			if verbose >= 1: sys.stdout.write( \
-				"\rReading line " + str(i+1) + "/" + str(max_iterations))
-			if verbose >= 1: sys.stdout.flush()
+        line = None
+        #hash = None
 
-			line = ser.readline()
-			line = str("".join(map(chr, line))).strip()
-			if verbose >= 3: print("[RECV] " + line)
+        for i in range(max_iterations):
+            if verbose >= 1:
+                sys.stdout.write(
+                    "\rReading line " + str(i+1) + "/" + str(max_iterations))
+            if verbose >= 1:
+                sys.stdout.flush()
 
-			if ("Hash" in line):
-				hash_ = line.split(":")[1]
-				if verbose >= 1: print("\nHash is {0}\n".format(hash_))
-			elif not ("RDY" in line): 
-				queue.put(line.split(","))
+            line = ser.readline()
+            line = str("".join(map(chr, line))).strip()
+            if verbose >= 3:
+                print("[RECV] " + line)
 
-			send = acc_file.readline().strip() + "\0"
-			sendline(ser, send)
-			if verbose >= 3: print("[SENT] " + send)
+            if ("Hash" in line):
+                hash_ = line.split(":")[1]
+                if verbose >= 1:
+                    print("\nHash is {0}".format(hash_))
+            elif not ("RDY" in line):
+                queue.put(line.split(","))
 
-			send = gyro_file.readline().strip() + "\0"
-			sendline(ser, send)
-			if verbose >= 3: print("[SENT] " + send)
-			
-		# if hash is None:
-		# 	typeQueue.put("baseline")
-		# else:
-		# 	typeQueue.put("hash-" + hash)
+            send = acc_file.readline().strip() + "\0"
+            sendline(ser, send)
+            if verbose >= 3:
+                print("[SENT] " + send)
 
-		acc_file.close()
-		gyro_file.close()
+            send = gyro_file.readline().strip() + "\0"
+            sendline(ser, send)
+            if verbose >= 3:
+                print("[SENT] " + send)
 
-		if verbose >= 2: print("Sending thread done!")
+        # if hash is None:
+        # 	typeQueue.put("baseline")
+        # else:
+        # 	typeQueue.put("hash-" + hash)
 
+        acc_file.close()
+        gyro_file.close()
+
+        if verbose >= 2:
+            print("Sending thread done!")
