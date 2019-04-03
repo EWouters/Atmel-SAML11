@@ -11,6 +11,7 @@ HOLD_TIME_TO = 1
 START_INDEX = 2
 AVERAGE = 3
 
+
 class Averages(object):
 
     def __init__(self, data=None, preprocessed_data=None, *args, **kwargs):
@@ -62,18 +63,16 @@ class Averages(object):
                     iteration = self.averages[pin_idx][i][ITERATION]
                     hold_time_from = self.averages[pin_idx][i][HOLD_TIME][HOLD_TIME_FROM]
                     hold_time_to = self.averages[pin_idx][i][HOLD_TIME][HOLD_TIME_TO]
-                    #seconds = self.averages[pin_idx][i][HOLD_TIME][HOLD_TIME_TO] - self.averages[pin_idx][i][HOLD_TIME][HOLD_TIME_FROM]
                     average = self.averages[pin_idx][i][AVERAGE]
 
-                    # if not(average is None):
                     f.write("{0},{1},{2},{3},{4}\n".format(
                         pin_idx, iteration, hold_time_from, hold_time_to, average))
 
             if verbose > 0:
                 print("Wrote averages to: " + filepath)
 
-    def print_averages_for_pin(self, pin_idx, print_per_iteration=True, print_total_average=True, 
-        print_benchmark_time=True, print_energy_and_current=True, how_many=0):
+    def print_averages_for_pin(self, pin_idx, print_per_iteration=True, print_total_average=True,
+                               print_benchmark_time=True, print_energy_and_current=True, how_many=0):
 
         if len(self.averages) == 0:
             print("ERROR: Average information missing for all pins")
@@ -117,8 +116,9 @@ class Averages(object):
             if print_per_iteration:
                 print("Average charge per iteration: {0} uC".format(round(
                     self.total_average[pin_idx] * 1000 * 1000 / self.total_iterations[pin_idx], 9)))
-                if print_energy_and_current: print("Average energy per iteration: {0} uJ".format(round(
-                    self.total_average[pin_idx]*self.voltage * 1000 * 1000 / self.total_iterations[pin_idx], 6)))
+                if print_energy_and_current:
+                    print("Average energy per iteration: {0} uJ".format(round(
+                        self.total_average[pin_idx]*self.voltage * 1000 * 1000 / self.total_iterations[pin_idx], 6)))
                 print("Average time per iteration: {0} ms".format(
                     round(self.total_duration[pin_idx] / self.total_iterations[pin_idx], 6)))
             print("")
@@ -126,16 +126,18 @@ class Averages(object):
             if print_total_average:
                 print("Total iterations: {0}".format(
                     self.total_iterations[pin_idx]))
-                if print_energy_and_current:  print("Total average current: {0} mA".format(
-                    round(self.total_average[pin_idx] * 1000 / self.total_duration[pin_idx], 6)))
+                if print_energy_and_current:
+                    print("Total average current: {0} mA".format(
+                        round(self.total_average[pin_idx] * 1000 / self.total_duration[pin_idx], 6)))
                 print("Total charge: {0} mC".format(
                     round(self.total_average[pin_idx] * 1000, 6)))
-                if print_energy_and_current:  print("Total energy: {0} mJ".format(
-                    round(self.total_average[pin_idx] * 1000 * self.voltage, 6)))
+                if print_energy_and_current:
+                    print("Total energy: {0} mJ".format(
+                        round(self.total_average[pin_idx] * 1000 * self.voltage, 6)))
                 print("Total time: {0} s".format(
                     round(self.total_duration[pin_idx], 6)))
                 print("")
-            
+
             if print_benchmark_time:
                 print("Benchmark time: {0} s".format(
                     round(self.benchmark_time, 8)))
@@ -146,7 +148,7 @@ class Averages(object):
     def calculate_averages_for_pin(self, pin_idx, pin_value=True, ignore_first_average=True):
         if self.total_average[pin_idx] > 0:
             return
-        
+
         start_time = time()
 
         if self.average_function == "leftpoint":
