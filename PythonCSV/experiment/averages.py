@@ -32,8 +32,12 @@ class Averages(object):
         self.total_iterations = [0, 0, 0, 0]
         self.benchmark_time = 0.0
         self.voltage = kwargs.get("voltage", 5)
+        self.verbose = kwargs.get("verbose", 0)
 
-    def read_from_csv(self, filepath, verbose=0):
+    def read_from_csv(self, filepath, verbose=None):
+        if verbose is None:
+            verbose = self.verbose
+
         with open(filepath, "r") as f:
             for line in f:
 
@@ -53,10 +57,13 @@ class Averages(object):
 
         self.initialized = True
 
-        if verbose > 0:
+        if self.verbose > 0:
             print("Read averages from CSV file:" + filepath)
 
-    def write_to_csv(self, filepath, verbose=0):
+    def write_to_csv(self, filepath, verbose=None):
+        if verbose is None:
+            verbose = self.verbose
+
         with open(filepath, "w") as f:
             for pin_idx in range(4):
                 for i in range(len(self.averages[pin_idx])):
