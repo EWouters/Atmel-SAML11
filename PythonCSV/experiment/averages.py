@@ -277,6 +277,11 @@ def calculate_average_leftpoint_single_interval(data_power, start_time=None, end
     if end_time is None:
         end_time = data_power.timestamps[-1]
     else:
+        if left_index is None:
+            left_index = 0
+            print("Averages.calculate_average_leftpoint_single_interval: Had to correct a left_index = 'None', to become 0.")
+            print(
+                "   Currently at time = {0} of processing the power data". format(end_time))
         (end_time, _, right_index, _) = get_nearest_timestamps(
             data_power, end_time, left_index)
 

@@ -5,10 +5,10 @@ import os
 iterations = 2887
 
 hash_sizes = [120]
-epsilons = [1.5]  # 1.6, 1.7, 1.8, 1.9, 2.0
+epsilons = [1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
 mod_precisions = [10000]
 attempts = [1]
-stage = "exp"
+stage = "avg"
 output_dir = "C:\\Users\\Dragos\\MasThesis_output"
 
 # Initial index:

@@ -6,7 +6,8 @@ import os
 import subprocess
 
 from experiment.averages import Averages
-from pydgilib_extra import DGILibExtra, LOGGER_OBJECT, LoggerData, DGILibInterfaceGPIO, DGILibInterfacePower, INTERFACE_GPIO, INTERFACE_POWER
+from pydgilib_extra import DGILibExtra, LOGGER_OBJECT, LoggerData, DGILibInterfaceGPIO, \
+    DGILibInterfacePower, INTERFACE_GPIO, INTERFACE_POWER, DGILibPlot
 
 kalman_c_folder = "C:\\Users\\Dragos\\Dropbox\\College\\MasThesis\\Git\\KalmanC++"
 
@@ -121,11 +122,11 @@ def get_dgilib_data_from_csv(output_dir, experiment_name):
 def show_plot_for_dgilib_data(data):
     config_dict_plot = {
         "loggers": [LOGGER_OBJECT],
-        "plot_pins_method": "highlight",
+        "plot_pins_method": "line",
     }
 
-    plot = DGILibPlot(config_dict_plot)
+    plot = DGILibPlot(**config_dict_plot, dgilib_extra=None)
 
-    plot.update_plot(logger_data)
+    plot.update_plot(data)
 
     plot.keep_plot_alive()
