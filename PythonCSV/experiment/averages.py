@@ -189,7 +189,7 @@ class Averages(object):
                     average = None
                 elif average is None:
                     average, start_index = calculate_average_leftpoint_single_interval(
-                        self.data.power, hold_times[0], hold_times[1], start_index)
+                    self.data.power, hold_times[0], hold_times[1], start_index)
 
                 if average is not None:
                     self.total_average[pin_idx] += average
@@ -278,10 +278,8 @@ def calculate_average_leftpoint_single_interval(data_power, start_time=None, end
         end_time = data_power.timestamps[-1]
     else:
         if left_index is None:
-            left_index = 0
-            print("Averages.calculate_average_leftpoint_single_interval: Had to correct a left_index = 'None', to become 0.")
-            print(
-                "   Currently at time = {0} of processing the power data". format(end_time))
+            raise RuntimeError("Averages.calculate_average_leftpoint_single_interval: Got a left_index = 'None' at time {0}. That means \
+                that the experiment wasn't fully done and written to the power and gpio csv files properly. Please re-run the experiment.".format(end_time))
         (end_time, _, right_index, _) = get_nearest_timestamps(
             data_power, end_time, left_index)
 

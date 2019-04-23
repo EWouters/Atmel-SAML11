@@ -93,13 +93,17 @@ def run_hash(verbose=1):
 
 
 def get_dgilib_data_from_csv(output_dir, experiment_name):
-    # For some reason, on 64 bit the dgilib.dll is not found
-    # We need 64 bit to read big CSV
-    # Therefore DGILibExtra is not used here
+    # Usually, to access dgilib csv's we use DGILibExtra,
+    #  which uses dgilib.dll.
+    # For some reason, on 64 bit, the dgilib.dll is not found
+    #  (besides the fact that it's a 32 bit dll).
+    # We need 64 bit to read big CSV.
+    # Therefore DGILibExtra is not used here, just LoggerData and
+    #  its dependency objects (DGILibInterfaceGPIO, DGILibInterfacePower).
 
     interfaces = {INTERFACE_GPIO: DGILibInterfaceGPIO(),
                   INTERFACE_POWER: DGILibInterfacePower()}
-    dgilib_logger_log_folder = os.path.join(output_dir, experiment_name)
+    dgilib_logger_log_folder = os.path.join(output_dir)
     interface_file_name_base = experiment_name
 
     logger_data = LoggerData()
