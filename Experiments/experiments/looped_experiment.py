@@ -161,8 +161,9 @@ def looped_experiment(config_file=path.abspath(
             num_bytes = range(x_step, (length+1)*x_step, x_step)
             if verbose:
                 print(
-                    f"Fitting model to {parameter_name}" +
-                    f" with maximum {max(num_bytes)} bytes.")
+                    f"Fitting model to {parameter_name} with {length} " +
+                    f"samples, from {min(num_bytes)} to {max(num_bytes)} "
+                    f"bytes in steps of {x_step}.")
             model_result = {}
             for result_type in result_types:
                 model_result[result_type] = model.fit(

@@ -16,7 +16,8 @@ class CheckpointEnergy(object):
 
     def __init__(self, projects_folder=[path.curdir],
                  security_folder="Security", security_projects=None,
-                 workload_folder="Workloads", workload_projects=None):
+                 workload_folder="Workloads", workload_projects=None,
+                 text_as_size=False):
         self.projects_folder = projects_folder
         self.security_folder = security_folder
         self.workload_folder = workload_folder
@@ -38,6 +39,8 @@ class CheckpointEnergy(object):
 
         self.get_security_energy = self.get_security_energy_function()
         self.get_workload_energy = self.get_workload_energy_function()
+
+        self.text_as_size = text_as_size
 
     def measure_all_security_energy(self, **kwargs):
         for security_project in self.security_projects:
@@ -185,9 +188,13 @@ class CheckpointEnergy(object):
 
     def get_checkpoint_size(self, workload_project):
         result = 0 + 12 + 1 + 1  # 12 GPR + LR + PC
+
+        checkpoint_regions = (
+            "data", "bss") if not self.text_as_size else ("text")
+
         for project in self.get_workload_size(workload_project).values():
             for size_type, size in project.items():
-                if size_type in ("data", "bss"):
+                if size_type in checkpoint_regions:
                     result += size
         return result
 

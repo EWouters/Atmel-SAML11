@@ -9,7 +9,7 @@
 #ifndef GPIO_INIT_H_
 #define GPIO_INIT_H_
 
-#define DELAY delay_ms(1)
+#define DELAY delay_ms(2)
 
 #ifdef INIT_GPIO
 #define GPIO_HIGH true

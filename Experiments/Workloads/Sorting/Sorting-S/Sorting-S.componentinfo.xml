@@ -98,7 +98,7 @@
 			<Description></Description>
 			<Files xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\include</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\include</AbsolutePath>
 					<Attribute></Attribute>
 					<Category>include</Category>
 					<Condition>C</Condition>
@@ -109,29 +109,29 @@
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\include\sam.h</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\include\sam.h</AbsolutePath>
 					<Attribute></Attribute>
 					<Category>header</Category>
 					<Condition>C</Condition>
-					<FileContentHash>3Aw2AahcgXK+wLexY9fpJg==</FileContentHash>
+					<FileContentHash>+abEtaDJqX8lJl6c0F2Xbg==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>include/sam.h</Name>
 					<SelectString></SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\templates\main.c</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\templates\main.c</AbsolutePath>
 					<Attribute>template</Attribute>
 					<Category>source</Category>
 					<Condition>C Exe</Condition>
-					<FileContentHash>PwMnlnuIOqbZZ14yElLxow==</FileContentHash>
+					<FileContentHash>o0ncidL5gR0Z0YwWJ1YroQ==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>templates/main.c</Name>
 					<SelectString>Main file (.c)</SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\templates\main.cpp</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\templates\main.cpp</AbsolutePath>
 					<Attribute>template</Attribute>
 					<Category>source</Category>
 					<Condition>C Exe</Condition>
@@ -142,44 +142,44 @@
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\gcc\gcc\startup_saml11e16a.c</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\gcc\gcc\startup_saml11e16a.c</AbsolutePath>
 					<Attribute>config</Attribute>
 					<Category>source</Category>
 					<Condition>GCC Exe</Condition>
-					<FileContentHash>EZGY70LBVqj37snkpfIvBA==</FileContentHash>
+					<FileContentHash>XYkb41GAqYMnmAcyOUm9XA==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>gcc/gcc/startup_saml11e16a.c</Name>
 					<SelectString></SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\gcc\system_saml11e16a.c</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\gcc\system_saml11e16a.c</AbsolutePath>
 					<Attribute>config</Attribute>
 					<Category>source</Category>
 					<Condition>GCC Exe</Condition>
-					<FileContentHash>penAWw7EOOOQYYQYKF9uOQ==</FileContentHash>
+					<FileContentHash>q5R7mY+WoqPLhh8HfzEDsQ==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>gcc/system_saml11e16a.c</Name>
 					<SelectString></SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\gcc\gcc\saml11e16a_flash.ld</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\gcc\gcc\saml11e16a_flash.ld</AbsolutePath>
 					<Attribute>config</Attribute>
 					<Category>linkerScript</Category>
 					<Condition>GCC Exe</Condition>
-					<FileContentHash>/5fsziWAQut2zuzvLlPRrw==</FileContentHash>
+					<FileContentHash>h1StaHO7Q15eATyFz888HA==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>gcc/gcc/saml11e16a_flash.ld</Name>
 					<SelectString></SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.91\gcc\gcc\saml11e16a_sram.ld</AbsolutePath>
+					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\SAML11_DFP\1.0.109\gcc\gcc\saml11e16a_sram.ld</AbsolutePath>
 					<Attribute>config</Attribute>
 					<Category>other</Category>
 					<Condition>GCC Exe</Condition>
-					<FileContentHash>fh2mVzFQe7nXfSvbylt8BA==</FileContentHash>
+					<FileContentHash>OH+Owu5VOa2249nG/xW2GA==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>gcc/gcc/saml11e16a_sram.ld</Name>
 					<SelectString></SelectString>
@@ -187,8 +187,8 @@
 				</d4p1:anyType>
 			</Files>
 			<PackName>SAML11_DFP</PackName>
-			<PackPath>C:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/SAML11_DFP/1.0.91/Atmel.SAML11_DFP.pdsc</PackPath>
-			<PackVersion>1.0.91</PackVersion>
+			<PackPath>C:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/SAML11_DFP/1.0.109/Atmel.SAML11_DFP.pdsc</PackPath>
+			<PackVersion>1.0.109</PackVersion>
 			<PresentInProject>true</PresentInProject>
 			<ReferenceConditionId>ATSAML11E16A</ReferenceConditionId>
 			<RteComponents xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">

@@ -1,80 +1,45 @@
 {
-    "name": "TrustZone Flash",
-    "project_paths": [
-        [
-            ".",
-            "TrustZone_Flash-NS"
-        ],
-        [
-            ".",
-            "TrustZone_Flash-S"
-        ]
-    ],
-    "config_dict": {
-        "interfaces": [
-            256,
-            48
-        ],
-        "loggers": [
-            1,
-            0
-        ],
-        "gpio_delay_time": 0.0007,
-        "file_name_base": "experiment_trustzone_flash"
+  "name": "TrustZone Flash",
+  "project_paths": [[".", "TrustZone_Flash-NS"], [".", "TrustZone_Flash-S"]],
+  "config_dict": {
+    "interfaces": [256, 48],
+    "loggers": [1, 0],
+    "gpio_delay_time": 0.0007,
+    "file_name_base": "experiment_trustzone_flash"
+  },
+  "config_dict_plot": {
+    "loggers": [1, 2, 0],
+    "plot_pins": [false, false, true, true],
+    "plot_pins_method": "line",
+    "plot_xmax": 1,
+    "window_title": "Experiment TrustZone Flash"
+  },
+  "analysis": {
+    "pins": {
+      "2": ["TrustZone Flash Write"],
+      "3": ["TrustZone Flash Read"]
     },
-    "config_dict_plot": {
-        "loggers": [
-            1,
-            2,
-            0
-        ],
-        "plot_pins": [
-            false,
-            false,
-            true,
-            true
-        ],
-        "plot_pins_method": "line",
-        "plot_xmax": 1,
-        "window_title": "Experiment TrustZone Flash"
+    "result_types": ["Charge", "Time"],
+    "section_types": {
+      "init": [],
+      "store": ["TrustZone Flash Write"],
+      "load": ["TrustZone Flash Read"],
+      "exit": []
     },
-    "analysis": {
-        "pins": {
-            "2": [
-                "TrustZone Flash Store"
-            ],
-            "3": [
-                "TrustZone Flash Load"
-            ]
-        },
-        "result_types": [
-            "Charge",
-            "Time"
-        ],
-        "section_types": {
-            "init": [],
-            "store": [
-                "TrustZone Flash Store"
-            ],
-            "load": [
-                "TrustZone Flash Load"
-            ],
-            "exit": []
-        },
-        "labels": {
-            "Charge": {
-                "x": "Data Size",
-                "x_unit": "byte",
-                "y": "Charge",
-                "y_unit": "C"
-            },
-            "Time": {
-                "x": "Data Size",
-                "x_unit": "byte",
-                "y": "Time",
-                "y_unit": "s"
-            }
-        },
-        "x_step": 1
-    }
+    "labels": {
+      "Charge": {
+        "x": "Data Size",
+        "x_unit": "byte",
+        "y": "Charge",
+        "y_unit": "C"
+      },
+      "Time": {
+        "x": "Data Size",
+        "x_unit": "byte",
+        "y": "Time",
+        "y_unit": "s"
+      }
+    },
+    "x_step": 1
+  }
 }

@@ -5,8 +5,9 @@
 #include "mbedtls/aes.h"
 #include "mbedtls/cmac.h"
 
-#define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 800 //880
+#define STEP_SIZE MBEDTLS_AES_BLOCK_SIZE
+#define MIN_NUM_BYTES STEP_SIZE
+#define MAX_NUM_BYTES 6000 //6496
 
 #define AES_KEY_SIZE 256
 
@@ -55,10 +56,10 @@ int main(void)
 	mbedtls_aes_setkey_enc( &aes, key, AES_KEY_SIZE );
 	mbedtls_aes_setkey_dec( &aes2, key, AES_KEY_SIZE );
 	
-	// Allocate MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZEbytes.
-	uint8_t *input = malloc(sizeof(uint8_t) * MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE);
+	// Allocate MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE bytes.
+	uint8_t *input = malloc(sizeof(uint8_t) * MAX_NUM_BYTES);
 	
-	for (size_t num_bytes = MIN_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes <= MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE; num_bytes += MBEDTLS_AES_BLOCK_SIZE) {
+	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes += STEP_SIZE) {
 		//size_t num_bytes = MAX_AES_BLOCKS * MBEDTLS_AES_BLOCK_SIZE;
 		// Fill with sequential data.
 		for (size_t byte = 0; byte < num_bytes; byte++) {

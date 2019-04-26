@@ -193,7 +193,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -233,7 +233,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.preprocessingassembler.general.IncludePaths>
@@ -256,7 +256,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -295,7 +295,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -336,7 +336,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
@@ -360,7 +360,7 @@
       <Value>../hpl/port</Value>
       <Value>../hri</Value>
       <Value>../trustzone</Value>
-      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.91\include</Value>
+      <Value>%24(PackRepoDir)\Atmel\SAML11_DFP\1.0.109\include</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>

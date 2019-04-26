@@ -11,9 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MIN_AES_BLOCKS 1
-#define MAX_AES_BLOCKS 10
-
 #ifndef FLASH_PAGE_SIZE
 #define FLASH_PAGE_SIZE 64
 #endif

@@ -3,7 +3,9 @@
 
 #include "trustzone_veneer.h"
 
-#define MIN_NUM_BYTES 1
+
+#define STEP_SIZE 1
+#define MIN_NUM_BYTES STEP_SIZE
 #define MAX_NUM_BYTES 6000 //6496
 
 #define SLEEP
@@ -16,7 +18,7 @@ int main(void)
 	
 	uint8_t *input = malloc(sizeof(uint8_t) * MAX_NUM_BYTES);
 	
-	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes++) {
+	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes += STEP_SIZE) {
 		//size_t num_bytes = MAX_NUM_BYTES;
 		// Fill with sequential data.
 		for (size_t byte = 0; byte < num_bytes; byte++) {
