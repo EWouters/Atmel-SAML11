@@ -514,3 +514,7 @@ KalmanC++/hash_experiment
 
 # Output files from Kalman hash table experiments are too big to commit
 PythonCSV/output/**
+
+# Ignore full pickles
+*_logger_data.p
+*.mp4
