@@ -45,7 +45,9 @@ def process_folder_namings(experiment, iterations, output_dir, hash_size=8,
         arm_kalman_solution_parent_folder_path, "STDIO_Redirect_w_TrustZone")
 
     # Results (averages, size) csv locations
-    exprm_output_folder_path = os.path.join(output_dir, experiment_name)
+    attempt_folder = "attempt_" + str(attempt)
+    exprm_output_folder_path = os.path.join(output_dir, attempt_folder,
+            experiment_name)
     original_output_path = os.path.join(output_dir, "original_output.csv")
 
     exprm_output_name = experiment_name + "_output.csv"
@@ -58,17 +60,29 @@ def process_folder_namings(experiment, iterations, output_dir, hash_size=8,
     log_file_name = experiment_name + "_unnamed_log.txt"
     log_file_path = os.path.join(exprm_output_folder_path, log_file_name)
 
-    power_gpio_folder_path = os.path.join(output_dir, "power_gpio")
+    power_gpio_folder_path = os.path.join(output_dir, "power_gpio", attempt_folder)
 
     return (experiment_name, exprm_output_folder_path, exprm_output_csv_path,
             power_gpio_folder_path, averages_csv_path,
             arm_kalman_solution_parent_folder_path, arm_kalman_solution_path,
             original_output_path, log_file_path)
 
+def create_folder(folder_path, verbose):
+    try:
+        os.mkdir(folder_path)
+        if verbose >= 2:
+            print("Folder '" + folder_path + "' created.")
+    except FileExistsError:
+        if verbose >= 2:
+            print("WARNING: Folder '" + folder_path +
+                    "' already exists.")
+        pass
 
 def experiment_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
                     epsilon=0.5, mod_precision=10, program=True, duration=9999,
                     verbose=1, output_to_console=True, output_to_file=True):
+
+    start_time_ = time()
 
     (experiment_name, exprm_output_folder_path, exprm_output_csv_path,
      power_gpio_folder_path, _,
@@ -76,7 +90,7 @@ def experiment_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
      _, log_file_path) = \
         process_folder_namings(experiment, iterations,
                                output_dir, hash_size,
-                               epsilon, mod_precision)
+                               epsilon, mod_precision, attempt)
 
     # This object will help print both on the console and in a log file.
     # All information and especially errors will go to the log file now, at
@@ -109,26 +123,9 @@ def experiment_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
             "MOD_PRECISION": mod_precision
         }
 
-        try:
-            os.mkdir(output_dir)
-            if verbose >= 2:
-                print("Folder '" + output_dir + "' created.")
-        except FileExistsError:
-            if verbose >= 2:
-                print("WARNING: Folder '" + output_dir +
-                      "' already exists.")
-            pass
-
-        try:
-            os.mkdir(exprm_output_folder_path)
-            if verbose >= 2:
-                print("Folder '" + exprm_output_folder_path +
-                      "' created.")
-        except FileExistsError:
-            if verbose >= 2:
-                print("WARNING: Folder '" +
-                      exprm_output_folder_path + "' already exists.")
-            pass
+        create_folder(output_dir, verbose)
+        create_folder(exprm_output_folder_path, verbose)
+        create_folder(power_gpio_folder_path, verbose)
 
         # KalmanC++
         if "hash" in experiment:
@@ -208,11 +205,16 @@ def experiment_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
                       input_gyro_file=config["input_gyro_file"],
                       output_file=config["output_file"], waitForPlot=True,
                       verbose=verbose)
-
+        
+        duration_ = math.ceil(time() - start_time_)
+        if verbose >= 1:
+            print("Experiment loop took {0} seconds...".format(duration))
 
 def averages_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
                   epsilon=0.5, mod_precision=10, verbose=1,
                   output_to_file=True, output_to_console=True):
+
+    start_time_ = time()
 
     (experiment_name, exprm_output_folder_path, exprm_output_csv_path,
         power_data_folder_path, averages_csv_path,
@@ -220,7 +222,7 @@ def averages_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
         original_output_path, log_file_path) = \
         process_folder_namings(experiment, iterations,
                                output_dir, hash_size,
-                               epsilon, mod_precision)
+                               epsilon, mod_precision, attempt)
 
     with Tee(log_file_path.replace("unnamed", "averages"),
              output_to_file=output_to_file,
@@ -250,17 +252,30 @@ def averages_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
         avg = Averages(data=data, average_function="leftpoint",
                        verbose=verbose)
 
-        avg.calculate_averages_for_pin(1, ignore_first_average=False)
+        ignore_first_average = False
+        if verbose >= 1:
+            print("Ignore first average is {0}!".format(ignore_first_average))
+
+        avg.calculate_averages_for_pin(1, ignore_first_average=
+                                        ignore_first_average)
+
         if verbose >= 2:
             duration = math.ceil(time() - start_time)
             print("Done calculating averages! Took" +
                   " {0} seconds. Writing averages csv...".format(duration))
         avg.write_to_csv(averages_csv_path)
 
+        duration_ = math.ceil(time() - start_time_)
+
+        if verbose >= 1:
+            print("Averages loop took {0} seconds...".format(duration))
+
 
 def sizes_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
                epsilon=0.5, mod_precision=10, program=False, verbose=1,
                output_to_console=True, output_to_file=True):
+
+    start_time_ = time()
 
     (experiment_name, exprm_output_folder_path, _,
      power_data_folder_path, averages_csv_path,
@@ -268,7 +283,7 @@ def sizes_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
      original_output_path, log_file_path) = \
         process_folder_namings(experiment, iterations,
                                output_dir, hash_size,
-                               epsilon, mod_precision)
+                               epsilon, mod_precision, attempt)
 
     with Tee(log_file_path.replace("unnamed", "sizes"),
              output_to_console=output_to_console,
@@ -329,3 +344,8 @@ def sizes_loop(experiment, iterations, output_dir, attempt=1, hash_size=8,
         if verbose >= 2:
             print("Written project size details to: '" +
                   project_size_file_path + "'\n")
+
+        duration_ = math.ceil(time() - start_time_)
+
+        if verbose >= 1:
+            print("Size loop took {0} seconds...".format(duration_))

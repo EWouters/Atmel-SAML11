@@ -188,8 +188,14 @@ class Averages(object):
                 if ignore_first_average and iteration_idx == 1:
                     average = None
                 elif average is None:
+                    if self.data is None:
+                        raise ValueError("averages.calculate_averages_for" +
+                        "_pin: The averages file being read has 'None' for" +
+                        " the first average, although ignore_first_average" +
+                        " is probably False implying that it should be" +
+                        " processed.")
                     average, start_index = calculate_average_leftpoint_single_interval(
-                    self.data.power, hold_times[0], hold_times[1], start_index)
+                        self.data.power, hold_times[0], hold_times[1], start_index)
 
                 if average is not None:
                     self.total_average[pin_idx] += average

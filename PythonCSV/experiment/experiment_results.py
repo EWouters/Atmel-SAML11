@@ -7,35 +7,48 @@ import numpy as np
 import operator
 import os
 
-def get_output_dir():
+def get_output_dirs():
+    def get_immediate_subdirectories(a_dir):
+        return [name for name in os.listdir(a_dir)
+                if os.path.isdir(os.path.join(a_dir, name))]
+
     windows_output_dir = "C:\\Users\\Dragos\\MasThesis_output"
-    linux_output_dir = "/home/dragos/MasThesis_output"
-    output_dir_ = ""
+    linux_output_dir = "/home/dragos/MasThesis/MasThesis_output"
+    output_dir = ""
 
     if os.name == "nt":
-        output_dir_ = windows_output_dir
+        output_dir = windows_output_dir
     else:
-        output_dir_ = linux_output_dir
+        output_dir = linux_output_dir
 
-    return output_dir_
+    output_dirs_ = get_immediate_subdirectories(output_dir)
+
+    print(str(output_dirs_))
+
+    output_dirs = []
+    for d in output_dirs_:
+        if "attempt" in d:
+            output_dirs.append(os.path.join(output_dir,d))
+
+    return output_dirs
 
 class ExperimentResult(object):
     
-    def __init__(self, folder="baseline_2887iter_1", output_dir=None):
-        
-        if output_dir is None:
-            output_dir = get_output_dir()
-        
+    def __init__(self, folder="baseline_2887iter_1", output_dir=None):        
         self.folder = folder
         self.experiment_name = folder
         self.output_dir = output_dir
+        
+        self.voltage = 5
         
         self.averages_csv = os.path.join(output_dir, folder, folder + "_averages.csv")
         self.hash_stats_txt = os.path.join(output_dir, folder, folder + "_hash.txt")
         self.size_stats_txt = os.path.join(output_dir, folder, folder + "_size.txt")
         self.output_csv = os.path.join(output_dir, folder, folder + "_output.csv")
         
-        self.column_names = ['Iteration', 'Roll', 'Pitch', 'Gyro X Angle', 'Gyro Y Angle', 'Comp Angle X', 'Comp Angle Y', 'Kalman Angle X', 'Kalman Angle Y']
+        self.column_names = ['Iteration', 'Roll', 'Pitch', 'Gyro X Angle', \
+            'Gyro Y Angle', 'Comp Angle X', 'Comp Angle Y', 'Kalman Angle X', \
+            'Kalman Angle Y']
         
         self.output_axes = None
         self.output_fig = None
@@ -49,7 +62,9 @@ class ExperimentResult(object):
         else:
             self.legend = folder.split("_")[0].title()
         
-        self.iterations = min(len(self.output_df['Iteration']), int(folder.split("iter")[0].split("_")[-1]))
+        self.iterations = min(len(self.output_df['Iteration']),
+                                int(folder.split("iter")[0].split("_")[-1]))
+        self.attempt = int(folder.split("_")[-1])
         
         self.avgobj = Averages()
         
@@ -65,7 +80,7 @@ class ExperimentResult(object):
             'Average': 0            
         }
         
-    def plot_output(self, color='red', reference = []):
+    def plot_output(self, color='red', reference=[]):
         self.output_fig, self.output_axes = plt.subplots(nrows=2, ncols=4)
 
         fig, axes = self.output_fig, self.output_axes
@@ -83,7 +98,10 @@ class ExperimentResult(object):
             
             color_idx = 0
             for df in dfs:
-                df.plot(kind='line', x='Iteration', y=column_names[i], ax=axes[row, column], color=self.output_colors[color_idx])
+                df.plot(kind='line', x='Iteration', y=column_names[i],
+                        ax=axes[row, column],
+                        color=self.output_colors[color_idx])
+                axes[row, column].axis([-50, 3000, -200, 200]) # xmin, xmax, ymin, ymax
                 color_idx += 1
             
             axes[row, column].legend(legends)
@@ -92,7 +110,7 @@ class ExperimentResult(object):
         self.output_axes = axes
         self.output_fig = fig
         
-        wait_for_plot(fig)
+        return fig, axes
         
     def plot_power_curves(self, reference=None):
         run_name_1 = self.folder
@@ -124,7 +142,9 @@ class ExperimentResult(object):
         
         axes.legend([self.legend, reference.legend])
         
-        wait_for_plot(fig)
+        return fig, axes
+        
+        #wait_for_plot(fig)
         
     def calculate_deviation(self, reference=None):
         # If the deviation is already calculated in the 'error' member,
@@ -163,23 +183,7 @@ class ExperimentResult(object):
             self.deviation[c] = self.deviation_df_average[c + ' (deviation average)'].item()
         
         self.deviation['Average'] = self.deviation_df_average.mean(axis=1).item()
-        
-#         for column in self.column_names:
-#             if column == 'Iteration': 
-#                 continue
-#             for i in range(iterations):
-#                 if df2[column][i] != 0.0: 
-#                     val = abs(df[column][i] - df2[column][i] / df2[column][i])
-#                 else: 
-#                     val = 0.0
-#                 self.error[column] += val
-#                 #print("Adding {0} for column {1} and i {2}".format(val, column, i))
-                
-#             self.error["Average"] += self.error[column]
-#             self.error[column] /= iterations
-            
-#         self.error["Average"] /= (iterations * (len(self.column_names) - 1))
-        
+
     def print_deviation(self,verbose=1):
         if verbose == 1:
             print("Deviation: {0}%".format(self.deviation["Average"]))
@@ -191,12 +195,12 @@ class ExperimentResult(object):
         elif verbose >= 3:
             display(self.deviation_df)
     
-    def calculate_averages(self):
+    def calculate_averages(self, ignore_first_average=True):
         self.avgobj.read_from_csv(self.averages_csv)
-        self.avgobj.calculate_averages_for_pin(1)
+        self.avgobj.calculate_averages_for_pin(1,
+            ignore_first_average=ignore_first_average)
     
     def show_averages(self, verbose=1):
-        
         print_per_iteration=False
         print_total_average=False
         print_benchmark_time=False
@@ -210,17 +214,21 @@ class ExperimentResult(object):
         if verbose >= 3:
             print_benchmark_time = True
         
-        self.avgobj.print_averages_for_pin(1, print_per_iteration = print_per_iteration, 
-                                          print_energy_and_current = print_energy_and_current,
-                                          print_total_average = print_total_average,
-                                          print_benchmark_time = print_benchmark_time)
+        self.avgobj.print_averages_for_pin(1,
+            print_per_iteration = print_per_iteration, 
+            print_energy_and_current = print_energy_and_current,
+            print_total_average = print_total_average,
+            print_benchmark_time = print_benchmark_time)
     
     def get_averages(self, pin = 1):
         return {
-            'Average per iteration uC': self.avgobj.total_average[pin] * 1000 * 1000 / self.avgobj.total_iterations[pin],
-            'Average per iteration duration': self.avgobj.total_duration[pin] / self.avgobj.total_iterations[pin],
+            'Average per iteration uC': self.avgobj.total_average[pin]*
+                         1000 * 1000 / self.avgobj.total_iterations[pin],
+            'Average per iteration ms': self.avgobj.total_duration[pin] * 1000
+                            / self.avgobj.total_iterations[pin],
             'Total mC': self.avgobj.total_average[pin] * 1000,
-            'Total duration': self.avgobj.total_duration[1],
+            'Total duration sec': self.avgobj.total_duration[1],
+            "Average mW": self.avgobj.total_average[pin] * 1000 * self.voltage / self.avgobj.total_duration[pin],
             'Iterations': self.avgobj.total_iterations[pin]
         }
     
@@ -229,7 +237,8 @@ class ExperimentResult(object):
             'Average': self.deviation["Average"], 
             'List': list(self.deviation.values())[:-1],
             'Maximum': max(list(self.deviation.values())[:-1]),
-            'Maximum name': max(self.deviation.items(), key=operator.itemgetter(1))[0]
+            'Maximum name': max(self.deviation.items(),
+                                key=operator.itemgetter(1))[0]
         }
     
     def get_hash_stats(self, verbose=0):
@@ -305,47 +314,54 @@ class ExperimentResult(object):
         
 class ResultsTable(object):
     
-    def __init__(self, advanced = False):
-        
-        self.advanced = advanced
-        self.column_names = ["Type", "Hash table size", "Epsilon", "Mod precision", 
-                             "mC/iter", "sec/iter", "Total mC", 
-                             "Total sec", "Deviation average", "Deviation maximum", "Deviation maximum name",
-                             "Hits from hash", "Writes to hash", "Kalman iterations", "FLASH memory occupancy (bytes)",
+    def __init__(self):
+        self.column_names = ["Type", "Attempt", "Hash table size",
+                            "Epsilon", "Mod precision",
+                             "mC/iter", "ms/iter", "Total mC", 
+                             "Total sec", "Average mW",
+                             "Deviation average",
+                             "Deviation maximum", "Deviation maximum name",
+                             "Hits from hash", "Writes to hash",
+                             "Power averaged iterations",
+                             "FLASH memory occupancy (bytes)",
                              "RAM memory occupancy (bytes)"]
-        if self.advanced:
-            self.column_names += ["Power averaged iterations",
-                             "Deviation iterations"]
         self.df = pd.DataFrame(columns=self.column_names)
+        self.df_mean = pd.DataFrame(columns=self.column_names)
+        self.df_max = pd.DataFrame(columns=self.column_names)
+        self.df_min = pd.DataFrame(columns=self.column_names)
         
     def add_to_table(self, exp):
+        attempt = exp.attempt
         averages = exp.get_averages()
         deviation = exp.get_deviation()
         sizes = exp.get_size_stats()
         
         if "baseline" in exp.folder:
-            row = ["Baseline", 0, 0, 0, 
-                   averages['Average per iteration uC'], averages['Average per iteration duration'], averages['Total mC'],
-                   averages['Total duration'], 
-                   deviation['Average'], deviation['Maximum'], deviation['Maximum name'],
-                   0, 0, exp.iterations, sizes['flash'], sizes['ram']]
-            if self.advanced:
-                row += [
-                    averages['Iterations'], exp.iterations
-                ]
+            row = ["Baseline", attempt, 0, 0, 0, 
+                   averages['Average per iteration uC'],
+                   averages['Average per iteration ms'],
+                   averages['Total mC'],
+                   averages['Total duration sec'], 
+                   averages['Average mW'],
+                   deviation['Average'],
+                   deviation['Maximum'],
+                   deviation['Maximum name'],
+                   0, 0, averages['Iterations'],
+                   sizes['flash'], sizes['ram']]
             assert(len(row) == len(self.column_names))
         else:
             hash_stats = exp.get_hash_stats()
-            row = ["Hash", hash_stats['Hash size'], hash_stats['Epsilon'], hash_stats['Mod precision'], averages['Average per iteration uC'],
-                   averages['Average per iteration duration'], averages['Total mC'], averages['Total duration'],
-                   deviation['Average'], deviation['Maximum'], deviation['Maximum name'],
-                   hash_stats['Found'], hash_stats['Stored'], exp.iterations,
-                   sizes['flash'], sizes['ram']]
-            if self.advanced:
-                row += [
-                    averages['Iterations'], exp.reference_iterations
-                ]
-
+            row = ["Hash", attempt, hash_stats['Hash size'],
+                    hash_stats['Epsilon'], hash_stats['Mod precision'],
+                    averages['Average per iteration uC'],
+                    averages['Average per iteration ms'],
+                    averages['Total mC'], averages['Total duration sec'],
+                    averages['Average mW'],
+                    deviation['Average'], deviation['Maximum'],
+                    deviation['Maximum name'],
+                    hash_stats['Found'], hash_stats['Stored'],
+                    averages['Iterations'],
+                    sizes['flash'], sizes['ram']]
             assert(len(row) == len(self.column_names))
         self.df.loc[len(self.df)] = row
         
@@ -353,26 +369,60 @@ class ResultsTable(object):
         self.df["Mod precision"] = self.df["Mod precision"].astype(int)
         self.df["Hits from hash"] = self.df["Hits from hash"].astype(int)
         self.df["Writes to hash"] = self.df["Writes to hash"].astype(int)
-        self.df["Kalman iterations"] = self.df["Kalman iterations"].astype(
-            int)
+        self.df["Power averaged iterations"] = \
+            self.df["Power averaged iterations"].astype(int)
         self.df["FLASH memory occupancy (bytes)"] = \
             self.df["FLASH memory occupancy (bytes)"].astype(int)
         self.df["RAM memory occupancy (bytes)"] = \
             self.df["RAM memory occupancy (bytes)"].astype(int)
-
-        if self.advanced:
-            self.df["Power averaged iterations"] = self.df["Power averaged iterations"].astype(
-                int)
-            self.df["Deviation iterations"] = self.df["Deviation iterations"].astype(
-                int)
         
-    def print_table(self):
-        # self.df.style.format({
-        #     'Deviation average': '{:,.6f%}'.format,
-        #     'Deviation maximum': '{:,.6f%}'.format,
-        # })
-        self.df.sort_values(by="Epsilon")
-        display(self.df.style.format({
-            'Deviation average': '{:,.4%}'.format,
-            'Deviation maximum': '{:,.4%}'.format,
-        }))
+    def group(self, which=None, groups=["Epsilon"]):
+        #groups can also be 
+        # ["Type", "Hash table size", "Mod precision", "Power averaged iterations",
+        # "Epsilon"]
+
+        if which is None:
+            return self.df.groupby(groups)
+        elif which == "max":
+            return self.df.groupby(groups).max()
+        elif which == "min":
+            return self.df.groupby(groups).min()
+        elif which == "mean":
+            return self.df.groupby(groups).mean()
+        elif which == "std":
+            return self.df.groupby(groups).std().fillna(0)
+
+    def print_table(self, which="all"):
+        self.df = self.df.sort_values(by=["Attempt", "Epsilon"])
+
+        if which == "all":
+            display(self.df.style.format({
+                'Deviation average': '{:,.4%}'.format,
+                'Deviation maximum': '{:,.4%}'.format,
+            }))
+        elif which in ["max", "min", "mean", "std"]:
+            display(self.group(which).style.format({
+                                   'Deviation average': '{:,.4%}'.format,
+                                   'Deviation maximum': '{:,.4%}'.format,
+                               }))
+    
+    def plot(self, columns):
+        mean = self.group().mean()
+        min_ = self.group().min()
+        max_ = self.group().max()
+
+        fig, ax = plt.subplots()
+        
+        for c in columns:
+            mean_ = mean[[c]]
+            max_ = self.group().max()[[c]]
+            min_ = self.group().min()[[c]]
+
+            err = []
+            for col in min_:  # Iterate over bar groups (represented as columns)
+                err.append([min_[col].values-mean_[col].values, max_[col].values-mean_[col].values])
+            err = np.abs(err)  # Absolute error values (you had some negatives)
+
+            mean_.plot(y=c, yerr=err, ax=ax)
+            
+        return fig, ax

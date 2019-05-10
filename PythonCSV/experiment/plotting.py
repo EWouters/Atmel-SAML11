@@ -107,7 +107,7 @@ def error_barchart():
 
 	return fig
 
-def wait_for_plot(fig, check_os=False):
+def wait_for_plot(fig):
     if platform == "linux" or platform == "linux2":
         while plt.fignum_exists(fig.number):
             plt.pause(0.000001)

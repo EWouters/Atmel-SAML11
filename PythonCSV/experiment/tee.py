@@ -11,7 +11,6 @@ from experiment.plotting import *
 from experiment.helpers import *
 
 import dgilib_threaded as dgi_t
-from atprogram.atprogram import atprogram, get_project_size
 
 import traceback
 import errno

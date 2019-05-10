@@ -6,8 +6,9 @@ import os
 import subprocess
 
 from experiment.averages import Averages
-from pydgilib_extra import DGILibExtra, LOGGER_OBJECT, LoggerData, DGILibInterfaceGPIO, \
-    DGILibInterfacePower, INTERFACE_GPIO, INTERFACE_POWER, DGILibPlot
+from pydgilib_extra import DGILibExtra, LOGGER_OBJECT, LoggerData, \
+    DGILibInterfaceGPIO, DGILibInterfacePower, INTERFACE_GPIO, \
+    INTERFACE_POWER, DGILibPlot
 
 kalman_c_folder = "C:\\Users\\Dragos\\Dropbox\\College\\MasThesis\\Git\\KalmanC++"
 
