@@ -7,10 +7,8 @@
 
 SRC = ${CURDIR}
 
-all:
-
-hash-exp: hash_experiment
-	gcc -m32 -g -Wall hash_experiment.c -o hash_experiment
+# hash-exp: hash_experiment
+#	gcc -m32 -g -Wall hash_experiment.c -o hash_experiment
 
 run-kalman-hash: kalman-hash
 	./kalman-hash
