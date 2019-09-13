@@ -83,6 +83,7 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/utils/src/utils_list.c"/>
         <file category="source" condition="GCC" name="hal/utils/src/utils_syscalls.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hpl/crya/hpl_crya.h"/>
+        <file category="doc" condition="ARMCC, GCC, IAR" name="hpl/doc_lite/nvmctrl.rst"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_ac_l11.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_adc_l11.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_ccl_l11.h"/>
@@ -130,6 +131,8 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/gclk/hpl_gclk.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hpl/gclk/hpl_gclk_base.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/mclk/hpl_mclk.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="hpl/nvmctrl/nvmctrl_lite.c"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hpl/nvmctrl/nvmctrl_lite.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/osc32kctrl/hpl_osc32kctrl.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/oscctrl/hpl_oscctrl.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/pm/hpl_pm.c"/>
@@ -163,6 +166,7 @@
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/dmac"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/gclk"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/mclk"/>
+        <file category="include" condition="ARMCC, GCC, IAR" name="hpl/nvmctrl"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/osc32kctrl"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/oscctrl"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/pm"/>

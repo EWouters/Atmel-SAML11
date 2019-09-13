@@ -4,10 +4,10 @@ versions:
   api: '1.0'
   backend: 1.5.122
   commit: 820baecf7dd115d94b0d42ee3b0b9d6ba2da7113
-  content: 1.0.1465
+  content: 1.0.1507
   content_pack_name: acme-packs-all
   format: '2'
-  frontend: 1.5.1826
+  frontend: 1.5.1877
 board:
   identifier: SAML11XplainedPro
   device: ATSAML11E16A-AU
@@ -74,8 +74,8 @@ middlewares:
       port_nonsec_pa07: false
       port_nonsec_pa08: false
       port_nonsec_pa09: false
-      port_nonsec_pa10: true
-      port_nonsec_pa11: true
+      port_nonsec_pa10: false
+      port_nonsec_pa11: false
       port_nonsec_pa12: false
       port_nonsec_pa13: false
       port_nonsec_pa14: false
@@ -87,11 +87,11 @@ middlewares:
       port_nonsec_pa20: false
       port_nonsec_pa21: false
       port_nonsec_pa22: false
-      port_nonsec_pa23: true
+      port_nonsec_pa23: false
       port_nonsec_pa24: false
       port_nonsec_pa25: false
       port_nonsec_pa26: false
-      port_nonsec_pa27: true
+      port_nonsec_pa27: false
       port_nonsec_pa28: false
       port_nonsec_pa29: false
       port_nonsec_pa30: false
@@ -138,9 +138,9 @@ middlewares:
       urow_bootrom_rxn: true
       urow_fuse_programming_enable: Enable
       urow_idau_ansc: 32
-      urow_idau_as: 128
+      urow_idau_as: 255
       urow_idau_ds: 8
-      urow_idau_rs: 64
+      urow_idau_rs: 127
       urow_non_trustzone_setting_enable: false
       urow_nvmctrl_bod33_dis: false
       urow_nvmctrl_nsulck: 7
@@ -397,6 +397,29 @@ drivers:
           external: false
           external_frequency: 0
         configuration: {}
+  FLASH_0:
+    user_label: FLASH_0
+    definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::NVMCTRL::driver_config_definition::Flash::Lite:NVMCTRL:Driver
+    functionality: Flash
+    api: Lite:NVMCTRL:Driver
+    configuration:
+      ctrlb_cachedis: false
+      ctrlb_fwup: false
+      ctrlb_qwen: false
+      ctrlb_readmode: No Miss Penalty
+      ctrlb_sleepprm: Wake On Access
+      ctrlc_manw: true
+      dscc_dsckey: 0
+      evctrl_autowei: false
+      evctrl_autowinv: false
+      secctrl_dscen: false
+      secctrl_silacc: false
+      secctrl_tampeen: false
+      secctrl_terow: 0
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group: null
   OSC32KCTRL:
     user_label: OSC32KCTRL
     definition: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::OSC32KCTRL::driver_config_definition::OSC32KCTRL::HAL:HPL:OSC32KCTRL
@@ -511,12 +534,6 @@ drivers:
 pads: {}
 toolchain_options:
 - definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
-  configuration: {}
-- definition:
-    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
-  configuration: {}
-- definition:
     identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Atmel.Studio:7.0.0
   configuration:
     compiler_config:
@@ -524,3 +541,9 @@ toolchain_options:
     linker_config:
       armgcc_linker_miscellaneous_LinkerFlags: -Wl,--out-implib=libsecure_gateway_veneer.lib
         -Wl,--cmse-implib
+- definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:IAR.EWARM:8.30.0
+  configuration: {}
+- definition:
+    identifier: Atmel:SAML11_Drivers:0.0.1::ATSAML11E16A-AU::environment_definition::All:Keil.MDK:5.26
+  configuration: {}

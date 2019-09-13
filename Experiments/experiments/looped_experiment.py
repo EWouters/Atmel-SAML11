@@ -13,10 +13,10 @@ from atprogram.atprogram import atprogram
 
 def looped_experiment(config_file=path.abspath(
         path.join(path.curdir, "looped_experiment.json")),
-        verbose=1, config_dict={}, live_plot=False, max_log_time=1000,
+        verbose=2, config_dict={}, live_plot=False, max_log_time=1000,
         log_stop_function=None, analysis_stop_function=None,
         drop_last_samples=0, dump_pickle=True, fit_lm=True, model=None,
-        show_lm_plot=1):
+        show_lm_plot=1, fig_size=(5, 4.5)):
     """looped_experiment.
 
     This function reads a json file with parameters. That file describes how
@@ -54,6 +54,7 @@ def looped_experiment(config_file=path.abspath(
         show_lm_plot {int} -- Whether to plot the results of the model
             1: Plot single view (default: {1})
             2: Plot each parameter individually and show the residuals
+        fig_size {tuple} -- Size of the residuals plot
     """
     # The config_file should be a json file with parameters
     with open(path.join(config_file)) as json_file:
@@ -231,7 +232,9 @@ def looped_experiment(config_file=path.abspath(
                         f" per {labels[result_type]['x_unit']}\n"
             ax[result_types[0]].legend(handles=lines)
             ax[result_types[0]].set_title(title_str[:-1])
-            fig.tight_layout()
+            # fig.tight_layout()
+            fig.tight_layout(rect=(0.05, 0.05, 1, 1))
+            fig.set_size_inches(*fig_size, forward=True)
             fig.show()
 
         # Save model results to file

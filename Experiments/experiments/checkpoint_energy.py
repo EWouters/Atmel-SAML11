@@ -83,7 +83,7 @@ class CheckpointEnergy(object):
                       f"Tried {pickle_path_base}_[looped|model].p")
 
         def get_security_energy(security_type, number_of_bytes,
-                                energy_parameter="Charge"):
+                                energy_parameter="Charge", use_model=False):
             if security_type in security_charge.keys():
                 power_dict = {}
                 for parameter_name in security_charge[security_type][
@@ -92,7 +92,7 @@ class CheckpointEnergy(object):
                         number_of_bytes/security_charge[security_type][
                             "parsed_data"][parameter_name].get("x_step", 1))
                     if index < len(security_charge[security_type][
-                            "parsed_data"][parameter_name][energy_parameter]):
+                            "parsed_data"][parameter_name][energy_parameter]) and not use_model:
                         power_dict[parameter_name] = security_charge[
                             security_type]["parsed_data"][parameter_name][
                                 energy_parameter][index]
@@ -187,7 +187,7 @@ class CheckpointEnergy(object):
         return self.workloads_std[workload_project]
 
     def get_checkpoint_size(self, workload_project):
-        result = 0 + 12 + 1 + 1  # 12 GPR + LR + PC
+        result = 3 + 12 + 1 + 1  # 12 GPR + LR + PC
 
         checkpoint_regions = (
             "data", "bss") if not self.text_as_size else ("text")
@@ -199,7 +199,7 @@ class CheckpointEnergy(object):
         return result
 
     def get_checkpoint_energy(self, security_type, workload_project,
-                              energy_parameter="Charge"):
+                              energy_parameter="Charge", use_model=False):
         if security_type == "None":
             return 0
         result = 0
@@ -212,7 +212,7 @@ class CheckpointEnergy(object):
         for security_section_type, security_section in \
                 self.get_security_energy(
                     security_type, self.get_checkpoint_size(workload_project),
-                    energy_parameter).items():
+                    energy_parameter, use_model=use_model).items():
             if security_section_type in checkpoint_sections:
                 result += security_section
         return result

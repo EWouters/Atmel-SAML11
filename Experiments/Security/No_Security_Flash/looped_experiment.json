@@ -3,23 +3,14 @@
     "project_paths": [
         [
             ".",
-            "No_Security_Flash-NS"
-        ],
-        [
-            ".",
             "No_Security_Flash-S"
         ]
     ],
     "config_dict": {
-        "interfaces": [
-            256,
-            48
-        ],
         "loggers": [
             1,
             0
         ],
-        "gpio_delay_time": 0.0007,
         "file_name_base": "experiment_no_security_flash"
     },
     "config_dict_plot": {
@@ -41,10 +32,10 @@
     "analysis": {
         "pins": {
             "2": [
-                "Flash Write"
+                "No Security Flash Write"
             ],
             "3": [
-                "Flash Read"
+                "No Security Flash Read"
             ]
         },
         "result_types": [
@@ -54,10 +45,10 @@
         "section_types": {
             "init": [],
             "store": [
-                "Flash Write"
+                "No Security Flash Write"
             ],
             "load": [
-                "Flash Read"
+                "No Security Flash Read"
             ],
             "exit": []
         },

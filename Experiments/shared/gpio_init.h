@@ -22,7 +22,7 @@
 
 #define START_MEASURE(PIN) DELAY; gpio_set_pin_level(PIN, GPIO_HIGH)
 #define STOP_MEASURE(PIN) gpio_set_pin_level(PIN, GPIO_LOW); DELAY
-#define END_MEASUREMENT DELAY; gpio_set_pin_level(DGI_GPIO0, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO1, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH)
+#define END_MEASUREMENT delay_ms(10); gpio_set_pin_level(DGI_GPIO0, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO1, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO2, GPIO_HIGH); gpio_set_pin_level(DGI_GPIO3, GPIO_HIGH)
 
 #endif
 

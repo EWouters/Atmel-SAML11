@@ -18,6 +18,8 @@ int main(void)
 	
 	uint8_t *input = malloc(sizeof(uint8_t) * MAX_NUM_BYTES);
 	
+	delay_ms(10);
+	
 	for (size_t num_bytes = MIN_NUM_BYTES; num_bytes <= MAX_NUM_BYTES; num_bytes += STEP_SIZE) {
 		//size_t num_bytes = MAX_NUM_BYTES;
 		// Fill with sequential data.

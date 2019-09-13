@@ -3,7 +3,11 @@
     "project_paths": [
         [
             ".",
-            "No_Security_Flash"
+            "No_Security_Flash-NS"
+        ],
+        [
+            ".",
+            "No_Security_Flash-S"
         ]
     ],
     "config_dict": {
